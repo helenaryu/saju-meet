@@ -339,7 +339,7 @@ export default function FaceReadingApp() {
     
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
+        provider: 'google' as const,
         options: {
           redirectTo: `${window.location.origin}/auth/callback`
         }
@@ -368,7 +368,7 @@ export default function FaceReadingApp() {
     
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'kakao',
+        provider: 'kakao' as const,
         options: {
           redirectTo: `${window.location.origin}/auth/callback`
         }
