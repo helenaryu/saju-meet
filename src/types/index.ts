@@ -1,5 +1,7 @@
 export type AppStep =
   | "onboarding"
+  | "signup"
+  | "login"
   | "integrated-analysis"
   | "combined-result"
   | "profile"

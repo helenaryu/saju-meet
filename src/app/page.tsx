@@ -3,8 +3,11 @@
 import { useState, useEffect } from "react"
 import { AppStep, ProfileData, SajuData, ChatMessage } from "@/types"
 import { FACE_READING_KEYWORDS, SAJU_KEYWORDS, IDEAL_TYPE_KEYWORDS, dummyMatches } from "@/constants/data"
+import { supabase } from "@/lib/supabase"
+import { useSearchParams } from "next/navigation"
 
 export default function FaceReadingApp() {
+  const searchParams = useSearchParams()
   const [currentStep, setCurrentStep] = useState<AppStep>("onboarding")
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
   const [additionalPhotos, setAdditionalPhotos] = useState<string[]>([])
@@ -51,6 +54,8 @@ export default function FaceReadingApp() {
 
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [newMessage, setNewMessage] = useState("")
+  const [isAuthenticating, setIsAuthenticating] = useState(false)
+  const [authProvider, setAuthProvider] = useState<"google" | "kakao" | null>(null)
 
   const initializeChatMessages = (userName: string) => {
     const dummyMessages: ChatMessage[] = [
@@ -277,6 +282,136 @@ export default function FaceReadingApp() {
     setIsEditingProfile(false)
   }
 
+  // URL 파라미터 감지하여 상태 업데이트
+  useEffect(() => {
+    const step = searchParams.get('step')
+    const auth = searchParams.get('auth')
+    
+    if (step === 'integrated-analysis') {
+      setCurrentStep('integrated-analysis')
+      // integrated-analysis 단계에서는 photo 단계로 자동 이동
+      setIntegratedAnalysisStep('photo')
+      // 인증 상태 초기화
+      setIsAuthenticating(false)
+      setAuthProvider(null)
+    }
+    
+    if (auth === 'error') {
+      alert('인증에 실패했습니다. 다시 시도해주세요.')
+      setIsAuthenticating(false)
+      setAuthProvider(null)
+    }
+  }, [searchParams])
+
+  // 인증 상태 확인 및 초기화
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        
+        if (error) {
+          console.error('인증 상태 확인 오류:', error)
+          return
+        }
+
+        if (session) {
+          console.log('로그인된 사용자:', session.user.email)
+          // 로그인된 상태라면 integrated-analysis로 이동
+          setCurrentStep('integrated-analysis')
+        } else {
+          console.log('로그인되지 않은 상태')
+          // 로그인되지 않은 상태라면 onboarding으로 유지
+          setCurrentStep('onboarding')
+        }
+      } catch (error) {
+        console.error('인증 상태 확인 예외:', error)
+        setCurrentStep('onboarding')
+      }
+    }
+
+    checkAuthStatus()
+  }, [])
+
+  // OAuth 인증 함수들
+  const handleGoogleSignUp = async () => {
+    setIsAuthenticating(true)
+    setAuthProvider("google")
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`
+        }
+      })
+      
+      if (error) {
+        console.error('Google 로그인 오류:', error)
+        alert('Google 로그인에 실패했습니다.')
+        setIsAuthenticating(false)
+        setAuthProvider(null)
+      } else {
+        console.log('Google 로그인 성공:', data)
+        // 팝업이 열리면 상태는 유지, 콜백에서 처리
+      }
+    } catch (error) {
+      console.error('Google 로그인 예외:', error)
+      alert('Google 로그인 중 오류가 발생했습니다.')
+      setIsAuthenticating(false)
+      setAuthProvider(null)
+    }
+  }
+
+  const handleKakaoSignUp = async () => {
+    setIsAuthenticating(true)
+    setAuthProvider("kakao")
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'kakao',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`
+        }
+      })
+      
+      if (error) {
+        console.error('Kakao 로그인 오류:', error)
+        alert('Kakao 로그인에 실패했습니다.')
+        setIsAuthenticating(false)
+        setAuthProvider(null)
+      } else {
+        console.log('Kakao 로그인 성공:', data)
+        // 팝업이 열리면 상태는 유지, 콜백에서 처리
+      }
+    } catch (error) {
+      console.error('Kakao 로그인 예외:', error)
+      alert('Kakao 로그인 중 오류가 발생했습니다.')
+      setIsAuthenticating(false)
+      setAuthProvider(null)
+    }
+  }
+
+  // 로그아웃 함수
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut()
+      
+      if (error) {
+        console.error('로그아웃 오류:', error)
+        alert('로그아웃에 실패했습니다.')
+      } else {
+        console.log('로그아웃 성공')
+        // 로그아웃 후 onboarding으로 이동
+        setCurrentStep('onboarding')
+        // URL 파라미터 제거
+        window.history.replaceState({}, '', '/')
+      }
+    } catch (error) {
+      console.error('로그아웃 예외:', error)
+      alert('로그아웃 중 오류가 발생했습니다.')
+    }
+  }
+
   if (currentStep === "onboarding") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex flex-col items-center justify-center p-6">
@@ -346,7 +481,7 @@ export default function FaceReadingApp() {
 
           {/* 시작 버튼 */}
           <button
-            onClick={() => setIntegratedAnalysisStep("photo")}
+            onClick={() => setCurrentStep("signup")}
             className="bg-amber-400 hover:bg-amber-500 text-black px-12 py-4 rounded-full text-xl font-bold transition-colors shadow-lg"
           >
             운명 찾기 시작
@@ -355,6 +490,184 @@ export default function FaceReadingApp() {
 
         {/* 점선 테두리 */}
         <div className="absolute inset-4 border-2 border-amber-400/20 border-dashed rounded-3xl pointer-events-none"></div>
+      </div>
+    )
+  }
+
+  if (currentStep === "signup") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex flex-col items-center justify-center p-6">
+        <div className="text-center max-w-md mx-auto">
+          <h1 className="text-4xl font-bold text-amber-400 mb-8">회원가입</h1>
+          
+          <div className="bg-white/10 rounded-2xl p-8 mb-6">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-left text-white mb-2">이메일</label>
+                <input
+                  type="email"
+                  className="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-amber-400 focus:outline-none"
+                  placeholder="이메일을 입력하세요"
+                />
+              </div>
+              <div>
+                <label className="block text-left text-white mb-2">비밀번호</label>
+                <input
+                  type="password"
+                  className="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-amber-400 focus:outline-none"
+                  placeholder="비밀번호를 입력하세요"
+                />
+              </div>
+              <div>
+                <label className="block text-left text-white mb-2">비밀번호 확인</label>
+                <input
+                  type="password"
+                  className="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-amber-400 focus:outline-none"
+                  placeholder="비밀번호를 다시 입력하세요"
+                />
+              </div>
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              // 간단한 유효성 검사 (실제로는 더 엄격하게)
+              const email = document.querySelector('input[type="email"]') as HTMLInputElement
+              const password = document.querySelector('input[type="password"]') as HTMLInputElement
+              
+              if (!email?.value || !password?.value) {
+                alert('이메일과 비밀번호를 모두 입력해주세요.')
+                return
+              }
+              
+              // 회원가입 완료 후 바로 사진 업로드 페이지로 이동
+              setCurrentStep("integrated-analysis")
+              setIntegratedAnalysisStep("photo")
+            }}
+            className="bg-amber-400 hover:bg-amber-500 text-black px-8 py-4 rounded-full text-lg font-bold transition-colors mb-4 w-full"
+          >
+            회원가입 완료
+          </button>
+
+          <div className="text-center mb-4">
+            <span className="text-white/60 text-sm">또는</span>
+          </div>
+
+          <button
+            onClick={handleGoogleSignUp}
+            className="bg-white hover:bg-gray-100 text-gray-800 px-8 py-3 rounded-full text-lg font-semibold transition-colors mb-3 w-full flex items-center justify-center"
+          >
+            <span className="mr-2">🔍</span>
+            Google로 회원가입
+          </button>
+
+          <button
+            onClick={handleKakaoSignUp}
+            className="bg-yellow-400 hover:bg-yellow-500 text-black px-8 py-3 rounded-full text-lg font-semibold transition-colors mb-4 w-full flex items-center justify-center"
+          >
+            <span className="mr-2">💬</span>
+            카카오로 회원가입
+          </button>
+
+          <button
+            onClick={() => setCurrentStep("login")}
+            className="text-amber-400 hover:text-amber-300 text-sm transition-colors"
+          >
+            이미 계정이 있으신가요? 로그인하기
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (currentStep === "login") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex flex-col items-center justify-center p-6">
+        <div className="text-center max-w-md mx-auto">
+          <h1 className="text-4xl font-bold text-amber-400 mb-8">로그인</h1>
+          
+          <div className="bg-white/10 rounded-2xl p-8 mb-6">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-left text-white mb-2">이메일</label>
+                <input
+                  type="email"
+                  className="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-amber-400 focus:outline-none"
+                  placeholder="이메일을 입력하세요"
+                />
+              </div>
+              <div>
+                <label className="block text-left text-white mb-2">비밀번호</label>
+                <input
+                  type="password"
+                  className="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-amber-400 focus:outline-none"
+                  placeholder="비밀번호를 입력하세요"
+                />
+              </div>
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              // 간단한 유효성 검사
+              const email = document.querySelector('input[type="email"]') as HTMLInputElement
+              const password = document.querySelector('input[type="password"]') as HTMLInputElement
+              
+              if (!email?.value || !password?.value) {
+                alert('이메일과 비밀번호를 모두 입력해주세요.')
+                return
+              }
+              
+              // 로그인 완료 후 바로 사진 업로드 페이지로 이동
+              setCurrentStep("integrated-analysis")
+              setIntegratedAnalysisStep("photo")
+            }}
+            className="bg-amber-400 hover:bg-amber-500 text-black px-8 py-4 rounded-full text-lg font-bold transition-colors mb-4 w-full"
+          >
+            로그인
+          </button>
+
+          <button
+            onClick={() => setCurrentStep("signup")}
+            className="text-amber-400 hover:text-amber-300 text-sm transition-colors"
+          >
+            계정이 없으신가요? 회원가입하기
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // OAuth 인증 중 화면
+  if (isAuthenticating) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex flex-col items-center justify-center p-6">
+        <div className="text-center max-w-md mx-auto">
+          <div className="animate-spin rounded-full h-24 w-24 border-b-2 border-amber-400 mx-auto mb-6"></div>
+          <h1 className="text-3xl font-bold text-amber-400 mb-4">
+            {authProvider === "google" ? "Google" : "카카오"} 회원가입 진행 중
+          </h1>
+          <p className="text-xl text-white mb-6">
+            {authProvider === "google" ? "Google" : "카카오"}에서 인증을 진행하고 있습니다.
+          </p>
+          <div className="bg-white/10 rounded-2xl p-6">
+            <p className="text-white/80 text-sm">
+              팝업 창이 열렸다면 인증을 완료해주세요.
+            </p>
+            <p className="text-white/60 text-xs mt-2">
+              팝업이 차단된 경우 브라우저 설정을 확인해주세요.
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              setIsAuthenticating(false)
+              setAuthProvider(null)
+            }}
+            className="text-amber-400 hover:text-amber-300 text-sm transition-colors mt-6"
+          >
+            취소하고 돌아가기
+          </button>
+        </div>
       </div>
     )
   }
