@@ -1,12 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { AppStep, ProfileData, SajuData, ChatMessage } from "@/types"
 import { FACE_READING_KEYWORDS, SAJU_KEYWORDS, IDEAL_TYPE_KEYWORDS, dummyMatches } from "@/constants/data"
 import { supabase } from "@/lib/supabase"
 import { useSearchParams } from "next/navigation"
 
-export default function FaceReadingApp() {
+function FaceReadingAppContent() {
   const searchParams = useSearchParams()
   const [currentStep, setCurrentStep] = useState<AppStep>("onboarding")
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
@@ -785,5 +785,20 @@ export default function FaceReadingApp() {
     <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
       <h1>관상은 과학이다</h1>
     </div>
+  )
+}
+
+export default function FaceReadingApp() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-amber-400 mx-auto mb-4"></div>
+          <p className="text-xl">로딩 중...</p>
+        </div>
+      </div>
+    }>
+      <FaceReadingAppContent />
+    </Suspense>
   )
 }
