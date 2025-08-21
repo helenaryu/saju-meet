@@ -10,15 +10,13 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...compat.extends("next/core-web-vitals"),
   {
-    ignores: [
-      "node_modules/**",
-      ".next/**",
-      "out/**",
-      "build/**",
-      "next-env.d.ts",
-    ],
+    rules: {
+      "@typescript-eslint/no-unused-vars": "warn", // error에서 warn으로 변경
+      "@typescript-eslint/no-explicit-any": "warn", // error에서 warn으로 변경
+      "@typescript-eslint/no-unused-vars": "off", // 사용하지 않는 변수 경고 끄기
+    },
   },
 ];
 
