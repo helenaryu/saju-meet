@@ -26,7 +26,16 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhY
 # TOSS_PAYMENTS_CLIENT_KEY=your-toss-client-key
 ```
 
-### 3. 개발 서버 실행
+### 3. 데이터베이스 스키마 설정
+Supabase에서 다음 단계를 따라 데이터베이스를 설정하세요:
+
+1. **Supabase 대시보드**에서 프로젝트 선택
+2. **"SQL Editor"** 탭 클릭
+3. **"New query"** 클릭
+4. `database-schema.sql` 파일의 내용을 복사해서 붙여넣기
+5. **"Run"** 버튼 클릭하여 스키마 생성
+
+### 4. 개발 서버 실행
 ```bash
 npm run dev
 ```
@@ -50,6 +59,23 @@ npm run dev
 - **프로필 관리**: 사용자 정보 및 사진 관리
 - **채팅 시스템**: 매칭된 사용자와의 대화
 - **결제 시스템**: 유료 기능 이용을 위한 결제
+
+## 🗄️ 데이터베이스 구조
+
+### 주요 테이블
+- **user_profiles**: 사용자 기본 정보
+- **face_reading_results**: 관상 분석 결과
+- **saju_results**: 사주 분석 결과
+- **compatibility_results**: 궁합 분석 결과
+- **messages**: 사용자 간 메시지
+- **payment_history**: 결제 내역
+- **usage_tracking**: 사용량 추적
+- **user_credits**: 사용자 크레딧
+
+### 보안 기능
+- **Row Level Security (RLS)** 활성화
+- **사용자별 데이터 접근 제어**
+- **자동 크레딧 차감 시스템**
 
 ## 🚀 배포
 
@@ -87,9 +113,9 @@ src/
 ### 상수 추가
 새로운 상수는 `src/constants/` 폴더에 추가하세요.
 
+### 데이터베이스 수정
+데이터베이스 스키마를 수정할 때는 `database-schema.sql` 파일을 업데이트하고 Supabase에서 실행하세요.
+
 ## 📄 라이선스
 
 이 프로젝트는 MIT 라이선스 하에 배포됩니다.
-# Force redeploy
-# Force new deployment
-# Vercel deployment fix
