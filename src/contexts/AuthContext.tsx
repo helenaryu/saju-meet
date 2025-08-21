@@ -11,7 +11,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>
   signUp: (email: string, password: string) => Promise<{ error: AuthError | null }>
   signOut: () => Promise<void>
-  signInWithOAuth: (provider: 'google' | 'kakao' | 'naver') => Promise<{ error: AuthError | null }>
+  signInWithOAuth: (provider: 'google' | 'kakao') => Promise<{ error: AuthError | null }>
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>
 }
 
@@ -68,9 +68,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await supabase.auth.signOut()
   }
 
-  const signInWithOAuth = async (provider: 'google' | 'kakao' | 'naver') => {
+  const signInWithOAuth = async (provider: 'google' | 'kakao') => {
     const { error } = await supabase.auth.signInWithOAuth({
-      provider,
+      provider: provider as 'google' | 'kakao',
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
       },
