@@ -359,6 +359,115 @@ export default function FaceReadingApp() {
     )
   }
 
+  // 통합 분석 단계별 화면 렌더링
+  if (integratedAnalysisStep === "photo") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex flex-col items-center justify-center p-6">
+        <div className="text-center max-w-2xl mx-auto">
+          <h1 className="text-4xl font-bold text-amber-400 mb-8">관상 분석 시작</h1>
+          <p className="text-xl text-white mb-8">정면 얼굴 사진을 업로드해주세요</p>
+          
+          <div className="bg-white/10 rounded-2xl p-8 mb-8">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoUpload}
+              className="hidden"
+              id="photo-upload"
+            />
+            <label
+              htmlFor="photo-upload"
+              className="bg-amber-400 hover:bg-amber-500 text-black px-8 py-4 rounded-full text-lg font-bold transition-colors cursor-pointer inline-block"
+            >
+              사진 선택하기
+            </label>
+          </div>
+
+          <button
+            onClick={() => setIntegratedAnalysisStep("saju")}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full text-lg font-semibold transition-colors"
+          >
+            사주 분석으로 건너뛰기
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (integratedAnalysisStep === "saju") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex flex-col items-center justify-center p-6">
+        <div className="text-center max-w-2xl mx-auto">
+          <h1 className="text-4xl font-bold text-amber-400 mb-8">사주 분석</h1>
+          <p className="text-xl text-white mb-8">생년월일과 출생 시간을 입력해주세요</p>
+          
+          <div className="bg-white/10 rounded-2xl p-8 mb-8">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-left text-white mb-2">생년월일</label>
+                <input
+                  type="date"
+                  value={sajuData.birthDate}
+                  onChange={(e) => handleSajuInputChange("birthDate", e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-amber-400 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-left text-white mb-2">출생 시간</label>
+                <input
+                  type="time"
+                  value={sajuData.birthTime}
+                  onChange={(e) => handleSajuInputChange("birthTime", e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-amber-400 focus:outline-none"
+                />
+              </div>
+            </div>
+          </div>
+
+          <button
+            onClick={() => startSajuAnalysis()}
+            className="bg-amber-400 hover:bg-amber-500 text-black px-8 py-4 rounded-full text-lg font-bold transition-colors"
+          >
+            사주 분석 시작
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (integratedAnalysisStep === "analyzing") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex flex-col items-center justify-center p-6">
+        <div className="text-center max-w-2xl mx-auto">
+          <h1 className="text-4xl font-bold text-amber-400 mb-8">분석 중...</h1>
+          <div className="bg-white/10 rounded-2xl p-8">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-amber-400 mx-auto mb-4"></div>
+            <p className="text-xl text-white">관상과 사주를 분석하고 있습니다</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (integratedAnalysisStep === "result") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex flex-col items-center justify-center p-6">
+        <div className="text-center max-w-2xl mx-auto">
+          <h1 className="text-4xl font-bold text-amber-400 mb-8">분석 완료!</h1>
+          <div className="bg-white/10 rounded-2xl p-8 mb-8">
+            <p className="text-xl text-white mb-4">당신의 연애 성향 분석이 완료되었습니다</p>
+            <button
+              onClick={() => setCurrentStep("profile")}
+              className="bg-amber-400 hover:bg-amber-500 text-black px-8 py-4 rounded-full text-lg font-bold transition-colors"
+            >
+              프로필 작성하기
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
       <h1>관상은 과학이다</h1>
