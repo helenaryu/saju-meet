@@ -92,3 +92,4 @@ src/
 이 프로젝트는 MIT 라이선스 하에 배포됩니다.
 # Force redeploy
 # Force new deployment
+# Vercel deployment fix
