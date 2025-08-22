@@ -1186,6 +1186,206 @@ function FaceReadingAppContent() {
               💬 메시지 보내기
             </button>
           </div>
+
+          {/* 상대방 관상 분석 */}
+          <div className="bg-white/10 rounded-2xl p-8 mb-8">
+            <h2 className="text-2xl font-bold text-amber-400 mb-6">🎭 {selectedUser.name}님의 관상 분석</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="bg-green-500/20 rounded-xl p-6 border border-green-400/30">
+                <h3 className="text-xl font-bold text-green-400 mb-4">눈의 특징</h3>
+                <p className="text-white leading-relaxed">큰 눈과 긴 속눈썹으로 감정 표현이 풍부하고 직관력이 뛰어납니다. 눈꼬리가 살짝 올라간 형태로 자신감 있고 리더십을 가진 인상을 줍니다.</p>
+                <div className="mt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-green-400 font-semibold">직관력</span>
+                    <span className="text-white font-bold">92%</span>
+                  </div>
+                  <div className="w-full bg-white/20 rounded-full h-2">
+                    <div className="bg-green-400 h-2 rounded-full" style={{ width: '92%' }}></div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-blue-500/20 rounded-xl p-6 border border-blue-400/30">
+                <h3 className="text-xl font-bold text-blue-400 mb-4">입의 특징</h3>
+                <p className="text-white leading-relaxed">입꼬리가 올라간 미소는 긍정적이고 친근한 성격을 나타냅니다. 말씀이 많고 대화를 즐기며, 타인과의 소통에 능숙합니다.</p>
+                <div className="mt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-blue-400 font-semibold">소통력</span>
+                    <span className="text-white font-bold">88%</span>
+                  </div>
+                  <div className="w-full bg-white/20 rounded-full h-2">
+                    <div className="bg-blue-400 h-2 rounded-full" style={{ width: '88%' }}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-purple-500/20 rounded-xl p-6 border border-purple-400/30">
+                <h3 className="text-xl font-bold text-purple-400 mb-4">이마와 턱</h3>
+                <p className="text-white leading-relaxed">넓은 이마는 지적 능력과 창의성을, 각진 턱은 의지력과 결단력을 나타냅니다. 문제 해결 능력이 뛰어나고 목표 달성에 집중하는 성향입니다.</p>
+                <div className="mt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-purple-400 font-semibold">지적 능력</span>
+                    <span className="text-white font-bold">85%</span>
+                  </div>
+                  <div className="w-full bg-white/20 rounded-full h-2">
+                    <div className="bg-purple-400 h-2 rounded-full" style={{ width: '85%' }}></div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-orange-500/20 rounded-xl p-6 border border-orange-400/30">
+                <h3 className="text-xl font-bold text-orange-400 mb-4">코와 귀</h3>
+                <p className="text-white leading-relaxed">직선적인 코는 정직하고 솔직한 성격을, 귀의 위치는 균형 잡힌 판단력을 나타냅니다. 감정적이기보다는 이성적으로 상황을 분석합니다.</p>
+                <div className="mt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-orange-400 font-semibold">판단력</span>
+                    <span className="text-white font-bold">90%</span>
+                  </div>
+                  <div className="w-full bg-white/20 rounded-full h-2">
+                    <div className="bg-orange-400 h-2 rounded-full" style={{ width: '90%' }}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 상대방 사주 분석 */}
+          <div className="bg-white/10 rounded-2xl p-8 mb-8">
+            <h2 className="text-2xl font-bold text-amber-400 mb-6">🔮 {selectedUser.name}님의 사주 분석</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="bg-red-500/20 rounded-xl p-6 border border-red-400/30">
+                <h3 className="text-xl font-bold text-red-400 mb-4">일간 (日干) - {selectedUser.name}님의 본성</h3>
+                <p className="text-white leading-relaxed">일간이 강한 편으로 독립적이고 자주적인 성격입니다. 리더십이 뛰어나며, 자신의 의견을 명확하게 표현하는 성향이 있습니다.</p>
+                <div className="mt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-red-400 font-semibold">독립성</span>
+                    <span className="text-white font-bold">87%</span>
+                  </div>
+                  <div className="w-full bg-white/20 rounded-full h-2">
+                    <div className="bg-red-400 h-2 rounded-full" style={{ width: '87%' }}></div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-yellow-500/20 rounded-xl p-6 border border-yellow-400/30">
+                <h3 className="text-xl font-bold text-yellow-400 mb-4">오행 균형</h3>
+                <p className="text-white leading-relaxed">목(木)과 화(火)의 기운이 강하여 창의적이고 열정적인 성격입니다. 새로운 아이디어를 추구하며, 변화를 두려워하지 않는 도전 정신을 가지고 있습니다.</p>
+                <div className="mt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-yellow-400 font-semibold">창의성</span>
+                    <span className="text-white font-bold">91%</span>
+                  </div>
+                  <div className="w-full bg-white/20 rounded-full h-2">
+                    <div className="bg-yellow-400 h-2 rounded-full" style={{ width: '91%' }}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="bg-indigo-500/20 rounded-xl p-6 border border-indigo-400/30">
+              <h3 className="text-xl font-bold text-indigo-400 mb-4">대운과 세운</h3>
+              <p className="text-white leading-relaxed">현재 20대 후반~30대 초반으로 인연과 관계에 대한 관심이 높아지는 시기입니다. 특히 올해는 새로운 만남과 관계 형성에 좋은 기운이 있으며, 진정한 사랑을 찾을 수 있는 기회가 많습니다.</p>
+              <div className="mt-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-indigo-400 font-semibold">인연운</span>
+                  <span className="text-white font-bold">89%</span>
+                </div>
+                <div className="w-full bg-white/20 rounded-full h-2">
+                  <div className="bg-indigo-400 h-2 rounded-full" style={{ width: '89%' }}></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 나와의 궁합 분석 */}
+          <div className="bg-white/10 rounded-2xl p-8 mb-8">
+            <h2 className="text-2xl font-bold text-amber-400 mb-6">💕 나와의 궁합 분석</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="bg-pink-500/20 rounded-xl p-6 border border-pink-400/30">
+                <h3 className="text-xl font-bold text-pink-400 mb-4">전체 궁합도</h3>
+                <div className="text-center">
+                  <div className="text-6xl font-bold text-pink-400 mb-4">{selectedUser.totalCompatibility}%</div>
+                  <p className="text-white text-lg">매우 좋은 궁합입니다!</p>
+                  <p className="text-gray-300 mt-2">서로를 이해하고 보완하는 관계가 될 수 있습니다.</p>
+                </div>
+              </div>
+              <div className="bg-cyan-500/20 rounded-xl p-6 border border-cyan-400/30">
+                <h3 className="text-xl font-bold text-cyan-400 mb-4">궁합 유형</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-white">관상 궁합</span>
+                    <span className="text-cyan-400 font-bold">85%</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-white">사주 궁합</span>
+                    <span className="text-cyan-400 font-bold">78%</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-white">성격 궁합</span>
+                    <span className="text-cyan-400 font-bold">82%</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-white">가치관 궁합</span>
+                    <span className="text-cyan-400 font-bold">88%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* 상세 궁합 분석 */}
+            <div className="space-y-6">
+              <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-xl p-6 border border-green-400/30">
+                <h3 className="text-xl font-bold text-green-400 mb-4">🎯 궁합의 장점</h3>
+                <ul className="space-y-2 text-white">
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-400 mt-1">✓</span>
+                    <span>서로의 강점을 인정하고 보완하는 관계</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-400 mt-1">✓</span>
+                    <span>대화가 잘 통하고 이해가 빠름</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-400 mt-1">✓</span>
+                    <span>함께 성장할 수 있는 동반자 관계</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-400 mt-1">✓</span>
+                    <span>감정적 안정감을 제공하는 관계</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div className="bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-xl p-6 border border-orange-400/30">
+                <h3 className="text-xl font-bold text-orange-400 mb-4">⚠️ 주의사항</h3>
+                <ul className="space-y-2 text-white">
+                  <li className="flex items-start gap-2">
+                    <span className="text-orange-400 mt-1">!</span>
+                    <span>서로의 독립성을 존중하는 것이 중요</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-orange-400 mt-1">!</span>
+                    <span>의견 차이가 있을 때는 대화로 해결</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-orange-400 mt-1">!</span>
+                    <span>서로의 공간과 시간을 인정하기</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl p-6 border border-purple-400/30">
+                <h3 className="text-xl font-bold text-purple-400 mb-4">💡 관계 발전 방향</h3>
+                <p className="text-white leading-relaxed mb-4">
+                  두 사람은 서로를 이해하고 보완하는 관계로 발전할 수 있습니다. 
+                  {selectedUser.name}님의 창의성과 직관력은 당신의 안정성과 균형감과 잘 맞으며, 
+                  함께하면 더 큰 시너지를 낼 수 있는 조합입니다.
+                </p>
+                <div className="text-center">
+                  <div className="inline-block bg-purple-500 text-white px-6 py-2 rounded-full font-semibold">
+                    🚀 관계 발전 가능성: 매우 높음
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     )
