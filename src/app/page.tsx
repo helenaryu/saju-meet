@@ -846,6 +846,53 @@ function FaceReadingAppContent() {
                 </div>
               </div>
 
+              {/* 추가 사진 업로드 */}
+              <div>
+                <label className="block text-white mb-2">추가 사진 (최대 5장)</label>
+                <div className="bg-white/10 rounded-lg p-4 border-2 border-dashed border-white/30">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleAdditionalPhotoUpload}
+                    className="hidden"
+                    id="additional-photo-upload"
+                  />
+                  <label
+                    htmlFor="additional-photo-upload"
+                    className="flex flex-col items-center justify-center cursor-pointer"
+                  >
+                    <div className="text-4xl mb-2">📸</div>
+                    <p className="text-white text-center mb-2">클릭하여 사진 추가</p>
+                    <p className="text-gray-400 text-sm text-center">여러 장 선택 가능</p>
+                  </label>
+                </div>
+                
+                {/* 업로드된 추가 사진들 */}
+                {additionalPhotos.length > 0 && (
+                  <div className="mt-4">
+                    <p className="text-white mb-2">업로드된 사진 ({additionalPhotos.length}/5)</p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {additionalPhotos.map((photo, index) => (
+                        <div key={index} className="relative">
+                          <img
+                            src={photo}
+                            alt={`추가 사진 ${index + 1}`}
+                            className="w-full h-24 object-cover rounded-lg"
+                          />
+                          <button
+                            onClick={() => removeAdditionalPhoto(index)}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* 이상형 키워드 선택 */}
               <div>
                 <label className="block text-white mb-2">이상형 키워드 (최대 3개)</label>
@@ -881,8 +928,7 @@ function FaceReadingAppContent() {
               <button
                 onClick={() => {
                   if (validateProfile()) {
-                    setCurrentStep("home")
-                    setIntegratedAnalysisStep("photo") // 상태 초기화
+                    setCurrentStep("ideal-match") // 이상형 추천 단계로 이동
                   }
                 }}
                 className="flex-1 bg-amber-400 hover:bg-amber-500 text-black px-8 py-4 rounded-full text-lg font-bold transition-colors"
@@ -1117,6 +1163,86 @@ function FaceReadingAppContent() {
             >
               이상형 찾으러 가기
             </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // 이상형 추천 화면
+  if (currentStep === "ideal-match") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white p-6 overflow-y-auto">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-4xl font-bold text-amber-400 mb-8 text-center">🎯 이상형 추천</h1>
+          <p className="text-xl text-white mb-8 text-center">당신과 잘 맞는 이상형을 찾아보세요!</p>
+          
+          {/* 프로필 요약 */}
+          <div className="bg-white/10 rounded-2xl p-6 mb-8">
+            <h2 className="text-2xl font-bold text-amber-400 mb-4 text-center">내 프로필 요약</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="text-left">
+                <p className="text-white mb-2"><span className="text-amber-400 font-semibold">닉네임:</span> {profileData.nickname}</p>
+                <p className="text-white mb-2"><span className="text-amber-400 font-semibold">성별:</span> {profileData.gender}</p>
+                <p className="text-white mb-2"><span className="text-amber-400 font-semibold">나이:</span> {profileData.birthDate ? `${new Date().getFullYear() - new Date(profileData.birthDate).getFullYear()}세` : '미입력'}</p>
+                <p className="text-white mb-2"><span className="text-amber-400 font-semibold">지역:</span> {profileData.region}</p>
+              </div>
+              <div className="text-left">
+                <p className="text-white mb-2"><span className="text-amber-400 font-semibold">직업:</span> {profileData.job}</p>
+                <p className="text-white mb-2"><span className="text-amber-400 font-semibold">학력:</span> {profileData.education}</p>
+                <p className="text-white mb-2"><span className="text-amber-400 font-semibold">이상형 키워드:</span> {selectedIdealKeywords.join(", ") || "없음"}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* 분석 결과 요약 */}
+          <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 border border-green-400 rounded-2xl p-6 mb-8">
+            <h2 className="text-2xl font-bold text-green-400 mb-4 text-center">분석 결과 요약</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-lg font-semibold text-amber-400 mb-3">관상 분석</h3>
+                <div className="flex flex-wrap gap-2">
+                  {faceReadingResults.slice(0, 3).map((result, index) => (
+                    <span key={index} className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm border border-green-400">
+                      {result.keyword}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-amber-400 mb-3">사주 분석</h3>
+                <div className="flex flex-wrap gap-2">
+                  {sajuResults.slice(0, 3).map((result, index) => (
+                    <span key={index} className="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm border border-blue-400">
+                      {result.keyword}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 이상형 매칭 시작 */}
+          <div className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 border border-pink-400 rounded-2xl p-8 mb-8 text-center">
+            <h2 className="text-2xl font-bold text-pink-400 mb-4">💕 이상형 매칭 시작</h2>
+            <p className="text-lg text-white mb-6">
+              AI가 당신의 관상과 사주 분석 결과를 바탕으로<br />
+              가장 잘 맞는 이상형을 찾아드립니다!
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={() => setCurrentStep("onboarding")}
+                className="bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-full font-bold transition-colors border border-white/30"
+              >
+                처음으로
+              </button>
+              <button
+                onClick={() => setShowMatches(true)}
+                className="bg-pink-500 hover:bg-pink-600 text-white px-8 py-4 rounded-full text-lg font-bold transition-colors"
+              >
+                이상형 찾기 시작
+              </button>
+            </div>
           </div>
         </div>
       </div>
