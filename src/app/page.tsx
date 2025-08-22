@@ -425,7 +425,7 @@ function FaceReadingAppContent() {
   }
 
   if (currentStep === "onboarding") {
-    return (
+  return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex flex-col items-center justify-center p-6">
         {/* 장식적 패턴 */}
         <div className="absolute top-8 left-8 w-12 h-12 border-2 border-amber-400/30 border-dashed rounded-lg"></div>
@@ -1337,11 +1337,11 @@ function FaceReadingAppContent() {
                   <li className="flex items-start gap-2">
                     <span className="text-green-400 mt-1">✓</span>
                     <span>서로의 강점을 인정하고 보완하는 관계</span>
-                  </li>
+          </li>
                   <li className="flex items-start gap-2">
                     <span className="text-green-400 mt-1">✓</span>
                     <span>대화가 잘 통하고 이해가 빠름</span>
-                  </li>
+          </li>
                   <li className="flex items-start gap-2">
                     <span className="text-green-400 mt-1">✓</span>
                     <span>함께 성장할 수 있는 동반자 관계</span>
@@ -1473,7 +1473,7 @@ function FaceReadingAppContent() {
                 >
                   전송
                 </button>
-              </div>
+        </div>
             </div>
             
             {/* 빠른 메시지 버튼들 */}
@@ -1596,7 +1596,7 @@ function FaceReadingAppContent() {
                   className="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-amber-400 focus:outline-none"
                   placeholder="직업을 입력하세요"
                 />
-              </div>
+    </div>
               <div>
                 <label className="block text-amber-400 font-semibold mb-2">학력</label>
                 <select
@@ -1736,18 +1736,12 @@ function FaceReadingAppContent() {
           </div>
 
           {/* 액션 버튼 */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex justify-center">
             <button
               onClick={() => setCurrentStep("home")}
-              className="bg-white/20 hover:bg-white/30 text-white px-8 py-4 rounded-full text-lg font-bold transition-colors border border-white/30"
+              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-8 py-4 rounded-full text-lg font-bold transition-colors"
             >
               매칭 목록으로
-            </button>
-            <button
-              onClick={() => setCurrentStep("onboarding")}
-              className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white px-8 py-4 rounded-full text-lg font-bold transition-colors"
-            >
-              처음으로
             </button>
           </div>
         </div>
