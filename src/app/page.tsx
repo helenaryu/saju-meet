@@ -159,10 +159,8 @@ function FaceReadingAppContent() {
           const selected = shuffled.slice(0, Math.floor(Math.random() * 3) + 3)
           setFaceReadingResults(selected)
           
-          // 사진 분석 완료 후 자동으로 다음 단계 진행
-          setTimeout(() => {
-            setIntegratedAnalysisStep("saju")
-          }, 1500) // 1.5초 후 자동 진행
+          // 사진 분석 완료 후 바로 사주 입력 단계로 진행
+          setIntegratedAnalysisStep("saju")
           
           return 0
         }
@@ -185,10 +183,8 @@ function FaceReadingAppContent() {
           const selected = shuffled.slice(0, Math.floor(Math.random() * 3) + 3)
           setSajuResults(selected)
           
-          // 사주 분석 완료 후 자동으로 결과 단계 진행
-          setTimeout(() => {
-            setIntegratedAnalysisStep("result")
-          }, 1500) // 1.5초 후 자동 진행
+          // 사주 분석 완료 후 바로 결과 단계로 진행
+          setIntegratedAnalysisStep("result")
           
           return 0
         }
@@ -725,6 +721,19 @@ function FaceReadingAppContent() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex flex-col items-center justify-center p-6">
         <div className="text-center max-w-2xl mx-auto">
+          {/* 관상 분석 완료 결과 표시 */}
+          <div className="bg-green-500/20 border border-green-400 rounded-2xl p-6 mb-8">
+            <h2 className="text-2xl font-bold text-green-400 mb-4">🎉 관상 분석 완료!</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {faceReadingResults.map((result, index) => (
+                <div key={index} className="bg-white/10 rounded-lg p-4 text-left">
+                  <h3 className="font-semibold text-amber-400 mb-2">{result.keyword}</h3>
+                  <p className="text-sm text-gray-300">{result.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          
           <h1 className="text-4xl font-bold text-amber-400 mb-8">사주 분석</h1>
           <p className="text-xl text-white mb-8">생년월일과 출생 시간을 입력해주세요</p>
           
@@ -780,7 +789,34 @@ function FaceReadingAppContent() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex flex-col items-center justify-center p-6">
         <div className="text-center max-w-2xl mx-auto">
-          <h1 className="text-4xl font-bold text-amber-400 mb-8">분석 완료!</h1>
+          <h1 className="text-4xl font-bold text-amber-400 mb-8">🎉 분석 완료!</h1>
+          
+          {/* 관상 분석 결과 */}
+          <div className="bg-green-500/20 border border-green-400 rounded-2xl p-6 mb-6">
+            <h2 className="text-2xl font-bold text-green-400 mb-4">관상 분석 결과</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {faceReadingResults.map((result, index) => (
+                <div key={index} className="bg-white/10 rounded-lg p-3 text-left">
+                  <h3 className="font-semibold text-amber-400 mb-1">{result.keyword}</h3>
+                  <p className="text-xs text-gray-300">{result.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* 사주 분석 결과 */}
+          <div className="bg-blue-500/20 border border-blue-400 rounded-2xl p-6 mb-8">
+            <h2 className="text-2xl font-bold text-blue-400 mb-4">사주 분석 결과</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {sajuResults.map((result, index) => (
+                <div key={index} className="bg-white/10 rounded-lg p-3 text-left">
+                  <h3 className="font-semibold text-amber-400 mb-1">{result.keyword}</h3>
+                  <p className="text-xs text-gray-300">{result.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          
           <div className="bg-white/10 rounded-2xl p-8 mb-8">
             <p className="text-xl text-white mb-4">당신의 연애 성향 분석이 완료되었습니다</p>
             <button
