@@ -929,6 +929,7 @@ function FaceReadingAppContent() {
                 onClick={() => {
                   if (validateProfile()) {
                     setCurrentStep("home") // 바로 매칭 결과 페이지로 이동
+                    setIntegratedAnalysisStep("photo") // 상태 초기화로 리포트 화면 렌더링 방지
                   }
                 }}
                 className="flex-1 bg-amber-400 hover:bg-amber-500 text-black px-8 py-4 rounded-full text-lg font-bold transition-colors"
