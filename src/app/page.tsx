@@ -1507,6 +1507,254 @@ function FaceReadingAppContent() {
     )
   }
 
+  // 나의 프로필 페이지
+  if (currentStep === "my-profile") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white p-6 overflow-y-auto">
+        <div className="max-w-4xl mx-auto">
+          {/* 헤더 */}
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-amber-400">내 프로필</h1>
+            <p className="text-xl text-white mt-2">프로필을 관리하고 연애운을 확인해보세요</p>
+          </div>
+
+          {/* 프로필 수정 섹션 */}
+          <div className="bg-white/10 rounded-2xl p-8 mb-8">
+            <h2 className="text-2xl font-bold text-amber-400 mb-6">프로필 정보 수정</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-amber-400 font-semibold mb-2">닉네임</label>
+                <input
+                  type="text"
+                  value={profileData.nickname}
+                  onChange={(e) => handleInputChange("nickname", e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-amber-400 focus:outline-none"
+                  placeholder="닉네임을 입력하세요"
+                />
+              </div>
+              <div>
+                <label className="block text-amber-400 font-semibold mb-2">성별</label>
+                <select
+                  value={profileData.gender}
+                  onChange={(e) => handleInputChange("gender", e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-amber-400 focus:outline-none"
+                >
+                  <option value="">선택하세요</option>
+                  <option value="male">남성</option>
+                  <option value="female">여성</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-amber-400 font-semibold mb-2">생년월일</label>
+                <input
+                  type="date"
+                  value={profileData.birthDate}
+                  onChange={(e) => handleInputChange("birthDate", e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-amber-400 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-amber-400 font-semibold mb-2">지역</label>
+                <input
+                  type="text"
+                  value={profileData.region}
+                  onChange={(e) => handleInputChange("region", e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-amber-400 focus:outline-none"
+                  placeholder="지역을 입력하세요"
+                />
+              </div>
+              <div>
+                <label className="block text-amber-400 font-semibold mb-2">키</label>
+                <input
+                  type="text"
+                  value={profileData.height}
+                  onChange={(e) => handleInputChange("height", e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-amber-400 focus:outline-none"
+                  placeholder="키를 입력하세요"
+                />
+              </div>
+              <div>
+                <label className="block text-amber-400 font-semibold mb-2">체형</label>
+                <select
+                  value={profileData.bodyType}
+                  onChange={(e) => handleInputChange("bodyType", e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-amber-400 focus:outline-none"
+                >
+                  <option value="">선택하세요</option>
+                  <option value="slim">마른 편</option>
+                  <option value="normal">보통</option>
+                  <option value="chubby">통통한 편</option>
+                  <option value="muscular">근육질</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-amber-400 font-semibold mb-2">직업</label>
+                <input
+                  type="text"
+                  value={profileData.job}
+                  onChange={(e) => handleInputChange("job", e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-amber-400 focus:outline-none"
+                  placeholder="직업을 입력하세요"
+                />
+              </div>
+              <div>
+                <label className="block text-amber-400 font-semibold mb-2">학력</label>
+                <select
+                  value={profileData.education}
+                  onChange={(e) => handleInputChange("education", e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-amber-400 focus:outline-none"
+                >
+                  <option value="">선택하세요</option>
+                  <option value="high-school">고등학교</option>
+                  <option value="college">대학교</option>
+                  <option value="graduate">대학원</option>
+                  <option value="other">기타</option>
+                </select>
+              </div>
+            </div>
+            <div className="mt-6">
+              <label className="block text-amber-400 font-semibold mb-2">자기소개</label>
+              <textarea
+                value={profileData.introduction}
+                                  onChange={(e) => handleInputChange("introduction", e.target.value)}
+                rows={4}
+                className="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-amber-400 focus:outline-none resize-none"
+                placeholder="자신을 소개해주세요"
+              />
+            </div>
+            <div className="mt-6">
+              <label className="block text-amber-400 font-semibold mb-2">이상형 키워드</label>
+              <div className="flex flex-wrap gap-2">
+                {profileData.idealKeywords.map((keyword, index) => (
+                  <span key={index} className="bg-amber-400/20 text-amber-400 px-3 py-1 rounded-full text-sm border border-amber-400 flex items-center gap-2">
+                    {keyword}
+                    <button
+                      onClick={() => {
+                        const newKeywords = profileData.idealKeywords.filter((_, i) => i !== index)
+                        handleInputChange("idealKeywords", newKeywords)
+                      }}
+                      className="text-amber-400 hover:text-amber-300 text-lg"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+                <input
+                  type="text"
+                  placeholder="키워드 추가"
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter" && e.currentTarget.value.trim()) {
+                      const newKeywords = [...profileData.idealKeywords, e.currentTarget.value.trim()]
+                      handleInputChange("idealKeywords", newKeywords)
+                      e.currentTarget.value = ""
+                    }
+                  }}
+                  className="bg-white/20 text-white px-3 py-1 rounded-full text-sm border border-white/30 focus:border-amber-400 focus:outline-none placeholder-gray-400"
+                />
+              </div>
+            </div>
+            <div className="flex justify-center mt-8">
+              <button
+                onClick={() => {
+                  // 프로필 저장 로직
+                  alert("프로필이 저장되었습니다!")
+                }}
+                className="bg-amber-400 hover:bg-amber-500 text-black px-8 py-4 rounded-full text-lg font-bold transition-colors"
+              >
+                프로필 저장
+              </button>
+            </div>
+          </div>
+
+          {/* 일별 연애운 분석 */}
+          <div className="bg-white/10 rounded-2xl p-8 mb-8">
+            <h2 className="text-2xl font-bold text-amber-400 mb-6">🔮 오늘의 연애운</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="bg-green-500/20 rounded-xl p-6 border border-green-400/30">
+                <h3 className="text-xl font-bold text-green-400 mb-4">관상 기반 연애운</h3>
+                <div className="text-center mb-4">
+                  <div className="text-4xl font-bold text-green-400 mb-2">85%</div>
+                  <div className="w-full bg-white/20 rounded-full h-3">
+                    <div className="bg-green-400 h-3 rounded-full" style={{ width: '85%' }}></div>
+                  </div>
+                </div>
+                <p className="text-white leading-relaxed mb-4">
+                  오늘은 눈빛이 특히 매력적으로 보이는 날입니다. 
+                  큰 눈과 긴 속눈썹의 에너지가 최고조에 달해 상대방의 마음을 쉽게 사로잡을 수 있습니다.
+                </p>
+                <div className="space-y-2 text-sm text-gray-300">
+                  <p>✓ 새로운 만남의 기회가 많음</p>
+                  <p>✓ 기존 관계에서 깊이 있는 대화 가능</p>
+                  <p>✓ 직관력이 뛰어나 상대방의 마음을 잘 읽음</p>
+                </div>
+              </div>
+              <div className="bg-blue-500/20 rounded-xl p-6 border border-blue-400/30">
+                <h3 className="text-xl font-bold text-blue-400 mb-4">사주 기반 연애운</h3>
+                <div className="text-center mb-4">
+                  <div className="text-4xl font-bold text-blue-400 mb-2">78%</div>
+                  <div className="w-full bg-white/20 rounded-full h-3">
+                    <div className="bg-blue-400 h-3 rounded-full" style={{ width: '78%' }}></div>
+                  </div>
+                </div>
+                <p className="text-white leading-relaxed mb-4">
+                  목(木)과 화(火)의 기운이 조화를 이루어 창의적이고 열정적인 만남이 기대됩니다. 
+                  특히 오후 2시~4시 사이에 좋은 기운이 집중됩니다.
+                </p>
+                <div className="space-y-2 text-sm text-gray-300">
+                  <p>✓ 창의적인 데이트 아이디어 제안</p>
+                  <p>✓ 열정적인 감정 표현으로 관계 발전</p>
+                  <p>✓ 새로운 취미나 활동을 통한 만남</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* 상세 운세 분석 */}
+            <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl p-6 border border-purple-400/30">
+              <h3 className="text-xl font-bold text-purple-400 mb-4">💕 오늘의 연애 조언</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div className="text-center">
+                  <div className="text-2xl mb-2">🕐</div>
+                  <p className="text-white font-semibold">최적 시간</p>
+                  <p className="text-gray-300 text-sm">오후 2시~4시</p>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl mb-2">📍</div>
+                  <p className="text-white font-semibold">추천 장소</p>
+                  <p className="text-gray-300 text-sm">카페, 공원, 문화공간</p>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl mb-2">🎨</div>
+                  <p className="text-white font-semibold">활동 추천</p>
+                  <p className="text-gray-300 text-sm">창의적 활동, 대화</p>
+                </div>
+              </div>
+              <p className="text-white leading-relaxed text-center">
+                오늘은 관상과 사주가 모두 좋은 기운을 보이고 있어 연애에 매우 유리한 날입니다. 
+                적극적으로 만남을 추구하고, 창의적인 아이디어로 상대방을 놀라게 해보세요!
+              </p>
+            </div>
+          </div>
+
+          {/* 액션 버튼 */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => setCurrentStep("home")}
+              className="bg-white/20 hover:bg-white/30 text-white px-8 py-4 rounded-full text-lg font-bold transition-colors border border-white/30"
+            >
+              매칭 목록으로
+            </button>
+            <button
+              onClick={() => setCurrentStep("onboarding")}
+              className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white px-8 py-4 rounded-full text-lg font-bold transition-colors"
+            >
+              처음으로
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   // 통합 분석 단계별 화면 렌더링
   if (integratedAnalysisStep === "photo") {
     return (
