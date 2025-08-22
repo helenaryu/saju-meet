@@ -137,6 +137,8 @@ function FaceReadingAppContent() {
       const reader = new FileReader()
       reader.onload = (e) => {
         setUploadedImage(e.target?.result as string)
+        // 사진 업로드 후 즉시 분석 단계로 이동
+        setIntegratedAnalysisStep("analyzing")
         startAnalysis()
       }
       reader.readAsDataURL(file)
@@ -156,6 +158,12 @@ function FaceReadingAppContent() {
           const shuffled = [...FACE_READING_KEYWORDS].sort(() => 0.5 - Math.random())
           const selected = shuffled.slice(0, Math.floor(Math.random() * 3) + 3)
           setFaceReadingResults(selected)
+          
+          // 사진 분석 완료 후 자동으로 다음 단계 진행
+          setTimeout(() => {
+            setIntegratedAnalysisStep("saju")
+          }, 1500) // 1.5초 후 자동 진행
+          
           return 0
         }
         return prev - 1
@@ -176,6 +184,12 @@ function FaceReadingAppContent() {
           const shuffled = [...SAJU_KEYWORDS].sort(() => 0.5 - Math.random())
           const selected = shuffled.slice(0, Math.floor(Math.random() * 3) + 3)
           setSajuResults(selected)
+          
+          // 사주 분석 완료 후 자동으로 결과 단계 진행
+          setTimeout(() => {
+            setIntegratedAnalysisStep("result")
+          }, 1500) // 1.5초 후 자동 진행
+          
           return 0
         }
         return prev - 1
