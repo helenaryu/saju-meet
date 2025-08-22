@@ -943,6 +943,118 @@ function FaceReadingAppContent() {
     )
   }
 
+  // 홈 화면 (매칭 결과 페이지) - currentStep을 먼저 체크
+  if (currentStep === "home") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white p-6 overflow-y-auto">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-4xl font-bold text-amber-400 mb-8 text-center">💕 이상형 매칭</h1>
+          <p className="text-xl text-white mb-8 text-center">AI가 당신과 잘 맞는 사람들을 찾았습니다!</p>
+          
+          {/* 매칭 결과 표시 */}
+          <div className="space-y-6">
+            {dummyMatches.map((match, index) => (
+              <div key={index} className="bg-white/10 rounded-2xl p-6 border border-white/20">
+                <div className="flex flex-col md:flex-row gap-6">
+                  {/* 프로필 사진 */}
+                  <div className="flex-shrink-0">
+                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-4xl">
+                      👤
+                    </div>
+                  </div>
+                  
+                  {/* 프로필 정보 */}
+                  <div className="flex-1">
+                    <div className="flex items-center gap-4 mb-4">
+                      <h3 className="text-2xl font-bold text-amber-400">{match.name}</h3>
+                      <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        {match.totalCompatibility}% 궁합
+                      </span>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <p className="text-white mb-1"><span className="text-amber-400 font-semibold">나이:</span> {match.age}세</p>
+                        <p className="text-white mb-1"><span className="text-amber-400 font-semibold">직업:</span> {match.job}</p>
+                        <p className="text-white mb-1"><span className="text-amber-400 font-semibold">지역:</span> {match.region}</p>
+                      </div>
+                      <div>
+                        <p className="text-white mb-1"><span className="text-amber-400 font-semibold">키:</span> {match.height}</p>
+                        <p className="text-white mb-1"><span className="text-amber-400 font-semibold">학력:</span> {match.education}</p>
+                      </div>
+                    </div>
+                    
+                    <p className="text-gray-300 mb-4">{match.introduction}</p>
+                    
+                    {/* 궁합 분석 */}
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div className="bg-green-500/20 rounded-lg p-3">
+                        <p className="text-green-400 font-semibold mb-1">관상 궁합</p>
+                        <p className="text-white text-sm">{match.faceAnalysis}</p>
+                      </div>
+                      <div className="bg-blue-500/20 rounded-lg p-3">
+                        <p className="text-blue-400 font-semibold mb-1">사주 궁합</p>
+                        <p className="text-white text-sm">{match.sajuAnalysis}</p>
+                      </div>
+                    </div>
+                    
+                    {/* 키워드 */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {match.keywords.map((keyword, idx) => (
+                        <span key={idx} className="bg-amber-400/20 text-amber-400 px-2 py-1 rounded-full text-xs border border-amber-400">
+                          {keyword}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                {/* 액션 버튼 */}
+                <div className="flex flex-col sm:flex-row gap-3 mt-6">
+                  <button
+                    onClick={() => {
+                      setSelectedUser(match)
+                      setCurrentStep("other-profile")
+                    }}
+                    className="flex-1 bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-full font-bold transition-colors border border-white/30"
+                  >
+                    프로필 자세히 보기
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedUser(match)
+                      initializeChatMessages(match.name)
+                      setCurrentStep("dm-chat")
+                    }}
+                    className="flex-1 bg-amber-400 hover:bg-amber-500 text-black px-6 py-3 rounded-full font-bold transition-colors"
+                  >
+                    💬 메시지 보내기
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {/* 하단 버튼 */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+            <button
+              onClick={() => setCurrentStep("onboarding")}
+              className="bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-full font-bold transition-colors border border-white/30"
+            >
+              처음으로
+            </button>
+            <button
+              onClick={() => alert("더 많은 매칭 결과를 보려면 프리미엄 서비스를 이용해주세요!")}
+              className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white px-8 py-4 rounded-full text-lg font-bold transition-colors"
+            >
+              더 많은 매칭 보기
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   // 통합 분석 단계별 화면 렌더링
   if (integratedAnalysisStep === "photo") {
     return (
@@ -1282,117 +1394,7 @@ function FaceReadingAppContent() {
     )
   }
 
-  // 홈 화면 (매칭 결과 페이지)
-  if (currentStep === "home") {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white p-6 overflow-y-auto">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold text-amber-400 mb-8 text-center">💕 이상형 매칭</h1>
-          <p className="text-xl text-white mb-8 text-center">AI가 당신과 잘 맞는 사람들을 찾았습니다!</p>
-          
-          {/* 매칭 결과 표시 */}
-          <div className="space-y-6">
-            {dummyMatches.map((match, index) => (
-              <div key={index} className="bg-white/10 rounded-2xl p-6 border border-white/20">
-                <div className="flex flex-col md:flex-row gap-6">
-                  {/* 프로필 사진 */}
-                  <div className="flex-shrink-0">
-                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-4xl">
-                      👤
-                    </div>
-                  </div>
-                  
-                  {/* 프로필 정보 */}
-                  <div className="flex-1">
-                    <div className="flex items-center gap-4 mb-4">
-                      <h3 className="text-2xl font-bold text-amber-400">{match.name}</h3>
-                      <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                        {match.totalCompatibility}% 궁합
-                      </span>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                      <div>
-                        <p className="text-white mb-1"><span className="text-amber-400 font-semibold">나이:</span> {match.age}세</p>
-                        <p className="text-white mb-1"><span className="text-amber-400 font-semibold">직업:</span> {match.job}</p>
-                        <p className="text-white mb-1"><span className="text-amber-400 font-semibold">지역:</span> {match.region}</p>
-                      </div>
-                      <div>
-                        <p className="text-white mb-1"><span className="text-amber-400 font-semibold">키:</span> {match.height}</p>
-                        <p className="text-white mb-1"><span className="text-amber-400 font-semibold">학력:</span> {match.education}</p>
-                      </div>
-                    </div>
-                    
-                    <p className="text-gray-300 mb-4">{match.introduction}</p>
-                    
-                    {/* 궁합 분석 */}
-                    <div className="grid grid-cols-2 gap-4 mb-4">
-                      <div className="bg-green-500/20 rounded-lg p-3">
-                        <p className="text-green-400 font-semibold mb-1">관상 궁합</p>
-                        <p className="text-white text-sm">{match.faceAnalysis}</p>
-                      </div>
-                      <div className="bg-blue-500/20 rounded-lg p-3">
-                        <p className="text-blue-400 font-semibold mb-1">사주 궁합</p>
-                        <p className="text-white text-sm">{match.sajuAnalysis}</p>
-                      </div>
-                    </div>
-                    
-                    {/* 키워드 */}
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {match.keywords.map((keyword, idx) => (
-                        <span key={idx} className="bg-amber-400/20 text-amber-400 px-2 py-1 rounded-full text-xs border border-amber-400">
-                          {keyword}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                
-                {/* 액션 버튼 */}
-                <div className="flex flex-col sm:flex-row gap-3 mt-6">
-                  <button
-                    onClick={() => {
-                      setSelectedUser(match)
-                      setCurrentStep("other-profile")
-                    }}
-                    className="flex-1 bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-full font-bold transition-colors border border-white/30"
-                  >
-                    프로필 자세히 보기
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedUser(match)
-                      initializeChatMessages(match.name)
-                      setCurrentStep("dm-chat")
-                    }}
-                    className="flex-1 bg-amber-400 hover:bg-amber-500 text-black px-6 py-3 rounded-full font-bold transition-colors"
-                  >
-                    💬 메시지 보내기
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          {/* 하단 버튼 */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-            <button
-              onClick={() => setCurrentStep("onboarding")}
-              className="bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-full font-bold transition-colors border border-white/30"
-            >
-              처음으로
-            </button>
-            <button
-              onClick={() => alert("더 많은 매칭 결과를 보려면 프리미엄 서비스를 이용해주세요!")}
-              className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white px-8 py-4 rounded-full text-lg font-bold transition-colors"
-            >
-              더 많은 매칭 보기
-            </button>
-          </div>
-        </div>
-      </div>
-    )
-  }
+
 
   return (
     <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
