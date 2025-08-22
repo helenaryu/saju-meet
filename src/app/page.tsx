@@ -1391,6 +1391,122 @@ function FaceReadingAppContent() {
     )
   }
 
+  // 메시지 페이지 (dm-chat)
+  if (currentStep === "dm-chat" && selectedUser) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex flex-col">
+        {/* 헤더 */}
+        <div className="bg-white/10 backdrop-blur-sm border-b border-white/20 p-4">
+          <div className="flex items-center gap-4 max-w-4xl mx-auto">
+            <button
+              onClick={() => setCurrentStep("other-profile")}
+              className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-full font-semibold transition-colors border border-white/30"
+            >
+              ← 뒤로 가기
+            </button>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-2xl">
+                👤
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-amber-400">{selectedUser.name}</h2>
+                <p className="text-sm text-gray-300">궁합도 {selectedUser.totalCompatibility}%</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 메시지 영역 */}
+        <div className="flex-1 overflow-y-auto p-4 max-w-4xl mx-auto w-full">
+          <div className="space-y-4">
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex ${message.sender === "me" ? "justify-end" : "justify-start"}`}
+              >
+                <div
+                  className={`max-w-xs md:max-w-md lg:max-w-lg px-4 py-3 rounded-2xl ${
+                    message.sender === "me"
+                      ? "bg-amber-400 text-black rounded-br-md"
+                      : "bg-white/20 text-white rounded-bl-md"
+                  }`}
+                >
+                  <p className="text-sm leading-relaxed">{message.text}</p>
+                  <div className={`flex items-center justify-between mt-2 text-xs ${
+                    message.sender === "me" ? "text-black/70" : "text-gray-300"
+                  }`}>
+                    <span>
+                      {message.timestamp.toLocaleTimeString("ko-KR", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                    {message.sender === "me" && (
+                      <span className="flex items-center gap-1">
+                        {message.isRead ? "읽음" : "전송됨"}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 메시지 입력 영역 */}
+        <div className="bg-white/10 backdrop-blur-sm border-t border-white/20 p-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex gap-3">
+              <div className="flex-1 relative">
+                <input
+                  type="text"
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+                  placeholder={`${selectedUser.name}님에게 메시지를 보내세요...`}
+                  className="w-full px-4 py-3 rounded-full bg-white/20 text-white border border-white/30 focus:border-amber-400 focus:outline-none placeholder-gray-400"
+                />
+                <button
+                  onClick={sendMessage}
+                  disabled={!newMessage.trim()}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-amber-400 hover:bg-amber-500 disabled:bg-gray-500 text-black px-4 py-2 rounded-full font-semibold transition-colors disabled:cursor-not-allowed"
+                >
+                  전송
+                </button>
+              </div>
+            </div>
+            
+            {/* 빠른 메시지 버튼들 */}
+            <div className="flex flex-wrap gap-2 mt-3">
+              {[
+                "안녕하세요! 😊",
+                "프로필 보고 연락드렸어요",
+                "시간 되실 때 대화해요",
+                "궁합 분석이 신기했어요",
+                "커피 한 잔 어떠세요? ☕"
+              ].map((quickMessage, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    setNewMessage(quickMessage)
+                    // 자동으로 전송
+                    setTimeout(() => {
+                      setNewMessage(quickMessage)
+                      sendMessage()
+                    }, 100)
+                  }}
+                  className="bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-full text-sm font-medium transition-colors border border-white/30"
+                >
+                  {quickMessage}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   // 통합 분석 단계별 화면 렌더링
   if (integratedAnalysisStep === "photo") {
     return (
