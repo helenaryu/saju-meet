@@ -873,20 +873,21 @@ function FaceReadingAppContent() {
             {/* 하단 버튼 */}
             <div className="flex flex-col sm:flex-row gap-4 mt-8">
               <button
+                onClick={() => setCurrentStep("integrated-analysis")}
+                className="flex-1 bg-white/20 hover:bg-white/30 text-white px-8 py-4 rounded-full text-lg font-bold transition-colors border border-white/30"
+              >
+                뒤로 가기
+              </button>
+              <button
                 onClick={() => {
                   if (validateProfile()) {
                     setCurrentStep("home")
+                    setIntegratedAnalysisStep("photo") // 상태 초기화
                   }
                 }}
                 className="flex-1 bg-amber-400 hover:bg-amber-500 text-black px-8 py-4 rounded-full text-lg font-bold transition-colors"
               >
                 프로필 완료
-              </button>
-              <button
-                onClick={() => setCurrentStep("integrated-analysis")}
-                className="flex-1 bg-white/20 hover:bg-white/30 text-white px-8 py-4 rounded-full text-lg font-bold transition-colors border border-white/30"
-              >
-                뒤로 가기
               </button>
             </div>
           </div>
@@ -1105,16 +1106,16 @@ function FaceReadingAppContent() {
           {/* 하단 CTA 버튼 */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => setCurrentStep("profile")}
-              className="bg-amber-400 hover:bg-amber-500 text-black px-8 py-4 rounded-full text-lg font-bold transition-colors"
-            >
-              이상형 찾으러 가기
-            </button>
-            <button
               onClick={() => alert("리포트 저장 기능은 준비 중입니다!")}
               className="bg-white/20 hover:bg-white/30 text-white px-8 py-4 rounded-full text-lg font-bold transition-colors border border-white/30"
             >
               리포트 저장하기
+            </button>
+            <button
+              onClick={() => setCurrentStep("profile")}
+              className="bg-amber-400 hover:bg-amber-500 text-black px-8 py-4 rounded-full text-lg font-bold transition-colors"
+            >
+              이상형 찾으러 가기
             </button>
           </div>
         </div>
@@ -1136,16 +1137,16 @@ function FaceReadingAppContent() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-md mx-auto">
               <button
-                onClick={() => setShowMatches(true)}
-                className="bg-amber-400 hover:bg-amber-500 text-black px-6 py-3 rounded-full font-bold transition-colors"
-              >
-                매칭 보기
-              </button>
-              <button
                 onClick={() => setCurrentStep("onboarding")}
                 className="bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-full font-bold transition-colors border border-white/30"
               >
                 처음으로
+              </button>
+              <button
+                onClick={() => setShowMatches(true)}
+                className="bg-amber-400 hover:bg-amber-500 text-black px-6 py-3 rounded-full font-bold transition-colors"
+              >
+                매칭 보기
               </button>
             </div>
           </div>
