@@ -1055,6 +1055,142 @@ function FaceReadingAppContent() {
     )
   }
 
+  // 프로필 자세히 보기 페이지
+  if (currentStep === "other-profile" && selectedUser) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white p-6 overflow-y-auto">
+        <div className="max-w-4xl mx-auto">
+          {/* 헤더 */}
+          <div className="text-center mb-8">
+            <button
+              onClick={() => setCurrentStep("home")}
+              className="absolute left-6 top-6 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-full font-semibold transition-colors border border-white/30"
+            >
+              ← 뒤로 가기
+            </button>
+            <h1 className="text-4xl font-bold text-amber-400">{selectedUser.name}님의 프로필</h1>
+            <p className="text-xl text-white mt-2">더 자세한 정보를 확인해보세요</p>
+          </div>
+
+          {/* 프로필 사진 섹션 */}
+          <div className="bg-white/10 rounded-2xl p-8 mb-8 text-center">
+            <div className="w-48 h-48 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-8xl mx-auto mb-6">
+              👤
+            </div>
+            <div className="bg-green-500 text-white px-6 py-2 rounded-full text-lg font-bold inline-block">
+              {selectedUser.totalCompatibility}% 궁합
+            </div>
+          </div>
+
+          {/* 기본 정보 */}
+          <div className="bg-white/10 rounded-2xl p-8 mb-8">
+            <h2 className="text-2xl font-bold text-amber-400 mb-6">기본 정보</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-amber-400 font-semibold mb-2">나이</label>
+                  <p className="text-white text-lg">{selectedUser.age}세</p>
+                </div>
+                <div>
+                  <label className="block text-amber-400 font-semibold mb-2">직업</label>
+                  <p className="text-white text-lg">{selectedUser.job}</p>
+                </div>
+                <div>
+                  <label className="block text-amber-400 font-semibold mb-2">지역</label>
+                  <p className="text-white text-lg">{selectedUser.region}</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-amber-400 font-semibold mb-2">키</label>
+                  <p className="text-white text-lg">{selectedUser.height}</p>
+                </div>
+                <div>
+                  <label className="block text-amber-400 font-semibold mb-2">학력</label>
+                  <p className="text-white text-lg">{selectedUser.education}</p>
+                </div>
+                <div>
+                  <label className="block text-amber-400 font-semibold mb-2">체형</label>
+                  <p className="text-white text-lg">{selectedUser.bodyType || "정보 없음"}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 자기소개 */}
+          <div className="bg-white/10 rounded-2xl p-8 mb-8">
+            <h2 className="text-2xl font-bold text-amber-400 mb-6">자기소개</h2>
+            <p className="text-white text-lg leading-relaxed">{selectedUser.introduction}</p>
+          </div>
+
+          {/* 궁합 분석 상세 */}
+          <div className="bg-white/10 rounded-2xl p-8 mb-8">
+            <h2 className="text-2xl font-bold text-amber-400 mb-6">궁합 분석</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-green-500/20 rounded-xl p-6 border border-green-400/30">
+                <h3 className="text-xl font-bold text-green-400 mb-4">관상 궁합</h3>
+                <p className="text-white leading-relaxed">{selectedUser.faceAnalysis}</p>
+                <div className="mt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-green-400 font-semibold">궁합도</span>
+                    <span className="text-white font-bold">85%</span>
+                  </div>
+                  <div className="w-full bg-white/20 rounded-full h-2">
+                    <div className="bg-green-400 h-2 rounded-full" style={{ width: '85%' }}></div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-blue-500/20 rounded-xl p-6 border border-blue-400/30">
+                <h3 className="text-xl font-bold text-blue-400 mb-4">사주 궁합</h3>
+                <p className="text-white leading-relaxed">{selectedUser.sajuAnalysis}</p>
+                <div className="mt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-blue-400 font-semibold">궁합도</span>
+                    <span className="text-white font-bold">78%</span>
+                  </div>
+                  <div className="w-full bg-white/20 rounded-full h-2">
+                    <div className="bg-blue-400 h-2 rounded-full" style={{ width: '78%' }}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 키워드 */}
+          <div className="bg-white/10 rounded-2xl p-8 mb-8">
+            <h2 className="text-2xl font-bold text-amber-400 mb-6">성향 키워드</h2>
+            <div className="flex flex-wrap gap-3">
+              {selectedUser.keywords.map((keyword: string, idx: number) => (
+                <span key={idx} className="bg-amber-400/20 text-amber-400 px-4 py-2 rounded-full text-sm font-semibold border border-amber-400">
+                  {keyword}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* 액션 버튼 */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => setCurrentStep("home")}
+              className="bg-white/20 hover:bg-white/30 text-white px-8 py-4 rounded-full text-lg font-bold transition-colors border border-white/30"
+            >
+              매칭 목록으로
+            </button>
+            <button
+              onClick={() => {
+                initializeChatMessages(selectedUser.name)
+                setCurrentStep("dm-chat")
+              }}
+              className="bg-amber-400 hover:bg-amber-500 text-black px-8 py-4 rounded-full text-lg font-bold transition-colors"
+            >
+              💬 메시지 보내기
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   // 통합 분석 단계별 화면 렌더링
   if (integratedAnalysisStep === "photo") {
     return (
