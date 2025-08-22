@@ -1038,10 +1038,10 @@ function FaceReadingAppContent() {
           {/* 하단 버튼 */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
             <button
-              onClick={() => setCurrentStep("onboarding")}
+              onClick={() => setCurrentStep("my-profile")}
               className="bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-full font-bold transition-colors border border-white/30"
             >
-              처음으로
+              나의 프로필 보기
             </button>
             <button
               onClick={() => alert("더 많은 매칭 결과를 보려면 프리미엄 서비스를 이용해주세요!")}
