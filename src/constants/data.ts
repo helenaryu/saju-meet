@@ -1,4 +1,4 @@
-import { FaceReadingKeyword, SajuKeyword, MatchUser } from '@/types'
+import { FaceReadingKeyword, SajuKeyword, MatchUser, AnalysisReport } from '@/types'
 
 // 관상 키워드 데이터
 export const FACE_READING_KEYWORDS: FaceReadingKeyword[] = [
@@ -99,3 +99,26 @@ export const dummyMatches: MatchUser[] = [
     totalAnalysis: "감성과 이성의 균형이 잘 맞는 이상적 궁합",
   },
 ]
+
+// 상세 분석 리포트 더미 데이터
+export const dummyAnalysisReport: AnalysisReport = {
+  nickname: "채라",
+  face_keywords: ["감성적", "밝은 인상", "리더형", "카리스마", "부드러운"],
+  saju_keywords: ["직진형", "애정 표현형", "몰입형", "감정교류형", "안정추구형"],
+  love_style: "💕 당신은 감정을 숨기지 않고 솔직하게 표현하는 타입입니다. 사랑에 빠지면 빠르게 몰입하며, 파트너에게 확신을 주고받는 관계를 선호합니다. 🌟 밝고 긍정적인 에너지로 주변 사람들을 이끄는 리더십을 가지고 있어, 연애에서도 주도적인 역할을 맡게 됩니다.",
+  face_analysis: {
+    눈: "또렷하고 위로 올라감 → 자신감 있고 직관적인 인상",
+    코: "곧고 균형 잡힘 → 신뢰감과 안정감을 주는 매력",
+    입: "입꼬리 올라감 → 밝고 사교적인 성격의 소유자",
+    이마: "넓고 균형잡힌 → 지적이고 판단력이 뛰어남",
+    턱: "적당한 각도 → 의지력과 결단력이 강함"
+  },
+  saju_analysis: {
+    오행: { "목": 2, "화": 4, "토": 1, "금": 0, "수": 3 },
+    해석: "🔥 화(火) 기운이 강한 당신은 열정적이고 직진적인 연애 스타일을 가지고 있습니다. 💧 수(水) 기운도 적당히 있어 감정을 꾸준히 보여주는 스타일로, 빠르게 몰입하며 확신을 주고받는 관계를 선호합니다."
+  },
+  ideal_match: {
+    description: "🌈 당신과 어울리는 사람은 조용하지만 감정을 꾸준히 보여주는 리스너형입니다. 당신의 열정을 받아주고 안정감을 제공하는 파트너가 가장 이상적입니다.",
+    keywords: ["정서 안정형", "리스너형", "한결같은 스타일", "배려심 깊은", "신뢰할 수 있는"]
+  }
+}

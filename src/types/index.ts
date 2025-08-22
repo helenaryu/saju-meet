@@ -70,3 +70,25 @@ export interface ChatMessage {
   timestamp: Date
   isRead: boolean
 }
+
+export interface AnalysisReport {
+  nickname: string
+  face_keywords: string[]
+  saju_keywords: string[]
+  love_style: string
+  face_analysis: {
+    눈: string
+    코: string
+    입: string
+    이마: string
+    턱: string
+  }
+  saju_analysis: {
+    오행: Record<string, number>
+    해석: string
+  }
+  ideal_match: {
+    description: string
+    keywords: string[]
+  }
+}

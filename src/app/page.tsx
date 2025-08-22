@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react"
 import { AppStep, ProfileData, SajuData, ChatMessage } from "@/types"
-import { FACE_READING_KEYWORDS, SAJU_KEYWORDS, IDEAL_TYPE_KEYWORDS, dummyMatches } from "@/constants/data"
+import { FACE_READING_KEYWORDS, SAJU_KEYWORDS, IDEAL_TYPE_KEYWORDS, dummyMatches, dummyAnalysisReport } from "@/constants/data"
 import { supabase } from "@/lib/supabase"
 import { useSearchParams } from "next/navigation"
 
@@ -787,43 +787,121 @@ function FaceReadingAppContent() {
 
   if (integratedAnalysisStep === "result") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex flex-col items-center justify-center p-6">
-        <div className="text-center max-w-2xl mx-auto">
-          <h1 className="text-4xl font-bold text-amber-400 mb-8">🎉 분석 완료!</h1>
-          
-          {/* 관상 분석 결과 */}
-          <div className="bg-green-500/20 border border-green-400 rounded-2xl p-6 mb-6">
-            <h2 className="text-2xl font-bold text-green-400 mb-4">관상 분석 결과</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {faceReadingResults.map((result, index) => (
-                <div key={index} className="bg-white/10 rounded-lg p-3 text-left">
-                  <h3 className="font-semibold text-amber-400 mb-1">{result.keyword}</h3>
-                  <p className="text-xs text-gray-300">{result.description}</p>
-                </div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white p-6 overflow-y-auto">
+        <div className="max-w-4xl mx-auto">
+          {/* 상단 요약 카드 영역 */}
+          <div className="bg-white/10 rounded-3xl p-8 mb-8 text-center">
+            <div className="flex items-center justify-center mb-6">
+              {uploadedImage && (
+                <img 
+                  src={uploadedImage} 
+                  alt="프로필" 
+                  className="w-24 h-24 rounded-full object-cover border-4 border-amber-400"
+                />
+              )}
+            </div>
+            <h1 className="text-3xl font-bold text-amber-400 mb-4">{dummyAnalysisReport.nickname}</h1>
+            
+            {/* 키워드 배지들 */}
+            <div className="flex flex-wrap justify-center gap-2 mb-4">
+              {dummyAnalysisReport.face_keywords.slice(0, 5).map((keyword, index) => (
+                <span key={index} className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm border border-green-400">
+                  {keyword}
+                </span>
+              ))}
+            </div>
+            <div className="flex flex-wrap justify-center gap-2">
+              {dummyAnalysisReport.saju_keywords.slice(0, 5).map((keyword, index) => (
+                <span key={index} className="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm border border-blue-400">
+                  {keyword}
+                </span>
               ))}
             </div>
           </div>
-          
-          {/* 사주 분석 결과 */}
-          <div className="bg-blue-500/20 border border-blue-400 rounded-2xl p-6 mb-8">
-            <h2 className="text-2xl font-bold text-blue-400 mb-4">사주 분석 결과</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {sajuResults.map((result, index) => (
-                <div key={index} className="bg-white/10 rounded-lg p-3 text-left">
-                  <h3 className="font-semibold text-amber-400 mb-1">{result.keyword}</h3>
-                  <p className="text-xs text-gray-300">{result.description}</p>
+
+          {/* 연애 스타일 요약 텍스트 */}
+          <div className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 border border-pink-400 rounded-2xl p-8 mb-8">
+            <h2 className="text-2xl font-bold text-pink-400 mb-4 text-center">💕 연애 스타일</h2>
+            <p className="text-lg text-white leading-relaxed text-center whitespace-pre-line">
+              {dummyAnalysisReport.love_style}
+            </p>
+          </div>
+
+          {/* 관상 분석 섹션 */}
+          <div className="bg-green-500/20 border border-green-400 rounded-2xl p-8 mb-8">
+            <h2 className="text-2xl font-bold text-green-400 mb-6 text-center">👁️ 관상 분석</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {Object.entries(dummyAnalysisReport.face_analysis).map(([part, analysis]) => (
+                <div key={part} className="bg-white/10 rounded-lg p-4">
+                  <h3 className="font-semibold text-amber-400 mb-2 text-lg">{part}</h3>
+                  <p className="text-gray-300">{analysis}</p>
                 </div>
               ))}
             </div>
+            <div className="mt-6 text-center">
+              <p className="text-gray-300 italic">
+                "전체적으로 균형 잡힌 인상으로, 자신감 있고 신뢰할 수 있는 매력을 가지고 있습니다."
+              </p>
+            </div>
           </div>
-          
-          <div className="bg-white/10 rounded-2xl p-8 mb-8">
-            <p className="text-xl text-white mb-4">당신의 연애 성향 분석이 완료되었습니다</p>
+
+          {/* 사주 분석 섹션 */}
+          <div className="bg-blue-500/20 border border-blue-400 rounded-2xl p-8 mb-8">
+            <h2 className="text-2xl font-bold text-blue-400 mb-6 text-center">🔮 사주 분석</h2>
+            
+            {/* 오행 비율 시각화 */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-white mb-4 text-center">오행 비율</h3>
+              <div className="grid grid-cols-5 gap-3 max-w-md mx-auto">
+                {Object.entries(dummyAnalysisReport.saju_analysis.오행).map(([element, value]) => (
+                  <div key={element} className="text-center">
+                    <div className="bg-white/20 rounded-lg p-2 mb-2">
+                      <div className="text-2xl mb-1">
+                        {element === "목" ? "🌳" : element === "화" ? "🔥" : element === "토" ? "🏔️" : element === "금" ? "⚔️" : "💧"}
+                      </div>
+                      <div className="text-lg font-bold text-amber-400">{value}</div>
+                    </div>
+                    <div className="text-sm text-gray-300">{element}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div className="text-center">
+              <p className="text-gray-300 leading-relaxed">
+                {dummyAnalysisReport.saju_analysis.해석}
+              </p>
+            </div>
+          </div>
+
+          {/* 이상형 제안 섹션 */}
+          <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-400 rounded-2xl p-8 mb-8">
+            <h2 className="text-2xl font-bold text-yellow-400 mb-4 text-center">🌈 이상형 제안</h2>
+            <p className="text-lg text-white leading-relaxed text-center mb-6">
+              {dummyAnalysisReport.ideal_match.description}
+            </p>
+            <div className="flex flex-wrap justify-center gap-2">
+              {dummyAnalysisReport.ideal_match.keywords.map((keyword, index) => (
+                <span key={index} className="bg-yellow-500/20 text-yellow-400 px-4 py-2 rounded-full text-sm border border-yellow-400">
+                  {keyword}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* 하단 CTA 버튼 */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={() => setCurrentStep("profile")}
               className="bg-amber-400 hover:bg-amber-500 text-black px-8 py-4 rounded-full text-lg font-bold transition-colors"
             >
-              프로필 작성하기
+              이상형 찾으러 가기
+            </button>
+            <button
+              onClick={() => alert("리포트 저장 기능은 준비 중입니다!")}
+              className="bg-white/20 hover:bg-white/30 text-white px-8 py-4 rounded-full text-lg font-bold transition-colors border border-white/30"
+            >
+              리포트 저장하기
             </button>
           </div>
         </div>
