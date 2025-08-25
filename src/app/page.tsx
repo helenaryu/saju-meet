@@ -5,6 +5,7 @@ import { AppStep, ProfileData, SajuData, ChatMessage } from "@/types"
 import { FACE_READING_KEYWORDS, SAJU_KEYWORDS, IDEAL_TYPE_KEYWORDS, dummyMatches, dummyAnalysisReport } from "@/constants/data"
 import { supabase } from "@/lib/supabase"
 import { useSearchParams } from "next/navigation"
+import { sajuService } from "@/lib/api/saju"
 
 function FaceReadingAppContent() {
   const searchParams = useSearchParams()
@@ -222,8 +223,6 @@ function FaceReadingAppContent() {
       }
 
       // 사주 분석 API 호출 (클라이언트 사이드에서 직접 호출)
-      const { sajuService } = await import('@/lib/api/saju')
-      
       const sajuResult = await sajuService.analyzeSaju({
         birthDate: sajuData.birthDate,
         birthTime: sajuData.birthTime,
