@@ -12,13 +12,22 @@ export async function POST(request: NextRequest) {
     const birthTime = formData.get('birthTime') as string;
     const imageFile = formData.get('imageFile') as File;
 
-    // 필수 필드 검증
-    if (!nickname || !gender || !birthDate || !birthTime || !imageFile) {
+    // 필수 필드 검증 (이미지는 반드시 필요)
+    if (!imageFile) {
       return NextResponse.json(
-        { error: '필수 정보가 누락되었습니다.' },
+        { error: '이미지 파일이 필요합니다.' },
         { status: 400 }
       );
     }
+
+    // 다른 필드들은 선택사항으로 처리
+    const analysisRequest: IntegratedAnalysisRequest = {
+      nickname: nickname || '사용자',
+      gender: gender || '미지정',
+      birthDate: birthDate || new Date().toISOString().split('T')[0],
+      birthTime: birthTime || '00:00',
+      imageFile
+    };
 
     // 이미지 파일 검증
     if (!imageFile.type.startsWith('image/')) {
@@ -28,14 +37,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 통합 분석 요청 객체 생성
-    const analysisRequest: IntegratedAnalysisRequest = {
-      nickname,
-      gender,
-      birthDate,
-      birthTime,
-      imageFile
-    };
+
 
     console.log('통합 분석 요청:', analysisRequest);
 
