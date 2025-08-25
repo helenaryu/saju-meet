@@ -217,15 +217,15 @@ function FaceReadingAppContent() {
     setIntegratedAnalysisStep("analyzing")
 
     try {
-      // 사주 데이터 검증
-      if (!sajuData.birthDate || !sajuData.birthTime) {
-        throw new Error('생년월일과 출생 시간을 입력해주세요.')
+      // 사주 데이터 검증 (생년월일만 필수)
+      if (!sajuData.birthDate) {
+        throw new Error('생년월일을 입력해주세요.')
       }
 
       // 사주 분석 API 호출 (클라이언트 사이드에서 직접 호출)
       const sajuResult = await sajuService.analyzeSaju({
         birthDate: sajuData.birthDate,
-        birthTime: sajuData.birthTime,
+        birthTime: sajuData.birthTime || '00:00', // 출생 시간이 없으면 자정으로 설정
         birthPlace: sajuData.birthPlace
       })
 
@@ -794,12 +794,25 @@ function FaceReadingAppContent() {
                 
                 <div>
                   <label className="block text-white mb-2">출생 시간</label>
-                  <input
-                    type="time"
+                  <select
                     value={profileData.birthTime}
                     onChange={(e) => handleInputChange("birthTime", e.target.value)}
                     className="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-amber-400 focus:outline-none"
-                  />
+                  >
+                    <option value="">없음</option>
+                    <option value="00:00">자시 (23:00-01:00)</option>
+                    <option value="02:00">축시 (01:00-03:00)</option>
+                    <option value="04:00">인시 (03:00-05:00)</option>
+                    <option value="06:00">묘시 (05:00-07:00)</option>
+                    <option value="08:00">진시 (07:00-09:00)</option>
+                    <option value="10:00">사시 (09:00-11:00)</option>
+                    <option value="12:00">오시 (11:00-13:00)</option>
+                    <option value="14:00">미시 (13:00-15:00)</option>
+                    <option value="16:00">신시 (15:00-17:00)</option>
+                    <option value="18:00">유시 (17:00-19:00)</option>
+                    <option value="20:00">술시 (19:00-21:00)</option>
+                    <option value="22:00">해시 (21:00-23:00)</option>
+                  </select>
                 </div>
               </div>
 
@@ -1874,12 +1887,25 @@ function FaceReadingAppContent() {
               </div>
               <div>
                 <label className="block text-left text-white mb-2">출생 시간</label>
-                <input
-                  type="time"
+                <select
                   value={sajuData.birthTime}
                   onChange={(e) => handleSajuInputChange("birthTime", e.target.value)}
                   className="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-amber-400 focus:outline-none"
-                />
+                >
+                  <option value="">없음</option>
+                  <option value="00:00">자시 (23:00-01:00)</option>
+                  <option value="02:00">축시 (01:00-03:00)</option>
+                  <option value="04:00">인시 (03:00-05:00)</option>
+                  <option value="06:00">묘시 (05:00-07:00)</option>
+                  <option value="08:00">진시 (07:00-09:00)</option>
+                  <option value="10:00">사시 (09:00-11:00)</option>
+                  <option value="12:00">오시 (11:00-13:00)</option>
+                  <option value="14:00">미시 (13:00-15:00)</option>
+                  <option value="16:00">신시 (15:00-17:00)</option>
+                  <option value="18:00">유시 (17:00-19:00)</option>
+                  <option value="20:00">술시 (19:00-21:00)</option>
+                  <option value="22:00">해시 (21:00-23:00)</option>
+                </select>
               </div>
             </div>
           </div>
