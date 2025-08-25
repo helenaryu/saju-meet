@@ -150,9 +150,9 @@ function FaceReadingAppContent() {
     setAnalysisProgress(3)
 
     try {
-      // 실제 API 호출을 위한 데이터 준비
-      if (!uploadedImage || !profileData.nickname || !profileData.gender || !profileData.birthDate) {
-        throw new Error('필수 정보가 누락되었습니다.')
+      // 사진만으로 관상 분석 진행 (프로필 정보는 나중에 입력)
+      if (!uploadedImage) {
+        throw new Error('사진이 업로드되지 않았습니다.')
       }
 
       // 이미지 파일을 File 객체로 변환
@@ -160,12 +160,8 @@ function FaceReadingAppContent() {
       const blob = await response.blob()
       const imageFile = new File([blob], 'profile-image.jpg', { type: 'image/jpeg' })
 
-      // FormData 생성
+      // FormData 생성 (기본값 사용)
       const formData = new FormData()
-      formData.append('nickname', profileData.nickname || '사용자')
-      formData.append('gender', profileData.gender || '미지정')
-      formData.append('birthDate', profileData.birthDate || new Date().toISOString().split('T')[0])
-      formData.append('birthTime', profileData.birthTime || '00:00')
       formData.append('imageFile', imageFile)
 
       // API 호출
@@ -187,13 +183,7 @@ function FaceReadingAppContent() {
           description: result.data.faceReading.interpretation
         })))
         
-        // 사주 결과도 저장
-        setSajuResults(result.data.saju.keywords.map((keyword: string) => ({
-          keyword,
-          description: result.data.saju.personality
-        })))
-        
-        console.log('통합 분석 완료:', result.data)
+        console.log('관상 분석 완료:', result.data)
       } else {
         throw new Error(result.error || '분석에 실패했습니다.')
       }
