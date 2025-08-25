@@ -145,54 +145,116 @@ function FaceReadingAppContent() {
     }
   }
 
-  const startAnalysis = () => {
+  const startAnalysis = async () => {
     setIsAnalyzing(true)
     setAnalysisProgress(3)
 
-    const timer = setInterval(() => {
-      setAnalysisProgress((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer)
-          setIsAnalyzing(false)
-          // 랜덤 관상 키워드 3-5개 생성
-          const shuffled = [...FACE_READING_KEYWORDS].sort(() => 0.5 - Math.random())
-          const selected = shuffled.slice(0, Math.floor(Math.random() * 3) + 3)
-          setFaceReadingResults(selected)
-          
-          // 사진 분석 완료 후 바로 사주 입력 단계로 진행
-          setIntegratedAnalysisStep("saju")
-          
-          return 0
-        }
-        return prev - 1
+    try {
+      // 실제 API 호출을 위한 데이터 준비
+      if (!uploadedImage || !profileData.nickname || !profileData.gender || !profileData.birthDate) {
+        throw new Error('필수 정보가 누락되었습니다.')
+      }
+
+      // 이미지 파일을 File 객체로 변환
+      const response = await fetch(uploadedImage)
+      const blob = await response.blob()
+      const imageFile = new File([blob], 'profile-image.jpg', { type: 'image/jpeg' })
+
+      // FormData 생성
+      const formData = new FormData()
+      formData.append('nickname', profileData.nickname || '사용자')
+      formData.append('gender', profileData.gender || '미지정')
+      formData.append('birthDate', profileData.birthDate || new Date().toISOString().split('T')[0])
+      formData.append('birthTime', profileData.birthTime || '00:00')
+      formData.append('imageFile', imageFile)
+
+      // API 호출
+      const apiResponse = await fetch('/api/analysis', {
+        method: 'POST',
+        body: formData
       })
-    }, 1000)
+
+      if (!apiResponse.ok) {
+        throw new Error('API 호출에 실패했습니다.')
+      }
+
+      const result = await apiResponse.json()
+      
+      if (result.success) {
+        // API 결과를 상태에 저장
+        setFaceReadingResults(result.data.faceReading.keywords.map((keyword: string) => ({
+          keyword,
+          description: result.data.faceReading.interpretation
+        })))
+        
+        // 사주 결과도 저장
+        setSajuResults(result.data.saju.keywords.map((keyword: string) => ({
+          keyword,
+          description: result.data.saju.personality
+        })))
+        
+        console.log('통합 분석 완료:', result.data)
+      } else {
+        throw new Error(result.error || '분석에 실패했습니다.')
+      }
+
+    } catch (error) {
+      console.error('분석 중 오류:', error)
+      
+      // 오류 발생 시 기존 더미 데이터 사용
+      const shuffled = [...FACE_READING_KEYWORDS].sort(() => 0.5 - Math.random())
+      const selected = shuffled.slice(0, Math.floor(Math.random() * 3) + 3)
+      setFaceReadingResults(selected)
+    } finally {
+      setIsAnalyzing(false)
+      setAnalysisProgress(0)
+      // 사진 분석 완료 후 바로 사주 입력 단계로 진행
+      setIntegratedAnalysisStep("saju")
+    }
   }
 
-  const startSajuAnalysis = () => {
+  const startSajuAnalysis = async () => {
     setIsSajuAnalyzing(true)
     setSajuProgress(3)
     // 사주 분석 시작 시 로딩 화면으로 이동
     setIntegratedAnalysisStep("analyzing")
 
-    const timer = setInterval(() => {
-      setSajuProgress((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer)
-          setIsSajuAnalyzing(false)
-          // 랜덤 사주 키워드 3-5개 생성
-          const shuffled = [...SAJU_KEYWORDS].sort(() => 0.5 - Math.random())
-          const selected = shuffled.slice(0, Math.floor(Math.random() * 3) + 3)
-          setSajuResults(selected)
-          
-          // 사주 분석 완료 후 바로 결과 단계로 진행
-          setIntegratedAnalysisStep("result")
-          
-          return 0
-        }
-        return prev - 1
+    try {
+      // 사주 데이터 검증
+      if (!sajuData.birthDate || !sajuData.birthTime) {
+        throw new Error('생년월일과 출생 시간을 입력해주세요.')
+      }
+
+      // 사주 분석 API 호출 (클라이언트 사이드에서 직접 호출)
+      const { sajuService } = await import('@/lib/api/saju')
+      
+      const sajuResult = await sajuService.analyzeSaju({
+        birthDate: sajuData.birthDate,
+        birthTime: sajuData.birthTime,
+        birthPlace: sajuData.birthPlace
       })
-    }, 1000)
+
+      // 사주 결과를 상태에 저장
+      setSajuResults(sajuResult.keywords.map((keyword: string) => ({
+        keyword,
+        description: sajuResult.personality
+      })))
+
+      console.log('사주 분석 완료:', sajuResult)
+
+    } catch (error) {
+      console.error('사주 분석 중 오류:', error)
+      
+      // 오류 발생 시 기존 더미 데이터 사용
+      const shuffled = [...SAJU_KEYWORDS].sort(() => 0.5 - Math.random())
+      const selected = shuffled.slice(0, Math.floor(Math.random() * 3) + 3)
+      setSajuResults(selected)
+    } finally {
+      setIsSajuAnalyzing(false)
+      setSajuProgress(0)
+      // 사주 분석 완료 후 바로 결과 단계로 진행
+      setIntegratedAnalysisStep("result")
+    }
   }
 
   const handleInputChange = (field: string, value: any) => {
@@ -1867,20 +1929,24 @@ function FaceReadingAppContent() {
                 />
               )}
             </div>
-            <h1 className="text-3xl font-bold text-amber-400 mb-4">{dummyAnalysisReport.nickname}</h1>
+            <h1 className="text-3xl font-bold text-amber-400 mb-4">{profileData.nickname || "사용자"}</h1>
+            <div className="text-gray-300 mb-4">
+              {profileData.gender === "male" ? "남성" : profileData.gender === "female" ? "여성" : ""} • {profileData.birthDate}
+            </div>
             
-            {/* 키워드 배지들 */}
+            {/* 관상 키워드 배지들 */}
             <div className="flex flex-wrap justify-center gap-2 mb-4">
-              {dummyAnalysisReport.face_keywords.slice(0, 5).map((keyword, index) => (
+              {faceReadingResults.slice(0, 5).map((result, index) => (
                 <span key={index} className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm border border-green-400">
-                  {keyword}
+                  {result.keyword}
                 </span>
               ))}
             </div>
+            {/* 사주 키워드 배지들 */}
             <div className="flex flex-wrap justify-center gap-2">
-              {dummyAnalysisReport.saju_keywords.slice(0, 5).map((keyword, index) => (
+              {sajuResults.slice(0, 5).map((result, index) => (
                 <span key={index} className="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm border border-blue-400">
-                  {keyword}
+                  {result.keyword}
                 </span>
               ))}
             </div>
@@ -1890,7 +1956,11 @@ function FaceReadingAppContent() {
           <div className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 border border-pink-400 rounded-2xl p-8 mb-8">
             <h2 className="text-2xl font-bold text-pink-400 mb-4 text-center">💕 연애 스타일</h2>
             <p className="text-lg text-white leading-relaxed text-center whitespace-pre-line">
-              {dummyAnalysisReport.love_style}
+              {`${profileData.nickname || "당신"}은 ${faceReadingResults.map(r => r.keyword).slice(0, 3).join(", ")}한 특성을 가진 ${sajuResults.map(r => r.keyword).slice(0, 2).join(", ")}한 연애 스타일입니다. 
+
+감정을 솔직하게 표현하고 상대방과의 깊은 소통을 중시하며, 한번 마음을 열면 진심으로 사랑하는 타입입니다. 
+
+당신의 ${faceReadingResults.find(r => r.keyword.includes("직관") || r.keyword.includes("감정"))?.keyword || "직관적인"} 특성은 연애에서 상대방의 마음을 잘 읽어내는 능력을 선사합니다.`}
             </p>
           </div>
 
@@ -1898,16 +1968,21 @@ function FaceReadingAppContent() {
           <div className="bg-green-500/20 border border-green-400 rounded-2xl p-8 mb-8">
             <h2 className="text-2xl font-bold text-green-400 mb-6 text-center">👁️ 관상 분석</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {Object.entries(dummyAnalysisReport.face_analysis).map(([part, analysis]) => (
-                <div key={part} className="bg-white/10 rounded-lg p-4">
-                  <h3 className="font-semibold text-amber-400 mb-2 text-lg">{part}</h3>
-                  <p className="text-gray-300">{analysis}</p>
+              {faceReadingResults.map((result, index) => (
+                <div key={index} className="bg-white/10 rounded-lg p-4">
+                  <h3 className="font-semibold text-amber-400 mb-2 text-lg">
+                    {index === 0 ? "👁️ 눈의 특징" : 
+                     index === 1 ? "👄 입의 특징" : 
+                     index === 2 ? "🧠 이마/턱" : 
+                     index === 3 ? "👃 코/귀" : "✨ 전체 인상"}
+                  </h3>
+                  <p className="text-gray-300">{result.description || result.keyword}</p>
                 </div>
               ))}
             </div>
             <div className="mt-6 text-center">
               <p className="text-gray-300 italic">
-                "전체적으로 균형 잡힌 인상으로, 자신감 있고 신뢰할 수 있는 매력을 가지고 있습니다."
+                &ldquo;전체적으로 균형 잡힌 인상으로, 자신감 있고 신뢰할 수 있는 매력을 가지고 있습니다.&rdquo;
               </p>
             </div>
           </div>
@@ -1916,19 +1991,13 @@ function FaceReadingAppContent() {
           <div className="bg-blue-500/20 border border-blue-400 rounded-2xl p-8 mb-8">
             <h2 className="text-2xl font-bold text-blue-400 mb-6 text-center">🔮 사주 분석</h2>
             
-            {/* 오행 비율 시각화 */}
+            {/* 사주 키워드 표시 */}
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-white mb-4 text-center">오행 비율</h3>
-              <div className="grid grid-cols-5 gap-3 max-w-md mx-auto">
-                {Object.entries(dummyAnalysisReport.saju_analysis.오행).map(([element, value]) => (
-                  <div key={element} className="text-center">
-                    <div className="bg-white/20 rounded-lg p-2 mb-2">
-                      <div className="text-2xl mb-1">
-                        {element === "목" ? "🌳" : element === "화" ? "🔥" : element === "토" ? "🏔️" : element === "금" ? "⚔️" : "💧"}
-                      </div>
-                      <div className="text-lg font-bold text-amber-400">{value}</div>
-                    </div>
-                    <div className="text-sm text-gray-300">{element}</div>
+              <h3 className="text-lg font-semibold text-white mb-4 text-center">사주 성향 키워드</h3>
+              <div className="flex flex-wrap justify-center gap-3 mb-6">
+                {sajuResults.map((result, index) => (
+                  <div key={index} className="bg-white/20 rounded-lg px-4 py-2">
+                    <span className="text-amber-400 font-semibold">{result.keyword}</span>
                   </div>
                 ))}
               </div>
@@ -1936,7 +2005,8 @@ function FaceReadingAppContent() {
             
             <div className="text-center">
               <p className="text-gray-300 leading-relaxed">
-                {dummyAnalysisReport.saju_analysis.해석}
+                {`${profileData.nickname || "당신"}의 사주는 ${sajuResults.map(r => r.keyword).slice(0, 3).join(", ")}한 특성을 보여줍니다. 
+                ${sajuResults.find(r => r.description)?.description || "감정을 솔직하게 표현하고 상대방과의 깊은 소통을 중시하는 연애 스타일입니다."}`}
               </p>
             </div>
           </div>
@@ -1945,10 +2015,12 @@ function FaceReadingAppContent() {
           <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-400 rounded-2xl p-8 mb-8">
             <h2 className="text-2xl font-bold text-yellow-400 mb-4 text-center">🌈 이상형 제안</h2>
             <p className="text-lg text-white leading-relaxed text-center mb-6">
-              {dummyAnalysisReport.ideal_match.description}
+              {`${profileData.nickname || "당신"}과 어울리는 이상형은 ${faceReadingResults.find(r => r.keyword.includes("직관") || r.keyword.includes("감정"))?.keyword || "직관적인"} 특성을 가진 사람입니다. 
+
+상대방의 마음을 잘 이해하고 공감할 수 있는 능력이 뛰어나며, ${sajuResults.find(r => r.keyword.includes("소통") || r.keyword.includes("감정"))?.keyword || "감정 표현이 풍부한"} 스타일과 잘 맞습니다.`}
             </p>
             <div className="flex flex-wrap justify-center gap-2">
-              {dummyAnalysisReport.ideal_match.keywords.map((keyword, index) => (
+              {["정서 안정형", "리스너형", "한결같은 스타일", "감정 표현형", "소통 능력자"].map((keyword, index) => (
                 <span key={index} className="bg-yellow-500/20 text-yellow-400 px-4 py-2 rounded-full text-sm border border-yellow-400">
                   {keyword}
                 </span>
