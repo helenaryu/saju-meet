@@ -136,27 +136,26 @@ function FaceReadingAppContent() {
     if (file) {
       const reader = new FileReader()
       reader.onload = (e) => {
-        setUploadedImage(e.target?.result as string)
+        const imageData = e.target?.result as string
+        setUploadedImage(imageData)
         // 사진 업로드 후 즉시 분석 단계로 이동
         setIntegratedAnalysisStep("analyzing")
-        startAnalysis()
+        // uploadedImage 상태가 설정된 후 startAnalysis 호출
+        setTimeout(() => {
+          startAnalysisWithImage(imageData)
+        }, 100)
       }
       reader.readAsDataURL(file)
     }
   }
 
-  const startAnalysis = async () => {
+  const startAnalysisWithImage = async (imageData: string) => {
     setIsAnalyzing(true)
     setAnalysisProgress(3)
 
     try {
-      // 사진만으로 관상 분석 진행 (프로필 정보는 나중에 입력)
-      if (!uploadedImage) {
-        throw new Error('사진이 업로드되지 않았습니다.')
-      }
-
       // 이미지 파일을 File 객체로 변환
-      const response = await fetch(uploadedImage)
+      const response = await fetch(imageData)
       const blob = await response.blob()
       const imageFile = new File([blob], 'profile-image.jpg', { type: 'image/jpeg' })
 
@@ -201,6 +200,13 @@ function FaceReadingAppContent() {
       // 사진 분석 완료 후 바로 사주 입력 단계로 진행
       setIntegratedAnalysisStep("saju")
     }
+  }
+
+  const startAnalysis = async () => {
+    if (!uploadedImage) {
+      throw new Error('사진이 업로드되지 않았습니다.')
+    }
+    await startAnalysisWithImage(uploadedImage)
   }
 
   const startSajuAnalysis = async () => {
