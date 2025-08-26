@@ -56,13 +56,19 @@ export async function POST(request: NextRequest) {
       console.log('Supabase가 설정되지 않아 인증을 건너뜁니다.');
     }
 
-    // 입력 검증
-    if (!nickname || !gender || !birthDate || !imageFile) {
+    // 입력 검증 (이미지만 필수)
+    if (!imageFile) {
       return NextResponse.json(
-        { error: '필수 정보가 누락되었습니다.' },
+        { error: '이미지 파일이 필요합니다.' },
         { status: 400 }
       );
     }
+
+    // 다른 필드들은 기본값으로 설정
+    const finalNickname = nickname || '사용자';
+    const finalGender = gender || '미지정';
+    const finalBirthDate = birthDate || new Date().toISOString().split('T')[0];
+    const finalBirthTime = birthTime || '00:00';
 
     // 파일 크기 검증 (10MB 제한)
     if (imageFile.size > 10 * 1024 * 1024) {
@@ -82,10 +88,10 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('분석 요청 시작:', {
-      nickname,
-      gender,
-      birthDate,
-      birthTime,
+      nickname: finalNickname,
+      gender: finalGender,
+      birthDate: finalBirthDate,
+      birthTime: finalBirthTime,
       imageSize: imageFile.size,
       imageType: imageFile.type,
       userId
@@ -93,10 +99,10 @@ export async function POST(request: NextRequest) {
 
     // 고도화된 통합 분석 수행
     const analysisResult = await integratedAnalysisService.performIntegratedAnalysis({
-      nickname,
-      gender,
-      birthDate,
-      birthTime,
+      nickname: finalNickname,
+      gender: finalGender,
+      birthDate: finalBirthDate,
+      birthTime: finalBirthTime,
       imageFile
     });
 
@@ -106,10 +112,10 @@ export async function POST(request: NextRequest) {
         await integratedAnalysisService.saveAnalysisResult(
           userId,
           {
-            nickname,
-            gender,
-            birthDate,
-            birthTime,
+            nickname: finalNickname,
+            gender: finalGender,
+            birthDate: finalBirthDate,
+            birthTime: finalBirthTime,
             imageFile
           },
           analysisResult
