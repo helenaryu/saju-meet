@@ -2276,10 +2276,10 @@ function FaceReadingAppContent() {
                     <div className="flex items-start gap-4 mb-6">
                       <div className="text-3xl">👁️</div>
                       <div>
-                        <h3 className="text-xl font-semibold text-green-300 mb-3">당신의 얼굴이 말하는 이야기</h3>
+                        <h3 className="text-xl font-semibold text-green-300 mb-3">동양 철학으로 본 당신의 얼굴</h3>
                         <p className="text-gray-200 leading-relaxed text-lg">
                           {faceReadingResults.find(r => r.keyword.includes("눈") || r.keyword.includes("입"))?.description || 
-                           `당신의 눈을 보니, 마음을 읽는 능력이 뛰어난 분이라는 걸 알 수 있어요. 입술의 곡선은 따뜻한 말씨와 공감 능력을, 턱의 형태는 의지력과 리더십을 보여줍니다. 실제로 대화할 때 상대방은 "이 사람은 정말 내 마음을 이해해주는구나"라는 느낌을 받을 거예요.`}
+                           `당신의 얼굴을 동양 철학의 오행 관상학으로 바라보니, 정말 아름다운 운명의 지도가 펼쳐져 있어요. 이마(화火)에서 느껴지는 정신적 성향은 연애에서도 깊이 있는 사고와 이상을 추구하는 모습을 보여줍니다. 눈 아래(목木)의 생동감은 사랑에 대한 생명력과 열정이 넘치는 것을 말해주고, 뺨(토土)의 넉넉함은 연애에서의 안정성과 조화 능력을 보여줍니다. 인중(금金)의 형태는 연애에서의 의지력과 숨겨진 강인함을, 턱(수水)은 연애에서의 지혜와 성숙함을 나타냅니다.`}
                         </p>
                       </div>
                     </div>
