@@ -2629,6 +2629,101 @@ function FaceReadingAppContent() {
                             <div className="text-sm text-gray-300">당신의 연애 성향을 오행으로 분석해보았어요</div>
                           </div>
                           
+                          {/* 오행 비율 시각화 */}
+                          <div className="mb-6">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-sm text-gray-300">오행 비율</span>
+                              <span className="text-xs text-gray-400">총 100%</span>
+                            </div>
+                            <div className="space-y-3">
+                              {/* 화(火) - 열정, 활력 */}
+                              <div className="flex items-center gap-3">
+                                <div className="w-16 text-center">
+                                  <div className="text-2xl mb-1">🔥</div>
+                                  <div className="text-xs font-semibold text-red-400">화(火)</div>
+                                </div>
+                                <div className="flex-1">
+                                  <div className="flex justify-between text-xs text-gray-400 mb-1">
+                                    <span>열정, 활력</span>
+                                    <span>25%</span>
+                                  </div>
+                                  <div className="w-full bg-gray-700 rounded-full h-2">
+                                    <div className="bg-gradient-to-r from-red-500 to-orange-500 h-2 rounded-full" style={{width: '25%'}}></div>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              {/* 목(木) - 성장, 확장 */}
+                              <div className="flex items-center gap-3">
+                                <div className="w-16 text-center">
+                                  <div className="text-2xl mb-1">🌱</div>
+                                  <div className="text-xs font-semibold text-green-400">목(木)</div>
+                                </div>
+                                <div className="flex-1">
+                                  <div className="flex justify-between text-xs text-gray-400 mb-1">
+                                    <span>성장, 확장</span>
+                                    <span>30%</span>
+                                  </div>
+                                  <div className="w-full bg-gray-700 rounded-full h-2">
+                                    <div className="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full" style={{width: '30%'}}></div>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              {/* 토(土) - 안정, 조화 */}
+                              <div className="flex items-center gap-3">
+                                <div className="w-16 text-center">
+                                  <div className="text-2xl mb-1">🌍</div>
+                                  <div className="text-xs font-semibold text-yellow-400">토(土)</div>
+                                </div>
+                                <div className="flex-1">
+                                  <div className="flex justify-between text-xs text-gray-400 mb-1">
+                                    <span>안정, 조화</span>
+                                    <span>20%</span>
+                                  </div>
+                                  <div className="w-full bg-gray-700 rounded-full h-2">
+                                    <div className="bg-gradient-to-r from-yellow-500 to-amber-500 h-2 rounded-full" style={{width: '20%'}}></div>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              {/* 금(金) - 의지, 결단 */}
+                              <div className="flex items-center gap-3">
+                                <div className="w-16 text-center">
+                                  <div className="text-2xl mb-1">⚔️</div>
+                                  <div className="text-xs font-semibold text-gray-400">금(金)</div>
+                                </div>
+                                <div className="flex-1">
+                                  <div className="flex justify-between text-xs text-gray-400 mb-1">
+                                    <span>의지, 결단</span>
+                                    <span>15%</span>
+                                  </div>
+                                  <div className="w-full bg-gray-700 rounded-full h-2">
+                                    <div className="bg-gradient-to-r from-gray-500 to-slate-500 h-2 rounded-full" style={{width: '15%'}}></div>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              {/* 수(水) - 지혜, 유연 */}
+                              <div className="flex items-center gap-3">
+                                <div className="w-16 text-center">
+                                  <div className="text-2xl mb-1">💧</div>
+                                  <div className="text-xs font-semibold text-blue-400">수(水)</div>
+                                </div>
+                                <div className="flex-1">
+                                  <div className="flex justify-between text-xs text-gray-400 mb-1">
+                                    <span>지혜, 유연</span>
+                                    <span>10%</span>
+                                  </div>
+                                  <div className="w-full bg-gray-700 rounded-full h-2">
+                                    <div className="bg-gradient-to-r from-blue-500 to-cyan-500 h-2 rounded-full" style={{width: '10%'}}></div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* 오행 요약 */}
                           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                             <div className="text-center">
                               <div className="text-3xl mb-2">🔥</div>
@@ -2659,7 +2754,7 @@ function FaceReadingAppContent() {
                         </div>
                         
                         {/* 연애 성향 분석 */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                           <div className="bg-white/10 rounded-lg p-4">
                             <div className="flex items-center gap-2 mb-2">
                               <span className="text-2xl">💝</span>
@@ -2697,6 +2792,74 @@ function FaceReadingAppContent() {
                             </div>
                             <p className="text-sm text-gray-300">
                               함께 성장하려는 마음이 강해 파트너와의 관계를 통해 서로 발전할 수 있는 기회를 만들어요.
+                            </p>
+                          </div>
+                        </div>
+                        
+                        {/* 이상적인 연애 상대 분석 */}
+                        <div className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-2xl p-6 mb-6 border border-pink-400/30">
+                          <div className="text-center mb-6">
+                            <div className="text-2xl font-bold text-pink-300 mb-2">💕 이상적인 연애 상대 분석</div>
+                            <div className="text-sm text-gray-300">당신과 가장 잘 맞는 파트너의 특징을 오행 기반으로 분석했어요</div>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* 보완적 오행 */}
+                            <div className="bg-white/10 rounded-lg p-4">
+                              <div className="flex items-center gap-2 mb-3">
+                                <span className="text-xl">⚖️</span>
+                                <span className="font-semibold text-pink-300">보완적 오행</span>
+                              </div>
+                              <div className="space-y-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm text-gray-300">•</span>
+                                  <span className="text-sm text-gray-300">토(土) 성향이 강한 사람</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm text-gray-300">•</span>
+                                  <span className="text-sm text-gray-300">안정감과 균형감을 제공</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm text-gray-300">•</span>
+                                  <span className="text-sm text-gray-300">당신의 열정을 지지해주는 타입</span>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* 시너지 오행 */}
+                            <div className="bg-white/10 rounded-lg p-4">
+                              <div className="flex items-center gap-2 mb-3">
+                                <span className="text-xl">🚀</span>
+                                <span className="font-semibold text-purple-300">시너지 오행</span>
+                              </div>
+                              <div className="space-y-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm text-gray-300">•</span>
+                                  <span className="text-sm text-gray-300">수(水) 성향이 강한 사람</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm text-gray-300">•</span>
+                                  <span className="text-sm text-gray-300">지혜와 유연성으로 조화</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm text-gray-300">•</span>
+                                  <span className="text-sm text-gray-300">함께 성장할 수 있는 파트너</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* 이상형 상세 설명 */}
+                          <div className="mt-6 bg-white/10 rounded-lg p-4">
+                            <div className="flex items-center gap-2 mb-3">
+                              <span className="text-xl">🎯</span>
+                              <span className="font-semibold text-pink-300">이상형 상세 설명</span>
+                            </div>
+                            <p className="text-sm text-gray-300 leading-relaxed">
+                              당신은 목(木)과 화(火) 성향이 강해 열정적이고 성장 지향적인 성격을 가지고 있어요. 
+                              따라서 안정감과 균형감을 제공해주는 토(土) 성향의 파트너와 만나면 서로를 보완하며 
+                              안정적인 관계를 구축할 수 있을 거예요. 또한 지혜와 유연성을 가진 수(水) 성향의 사람과는 
+                              함께 배우고 성장할 수 있는 시너지를 낼 수 있어요.
                             </p>
                           </div>
                         </div>
