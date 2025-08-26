@@ -2086,9 +2086,37 @@ function FaceReadingAppContent() {
             {/* 오른쪽: 사주 정보 입력 */}
             <div className="bg-white/10 rounded-2xl p-6">
               <h2 className="text-2xl font-bold text-blue-400 mb-4">🔮 사주 분석 정보</h2>
-              <p className="text-gray-300 mb-4">생년월일과 출생 시간을 입력해주세요</p>
+              <p className="text-gray-300 mb-4">성별, 생년월일, 출생 시간을 입력해주세요</p>
               
               <div className="space-y-4">
+                {/* 성별 선택 */}
+                <div>
+                  <label className="block text-white mb-2">성별 *</label>
+                  <div className="flex gap-3">
+                    <button 
+                      type="button"
+                      onClick={() => setProfileData(prev => ({ ...prev, gender: '남성' }))}
+                      className={`flex-1 px-4 py-3 rounded-lg transition-all border-2 ${
+                        profileData.gender === '남성' 
+                          ? 'bg-blue-500 text-white border-blue-400 shadow-lg' 
+                          : 'bg-white/20 text-gray-300 border-white/30 hover:bg-white/30'
+                      }`}
+                    >
+                      👨 남성
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={() => setProfileData(prev => ({ ...prev, gender: '여성' }))}
+                      className={`flex-1 px-4 py-3 rounded-lg transition-all border-2 ${
+                        profileData.gender === '여성' 
+                          ? 'bg-pink-500 text-white border-pink-400 shadow-lg' 
+                          : 'bg-white/20 text-gray-300 border-white/30 hover:bg-white/30'
+                      }`}
+                    >
+                      👩 여성
+                    </button>
+                  </div>
+                </div>
                 <div>
                   <label className="block text-white mb-2">생년월일 *</label>
                   <input
@@ -2156,9 +2184,9 @@ function FaceReadingAppContent() {
           <div className="text-center mt-8">
             <button
               onClick={startIntegratedAnalysis}
-              disabled={!uploadedImage || !sajuData.birthDate}
+              disabled={!uploadedImage || !sajuData.birthDate || !profileData.gender}
               className={`px-12 py-4 rounded-full text-xl font-bold transition-colors ${
-                uploadedImage && sajuData.birthDate
+                uploadedImage && sajuData.birthDate && profileData.gender
                   ? 'bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black'
                   : 'bg-gray-500 text-gray-300 cursor-not-allowed'
               }`}
@@ -2166,10 +2194,11 @@ function FaceReadingAppContent() {
               🚀 AI 통합 분석 시작하기
             </button>
             
-            {(!uploadedImage || !sajuData.birthDate) && (
+            {(!uploadedImage || !sajuData.birthDate || !profileData.gender) && (
               <p className="text-gray-400 text-sm mt-2">
-                {!uploadedImage && !sajuData.birthDate ? '사진과 생년월일을 입력해주세요' :
-                 !uploadedImage ? '사진을 업로드해주세요' : '생년월일을 입력해주세요'}
+                {!uploadedImage && !sajuData.birthDate && !profileData.gender ? '사진, 성별, 생년월일을 입력해주세요' :
+                 !uploadedImage ? '사진을 업로드해주세요' : 
+                 !profileData.gender ? '성별을 선택해주세요' : '생년월일을 입력해주세요'}
               </p>
             )}
           </div>
@@ -2303,34 +2332,19 @@ function FaceReadingAppContent() {
                             <div className="text-sm text-gray-300">당신의 얼굴에 담긴 운명의 이야기</div>
                           </div>
                           
-                          {/* 성별 선택 */}
-                          <div className="flex justify-center gap-4 mb-6">
-                            <button 
-                              onClick={() => setProfileData(prev => ({ ...prev, gender: '남성' }))}
-                              className={`px-4 py-2 rounded-lg transition-all ${
-                                profileData.gender === '남성' 
-                                  ? 'bg-blue-500 text-white shadow-lg' 
-                                  : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
-                              }`}
-                            >
-                              👨 남성 얼굴
-                            </button>
-                            <button 
-                              onClick={() => setProfileData(prev => ({ ...prev, gender: '여성' }))}
-                              className={`px-4 py-2 rounded-lg transition-all ${
-                                profileData.gender === '여성' 
-                                  ? 'bg-pink-500 text-white shadow-lg' 
-                                  : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
-                              }`}
-                            >
-                              👩 여성 얼굴
-                            </button>
-                          </div>
+
                           
                           {/* 얼굴 그림과 분석 영역 */}
                           <div className="relative mx-auto w-64 h-80 mb-6">
-                            {/* 남성 얼굴 */}
-                            {profileData.gender === '남성' ? (
+                            {!profileData.gender ? (
+                              /* 성별이 선택되지 않았을 때 안내 메시지 */
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="text-center">
+                                  <div className="text-6xl mb-4">👤</div>
+                                  <p className="text-gray-400 text-sm">사주 정보에서 성별을 선택해주세요</p>
+                                </div>
+                              </div>
+                            ) : profileData.gender === '남성' ? (
                               <>
                                 {/* 얼굴 기본 형태 - 더 자연스러운 계란형 */}
                                 <div className="absolute inset-0 bg-gradient-to-b from-amber-50 via-amber-100 to-amber-200 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] border-4 border-amber-300 shadow-lg"></div>
