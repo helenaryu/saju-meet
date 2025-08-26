@@ -2250,35 +2250,49 @@ function FaceReadingAppContent() {
           {/* 연애 스타일 요약 텍스트 */}
           <div className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 border border-pink-400 rounded-2xl p-8 mb-8">
             <h2 className="text-2xl font-bold text-pink-400 mb-4 text-center">💕 연애 스타일</h2>
-            <p className="text-lg text-white leading-relaxed text-center whitespace-pre-line">
-              {`${profileData.nickname || "당신"}은 ${faceReadingResults.map(r => r.keyword).slice(0, 3).join(", ")}한 특성을 가진 ${sajuResults.map(r => r.keyword).slice(0, 2).join(", ")}한 연애 스타일입니다. 
+            <div className="text-lg text-white leading-relaxed whitespace-pre-line">
+              {faceReadingResults && faceReadingResults.length > 0 ? (
+                <div className="space-y-4">
+                  {faceReadingResults.map((result, index) => (
+                    <div key={index} className="bg-white/10 rounded-lg p-4">
+                      <h3 className="font-semibold text-amber-400 mb-2">{result.keyword}</h3>
+                      <p className="text-gray-300">{result.description || result.keyword}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-center">
+                  {`${profileData.nickname || "당신"}은 ${sajuResults.map(r => r.keyword).slice(0, 3).join(", ")}한 특성을 가진 연애 스타일입니다. 
 
-감정을 솔직하게 표현하고 상대방과의 깊은 소통을 중시하며, 한번 마음을 열면 진심으로 사랑하는 타입입니다. 
-
-당신의 ${faceReadingResults.find(r => r.keyword.includes("직관") || r.keyword.includes("감정"))?.keyword || "직관적인"} 특성은 연애에서 상대방의 마음을 잘 읽어내는 능력을 선사합니다.`}
-            </p>
+감정을 솔직하게 표현하고 상대방과의 깊은 소통을 중시하며, 한번 마음을 열면 진심으로 사랑하는 타입입니다.`}
+                </p>
+              )}
+            </div>
           </div>
 
           {/* 관상 분석 섹션 */}
           <div className="bg-green-500/20 border border-green-400 rounded-2xl p-8 mb-8">
             <h2 className="text-2xl font-bold text-green-400 mb-6 text-center">👁️ 관상 분석</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {faceReadingResults.map((result, index) => (
-                <div key={index} className="bg-white/10 rounded-lg p-4">
-                  <h3 className="font-semibold text-amber-400 mb-2 text-lg">
-                    {index === 0 ? "👁️ 눈의 특징" : 
-                     index === 1 ? "👄 입의 특징" : 
-                     index === 2 ? "🧠 이마/턱" : 
-                     index === 3 ? "👃 코/귀" : "✨ 전체 인상"}
-                  </h3>
-                  <p className="text-gray-300">{result.description || result.keyword}</p>
+            <div className="space-y-4">
+              {faceReadingResults && faceReadingResults.length > 0 ? (
+                faceReadingResults.map((result, index) => (
+                  <div key={index} className="bg-white/10 rounded-lg p-4">
+                    <h3 className="font-semibold text-amber-400 mb-2 text-lg">
+                      {index === 0 ? "👁️ 눈의 특징" : 
+                       index === 1 ? "👄 입의 특징" : 
+                       index === 2 ? "🧠 이마/턱" : 
+                       index === 3 ? "👃 코/귀" : "✨ 전체 인상"}
+                    </h3>
+                    <p className="text-gray-300">{result.description || result.keyword}</p>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center">
+                  <p className="text-gray-300 italic">
+                    &ldquo;전체적으로 균형 잡힌 인상으로, 자신감 있고 신뢰할 수 있는 매력을 가지고 있습니다.&rdquo;
+                  </p>
                 </div>
-              ))}
-            </div>
-            <div className="mt-6 text-center">
-              <p className="text-gray-300 italic">
-                &ldquo;전체적으로 균형 잡힌 인상으로, 자신감 있고 신뢰할 수 있는 매력을 가지고 있습니다.&rdquo;
-              </p>
+              )}
             </div>
           </div>
 
@@ -2286,40 +2300,64 @@ function FaceReadingAppContent() {
           <div className="bg-blue-500/20 border border-blue-400 rounded-2xl p-8 mb-8">
             <h2 className="text-2xl font-bold text-blue-400 mb-6 text-center">🔮 사주 분석</h2>
             
-            {/* 사주 키워드 표시 */}
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-white mb-4 text-center">사주 성향 키워드</h3>
-              <div className="flex flex-wrap justify-center gap-3 mb-6">
-                {sajuResults.map((result, index) => (
-                  <div key={index} className="bg-white/20 rounded-lg px-4 py-2">
-                    <span className="text-amber-400 font-semibold">{result.keyword}</span>
+            <div className="space-y-4">
+              {sajuResults && sajuResults.length > 0 ? (
+                sajuResults.map((result, index) => (
+                  <div key={index} className="bg-white/10 rounded-lg p-4">
+                    <h3 className="font-semibold text-amber-400 mb-2 text-lg">
+                      {index === 0 ? "🌟 사주 성향" : 
+                       index === 1 ? "💫 연애 에너지" : 
+                       index === 2 ? "✨ 이상형 특성" : 
+                       index === 3 ? "🎯 궁합 요소" : "🔮 미래 전망"}
+                    </h3>
+                    <p className="text-gray-300">{result.description || result.keyword}</p>
                   </div>
-                ))}
-              </div>
-            </div>
-            
-            <div className="text-center">
-              <p className="text-gray-300 leading-relaxed">
-                {`${profileData.nickname || "당신"}의 사주는 ${sajuResults.map(r => r.keyword).slice(0, 3).join(", ")}한 특성을 보여줍니다. 
-                ${sajuResults.find(r => r.description)?.description || "감정을 솔직하게 표현하고 상대방과의 깊은 소통을 중시하는 연애 스타일입니다."}`}
-              </p>
+                ))
+              ) : (
+                <div className="text-center">
+                  <p className="text-gray-300 leading-relaxed">
+                    {`${profileData.nickname || "당신"}의 사주는 감정을 솔직하게 표현하고 상대방과의 깊은 소통을 중시하는 연애 스타일입니다.`}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
           {/* 이상형 제안 섹션 */}
           <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-400 rounded-2xl p-8 mb-8">
             <h2 className="text-2xl font-bold text-yellow-400 mb-4 text-center">🌈 이상형 제안</h2>
-            <p className="text-lg text-white leading-relaxed text-center mb-6">
-              {`${profileData.nickname || "당신"}과 어울리는 이상형은 ${faceReadingResults.find(r => r.keyword.includes("직관") || r.keyword.includes("감정"))?.keyword || "직관적인"} 특성을 가진 사람입니다. 
+            <div className="space-y-4">
+              {sajuResults && sajuResults.length > 0 ? (
+                <div>
+                  <p className="text-lg text-white leading-relaxed text-center mb-6">
+                    {`${profileData.nickname || "당신"}과 어울리는 이상형은 ${sajuResults.find(r => r.keyword.includes("직관") || r.keyword.includes("감정"))?.keyword || "직관적인"} 특성을 가진 사람입니다. 
 
 상대방의 마음을 잘 이해하고 공감할 수 있는 능력이 뛰어나며, ${sajuResults.find(r => r.keyword.includes("소통") || r.keyword.includes("감정"))?.keyword || "감정 표현이 풍부한"} 스타일과 잘 맞습니다.`}
-            </p>
-            <div className="flex flex-wrap justify-center gap-2">
-              {["정서 안정형", "리스너형", "한결같은 스타일", "감정 표현형", "소통 능력자"].map((keyword, index) => (
-                <span key={index} className="bg-yellow-500/20 text-yellow-400 px-4 py-2 rounded-full text-sm border border-yellow-400">
-                  {keyword}
-                </span>
-              ))}
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {sajuResults.slice(0, 5).map((result, index) => (
+                      <span key={index} className="bg-yellow-500/20 text-yellow-400 px-4 py-2 rounded-full text-sm border border-yellow-400">
+                        {result.keyword}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-lg text-white leading-relaxed text-center mb-6">
+                    {`${profileData.nickname || "당신"}과 어울리는 이상형은 직관적인 특성을 가진 사람입니다. 
+
+상대방의 마음을 잘 이해하고 공감할 수 있는 능력이 뛰어나며, 감정 표현이 풍부한 스타일과 잘 맞습니다.`}
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {["정서 안정형", "리스너형", "한결같은 스타일", "감정 표현형", "소통 능력자"].map((keyword, index) => (
+                      <span key={index} className="bg-yellow-500/20 text-yellow-400 px-4 py-2 rounded-full text-sm border border-yellow-400">
+                        {keyword}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
