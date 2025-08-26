@@ -24,7 +24,7 @@ function FaceReadingAppContent() {
 
   const [profileData, setProfileData] = useState<ProfileData>({
     nickname: "",
-    gender: "",
+    gender: "남성", // 기본값을 남성으로 설정
     birthDate: "",
     birthTime: "",
     region: "",
@@ -2303,14 +2303,86 @@ function FaceReadingAppContent() {
                             <div className="text-sm text-gray-300">당신의 얼굴에 담긴 운명의 이야기</div>
                           </div>
                           
+                          {/* 성별 선택 */}
+                          <div className="flex justify-center gap-4 mb-6">
+                            <button 
+                              onClick={() => setProfileData(prev => ({ ...prev, gender: '남성' }))}
+                              className={`px-4 py-2 rounded-lg transition-all ${
+                                profileData.gender === '남성' 
+                                  ? 'bg-blue-500 text-white shadow-lg' 
+                                  : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
+                              }`}
+                            >
+                              👨 남성 얼굴
+                            </button>
+                            <button 
+                              onClick={() => setProfileData(prev => ({ ...prev, gender: '여성' }))}
+                              className={`px-4 py-2 rounded-lg transition-all ${
+                                profileData.gender === '여성' 
+                                  ? 'bg-pink-500 text-white shadow-lg' 
+                                  : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
+                              }`}
+                            >
+                              👩 여성 얼굴
+                            </button>
+                          </div>
+                          
                           {/* 얼굴 그림과 분석 영역 */}
                           <div className="relative mx-auto w-64 h-80 mb-6">
-                            {/* 얼굴 기본 형태 */}
-                            <div className="absolute inset-0 bg-gradient-to-b from-amber-100 to-amber-200 rounded-full border-4 border-amber-300"></div>
+                            {/* 남성 얼굴 */}
+                            {profileData.gender === '남성' ? (
+                              <>
+                                {/* 얼굴 기본 형태 - 더 자연스러운 계란형 */}
+                                <div className="absolute inset-0 bg-gradient-to-b from-amber-50 via-amber-100 to-amber-200 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] border-4 border-amber-300 shadow-lg"></div>
+                                
+                                {/* 머리카락 - 남자 스타일 */}
+                                <div className="absolute -top-2 -left-2 -right-2 h-16 bg-gradient-to-b from-amber-800 via-amber-700 to-amber-600 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] opacity-90"></div>
+                                
+                                {/* 눈 - 더 자연스러운 형태 */}
+                                <div className="absolute top-24 left-10 w-6 h-4 bg-black rounded-full opacity-80"></div>
+                                <div className="absolute top-24 right-10 w-6 h-4 bg-black rounded-full opacity-80"></div>
+                                
+                                {/* 눈썹 */}
+                                <div className="absolute top-20 left-8 w-8 h-2 bg-amber-800 rounded-full opacity-80"></div>
+                                <div className="absolute top-20 right-8 w-8 h-2 bg-amber-800 rounded-full opacity-80"></div>
+                                
+                                {/* 코 - 부드러운 곡선 */}
+                                <div className="absolute top-32 left-1/2 transform -translate-x-1/2 w-1 h-8 bg-amber-300 rounded-full"></div>
+                                
+                                {/* 입 - 부드러운 미소 */}
+                                <div className="absolute top-44 left-1/2 transform -translate-x-1/2 w-8 h-3 bg-pink-300 rounded-full opacity-80"></div>
+                                
+                                {/* 귀 */}
+                                <div className="absolute top-28 -left-1 w-3 h-8 bg-amber-200 rounded-full opacity-80"></div>
+                                <div className="absolute top-28 -right-1 w-3 h-8 bg-amber-200 rounded-full opacity-80"></div>
+                              </>
+                            ) : (
+                              <>
+                                {/* 여성 얼굴 */}
+                                <div className="absolute inset-0 bg-gradient-to-b from-pink-50 via-pink-100 to-pink-200 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] border-4 border-pink-300 shadow-lg"></div>
+                                
+                                {/* 머리카락 - 여자 스타일 (긴 머리) */}
+                                <div className="absolute -top-4 -left-4 -right-4 h-20 bg-gradient-to-b from-amber-800 via-amber-700 to-amber-600 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] opacity-90"></div>
+                                
+                                {/* 눈 - 아몬드형 */}
+                                <div className="absolute top-26 left-10 w-7 h-4 bg-black rounded-full opacity-80"></div>
+                                <div className="absolute top-26 right-10 w-7 h-4 bg-black rounded-full opacity-80"></div>
+                                
+                                {/* 코 - 더 작고 섬세하게 */}
+                                <div className="absolute top-34 left-1/2 transform -translate-x-1/2 w-1 h-6 bg-pink-300 rounded-full"></div>
+                                
+                                {/* 입 - 부드러운 미소 */}
+                                <div className="absolute top-46 left-1/2 transform -translate-x-1/2 w-6 h-2 bg-pink-400 rounded-full opacity-80"></div>
+                                
+                                {/* 귀 */}
+                                <div className="absolute top-30 -left-1 w-2 h-6 bg-pink-200 rounded-full opacity-80"></div>
+                                <div className="absolute top-30 -right-1 w-2 h-6 bg-pink-200 rounded-full opacity-80"></div>
+                              </>
+                            )}
                             
                             {/* 이마 (화火) - 천(天) */}
-                            <div className="absolute top-4 left-1/2 transform -translate-x-1/2">
-                              <div className="w-16 h-8 bg-red-500/80 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-red-600">
+                            <div className="absolute top-6 left-1/2 transform -translate-x-1/2">
+                              <div className="w-16 h-8 bg-red-500/90 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-red-600 shadow-lg">
                                 1. 이마
                               </div>
                               <div className="text-center mt-1">
@@ -2320,8 +2392,8 @@ function FaceReadingAppContent() {
                             </div>
                             
                             {/* 눈 아래 (목木) */}
-                            <div className="absolute top-20 left-12">
-                              <div className="w-12 h-6 bg-green-500/80 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-green-600">
+                            <div className="absolute top-28 left-8">
+                              <div className="w-12 h-6 bg-green-500/90 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-green-600 shadow-lg">
                                 2. 눈
                               </div>
                               <div className="text-center mt-1">
@@ -2330,8 +2402,8 @@ function FaceReadingAppContent() {
                               </div>
                             </div>
                             
-                            <div className="absolute top-20 right-12">
-                              <div className="w-12 h-6 bg-green-500/80 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-green-600">
+                            <div className="absolute top-28 right-8">
+                              <div className="w-12 h-6 bg-green-500/90 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-green-600 shadow-lg">
                                 2. 눈
                               </div>
                               <div className="text-center mt-1">
@@ -2341,8 +2413,8 @@ function FaceReadingAppContent() {
                             </div>
                             
                             {/* 뺨 (토土) */}
-                            <div className="absolute top-32 left-8">
-                              <div className="w-14 h-7 bg-yellow-500/80 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-yellow-600">
+                            <div className="absolute top-36 left-6">
+                              <div className="w-14 h-7 bg-yellow-500/90 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-yellow-600 shadow-lg">
                                 3. 뺨
                               </div>
                               <div className="text-center mt-1">
@@ -2351,8 +2423,8 @@ function FaceReadingAppContent() {
                               </div>
                             </div>
                             
-                            <div className="absolute top-32 right-8">
-                              <div className="w-14 h-7 bg-yellow-500/80 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-yellow-600">
+                            <div className="absolute top-36 right-6">
+                              <div className="w-14 h-7 bg-yellow-500/90 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-yellow-600 shadow-lg">
                                 3. 뺨
                               </div>
                               <div className="text-center mt-1">
@@ -2362,8 +2434,8 @@ function FaceReadingAppContent() {
                             </div>
                             
                             {/* 인중 (금金) */}
-                            <div className="absolute top-48 left-1/2 transform -translate-x-1/2">
-                              <div className="w-16 h-6 bg-gray-500/80 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-gray-600">
+                            <div className="absolute top-52 left-1/2 transform -translate-x-1/2">
+                              <div className="w-16 h-6 bg-gray-500/90 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-gray-600 shadow-lg">
                                 4. 인중
                               </div>
                               <div className="text-center mt-1">
@@ -2373,8 +2445,8 @@ function FaceReadingAppContent() {
                             </div>
                             
                             {/* 턱 (수水) - 지(地) */}
-                            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-                              <div className="w-16 h-8 bg-blue-500/80 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-blue-600">
+                            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2">
+                              <div className="w-16 h-8 bg-blue-500/90 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-blue-600 shadow-lg">
                                 5. 턱
                               </div>
                               <div className="text-center mt-1">
