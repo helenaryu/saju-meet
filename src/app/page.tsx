@@ -2723,37 +2723,10 @@ function FaceReadingAppContent() {
                             </div>
                           </div>
                           
-                          {/* 오행 요약 */}
-                          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                            <div className="text-center">
-                              <div className="text-3xl mb-2">🔥</div>
-                              <div className="text-xs font-semibold text-red-400">화(火)</div>
-                              <div className="text-xs text-gray-300">열정, 활력</div>
-                            </div>
-                            <div className="text-center">
-                              <div className="text-3xl mb-2">🌱</div>
-                              <div className="text-xs font-semibold text-green-400">목(木)</div>
-                              <div className="text-xs text-gray-300">성장, 확장</div>
-                            </div>
-                            <div className="text-center">
-                              <div className="text-3xl mb-2">🌍</div>
-                              <div className="text-xs font-semibold text-yellow-400">토(土)</div>
-                              <div className="text-xs text-gray-300">안정, 조화</div>
-                            </div>
-                            <div className="text-center">
-                              <div className="text-3xl mb-2">⚔️</div>
-                              <div className="text-xs font-semibold text-gray-400">금(金)</div>
-                              <div className="text-xs text-gray-300">의지, 결단</div>
-                            </div>
-                            <div className="text-center">
-                              <div className="text-3xl mb-2">💧</div>
-                              <div className="text-xs font-semibold text-blue-400">수(水)</div>
-                              <div className="text-xs text-gray-300">지혜, 유연</div>
-                            </div>
-                          </div>
+
                         </div>
                         
-                        {/* 연애 성향 분석 */}
+                        {/* 나의 연애 성향 분석 */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                           <div className="bg-white/10 rounded-lg p-4">
                             <div className="flex items-center gap-2 mb-2">
@@ -2799,7 +2772,7 @@ function FaceReadingAppContent() {
                         {/* 이상적인 연애 상대 분석 */}
                         <div className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-2xl p-6 mb-6 border border-pink-400/30">
                           <div className="text-center mb-6">
-                            <div className="text-2xl font-bold text-pink-300 mb-2">💕 이상적인 연애 상대 분석</div>
+                            <div className="text-2xl font-bold text-pink-300 mb-2">💕 상대에 대한 분석</div>
                             <div className="text-sm text-gray-300">당신과 가장 잘 맞는 파트너의 특징을 오행 기반으로 분석했어요</div>
                           </div>
                           
