@@ -3,7 +3,6 @@
 import { useState, useEffect, Suspense } from "react"
 import { AppStep, ProfileData, SajuData, ChatMessage } from "@/types"
 import { FACE_READING_KEYWORDS, SAJU_KEYWORDS, IDEAL_TYPE_KEYWORDS, dummyMatches, dummyAnalysisReport } from "@/constants/data"
-import { supabase } from "@/lib/supabase"
 import { useSearchParams } from "next/navigation"
 import { sajuService } from "@/lib/api/saju"
 
@@ -57,6 +56,30 @@ function FaceReadingAppContent() {
   const [newMessage, setNewMessage] = useState("")
   const [isAuthenticating, setIsAuthenticating] = useState(false)
   const [authProvider, setAuthProvider] = useState<"google" | "kakao" | null>(null)
+
+  // Supabase 관련 상태
+  const [supabase, setSupabase] = useState<any>(null)
+  const [supabaseAvailable, setSupabaseAvailable] = useState(false)
+  
+  // 로컬 인증 상태 (Supabase 없이도 작동)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [localUser, setLocalUser] = useState<any>(null)
+
+  // Supabase 초기화 (클라이언트 사이드에서만)
+  useEffect(() => {
+    const initializeSupabase = async () => {
+      try {
+        const { supabase: supabaseClient, isSupabaseAvailable } = await import('@/lib/supabase')
+        setSupabase(supabaseClient)
+        setSupabaseAvailable(isSupabaseAvailable())
+      } catch (error) {
+        console.log('Supabase 초기화 실패:', error)
+        setSupabaseAvailable(false)
+      }
+    }
+
+    initializeSupabase()
+  }, [])
 
   const initializeChatMessages = (userName: string) => {
     const dummyMessages: ChatMessage[] = [
@@ -372,8 +395,13 @@ function FaceReadingAppContent() {
     }
   }, [searchParams])
 
-  // 인증 상태 확인 및 초기화
+  // 인증 상태 확인 및 초기화 (Supabase가 설정된 경우에만)
   useEffect(() => {
+    if (!supabaseAvailable || !supabase) {
+      console.log('Supabase가 설정되지 않아 인증 기능을 건너뜁니다.')
+      return
+    }
+
     const checkAuthStatus = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession()
@@ -399,10 +427,66 @@ function FaceReadingAppContent() {
     }
 
     checkAuthStatus()
+  }, [supabaseAvailable, supabase])
+
+  // 로컬 인증 상태 (Supabase 없이도 작동)
+  const handleLocalLogin = (email: string, password: string) => {
+    // 간단한 로컬 인증 (실제로는 더 안전한 방식 사용)
+    if (email && password) {
+      const user = {
+        id: 'local_user_' + Date.now(),
+        email: email,
+        nickname: email.split('@')[0],
+        createdAt: new Date().toISOString()
+      }
+      
+      setLocalUser(user)
+      setIsLoggedIn(true)
+      localStorage.setItem('localUser', JSON.stringify(user))
+      
+      // 로그인 성공 후 integrated-analysis로 이동
+      setCurrentStep('integrated-analysis')
+      setIntegratedAnalysisStep('photo')
+    }
+  }
+
+  // 로컬 로그아웃 함수
+  const handleLocalLogout = () => {
+    setLocalUser(null)
+    setIsLoggedIn(false)
+    localStorage.removeItem('localUser')
+    setCurrentStep('onboarding')
+  }
+
+  // 로컬 사용자 정보 복원 (페이지 새로고침 시)
+  useEffect(() => {
+    const savedUser = localStorage.getItem('localUser')
+    if (savedUser) {
+      try {
+        const user = JSON.parse(savedUser)
+        setLocalUser(user)
+        setIsLoggedIn(true)
+        setCurrentStep('integrated-analysis')
+        setIntegratedAnalysisStep('photo')
+      } catch (error) {
+        console.error('저장된 사용자 정보 파싱 오류:', error)
+        localStorage.removeItem('localUser')
+      }
+    }
   }, [])
 
-  // OAuth 인증 함수들
+  // OAuth 인증 함수들 (Supabase가 설정된 경우에만)
   const handleGoogleSignUp = async () => {
+    if (!supabaseAvailable || !supabase) {
+      // Supabase가 없으면 로컬 인증으로 대체
+      const email = prompt('이메일을 입력해주세요:')
+      const password = prompt('비밀번호를 입력해주세요:')
+      if (email && password) {
+        handleLocalLogin(email, password)
+      }
+      return
+    }
+
     setIsAuthenticating(true)
     setAuthProvider("google")
     
@@ -432,6 +516,16 @@ function FaceReadingAppContent() {
   }
 
   const handleKakaoSignUp = async () => {
+    if (!supabaseAvailable || !supabase) {
+      // Supabase가 없으면 로컬 인증으로 대체
+      const email = prompt('이메일을 입력해주세요:')
+      const password = prompt('비밀번호를 입력해주세요:')
+      if (email && password) {
+        handleLocalLogin(email, password)
+      }
+      return
+    }
+
     setIsAuthenticating(true)
     setAuthProvider("kakao")
     
@@ -460,8 +554,14 @@ function FaceReadingAppContent() {
     }
   }
 
-  // 로그아웃 함수
+  // 로그아웃 함수 (Supabase가 설정된 경우에만)
   const handleLogout = async () => {
+    if (!supabaseAvailable || !supabase) {
+      // Supabase가 없으면 로컬 로그아웃
+      handleLocalLogout()
+      return
+    }
+
     try {
       const { error } = await supabase.auth.signOut()
       
@@ -550,7 +650,11 @@ function FaceReadingAppContent() {
 
           {/* 시작 버튼 */}
           <button
-            onClick={() => setCurrentStep("signup")}
+            onClick={() => {
+              console.log('운명 찾기 시작 버튼 클릭됨')
+              setCurrentStep("login")
+              console.log('currentStep을 login으로 설정함')
+            }}
             className="bg-amber-400 hover:bg-amber-500 text-black px-12 py-4 rounded-full text-xl font-bold transition-colors shadow-lg"
           >
             운명 찾기 시작
@@ -609,41 +713,44 @@ function FaceReadingAppContent() {
                 return
               }
               
-              // 회원가입 완료 후 바로 사진 업로드 페이지로 이동
-              setCurrentStep("integrated-analysis")
-              setIntegratedAnalysisStep("photo")
+              // 로컬 회원가입 처리
+              handleLocalLogin(email.value, password.value)
             }}
             className="bg-amber-400 hover:bg-amber-500 text-black px-8 py-4 rounded-full text-lg font-bold transition-colors mb-4 w-full"
           >
             회원가입 완료
           </button>
 
-          <div className="text-center mb-4">
-            <span className="text-white/60 text-sm">또는</span>
+
+
+          <div className="text-center space-y-4">
+            <button
+              onClick={() => setCurrentStep("login")}
+              className="text-amber-400 hover:text-amber-300 text-sm transition-colors block w-full"
+            >
+              이미 계정이 있으신가요? 로그인하기
+            </button>
+            
+            <div className="text-center">
+              <span className="text-white/60 text-sm">또는</span>
+            </div>
+            
+            <button
+              onClick={handleGoogleSignUp}
+              className="bg-white hover:bg-gray-100 text-gray-800 px-8 py-3 rounded-full text-lg font-semibold transition-colors mb-3 w-full flex items-center justify-center"
+            >
+              <span className="mr-2">🔍</span>
+              Google로 회원가입
+            </button>
+
+            <button
+              onClick={handleKakaoSignUp}
+              className="bg-yellow-400 hover:bg-yellow-500 text-black px-8 py-3 rounded-full text-lg font-semibold transition-colors w-full flex items-center justify-center"
+            >
+              <span className="mr-2">💬</span>
+              카카오로 회원가입
+            </button>
           </div>
-
-          <button
-            onClick={handleGoogleSignUp}
-            className="bg-white hover:bg-gray-100 text-gray-800 px-8 py-3 rounded-full text-lg font-semibold transition-colors mb-3 w-full flex items-center justify-center"
-          >
-            <span className="mr-2">🔍</span>
-            Google로 회원가입
-          </button>
-
-          <button
-            onClick={handleKakaoSignUp}
-            className="bg-yellow-400 hover:bg-yellow-500 text-black px-8 py-3 rounded-full text-lg font-semibold transition-colors mb-4 w-full flex items-center justify-center"
-          >
-            <span className="mr-2">💬</span>
-            카카오로 회원가입
-          </button>
-
-          <button
-            onClick={() => setCurrentStep("login")}
-            className="text-amber-400 hover:text-amber-300 text-sm transition-colors"
-          >
-            이미 계정이 있으신가요? 로그인하기
-          </button>
         </div>
       </div>
     )
@@ -687,21 +794,42 @@ function FaceReadingAppContent() {
                 return
               }
               
-              // 로그인 완료 후 바로 사진 업로드 페이지로 이동
-              setCurrentStep("integrated-analysis")
-              setIntegratedAnalysisStep("photo")
+              // 로컬 로그인 처리
+              handleLocalLogin(email.value, password.value)
             }}
             className="bg-amber-400 hover:bg-amber-500 text-black px-8 py-4 rounded-full text-lg font-bold transition-colors mb-4 w-full"
           >
             로그인
           </button>
 
-          <button
-            onClick={() => setCurrentStep("signup")}
-            className="text-amber-400 hover:text-amber-300 text-sm transition-colors"
-          >
-            계정이 없으신가요? 회원가입하기
-          </button>
+          <div className="text-center space-y-4">
+            <button
+              onClick={() => setCurrentStep("signup")}
+              className="text-amber-400 hover:text-amber-300 text-sm transition-colors block w-full"
+            >
+              계정이 없으신가요? 회원가입하기
+            </button>
+            
+            <div className="text-center">
+              <span className="text-white/60 text-sm">또는</span>
+            </div>
+            
+            <button
+              onClick={handleGoogleSignUp}
+              className="bg-white hover:bg-gray-100 text-gray-800 px-8 py-3 rounded-full text-lg font-semibold transition-colors mb-3 w-full flex items-center justify-center"
+            >
+              <span className="mr-2">🔍</span>
+              Google로 로그인
+            </button>
+
+            <button
+              onClick={handleKakaoSignUp}
+              className="bg-yellow-400 hover:bg-yellow-500 text-black px-8 py-3 rounded-full text-lg font-semibold transition-colors w-full flex items-center justify-center"
+            >
+              <span className="mr-2">💬</span>
+              카카오로 로그인
+            </button>
+          </div>
         </div>
       </div>
     )
@@ -1823,6 +1951,21 @@ function FaceReadingAppContent() {
   if (integratedAnalysisStep === "photo") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex flex-col items-center justify-center p-6">
+        {/* 로그인 상태 표시 */}
+        {(isLoggedIn || localUser) && (
+          <div className="absolute top-6 right-6 flex items-center gap-4">
+            <span className="text-amber-400">
+              {localUser?.nickname || '사용자'}님 환영합니다!
+            </span>
+            <button
+              onClick={handleLocalLogout}
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-colors"
+            >
+              로그아웃
+            </button>
+          </div>
+        )}
+        
         <div className="text-center max-w-2xl mx-auto">
           <h1 className="text-4xl font-bold text-amber-400 mb-8">관상 분석 시작</h1>
           <p className="text-xl text-white mb-8">정면 얼굴 사진을 업로드해주세요</p>
@@ -1857,6 +2000,21 @@ function FaceReadingAppContent() {
   if (integratedAnalysisStep === "saju") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex flex-col items-center justify-center p-6">
+        {/* 로그인 상태 표시 */}
+        {(isLoggedIn || localUser) && (
+          <div className="absolute top-6 right-6 flex items-center gap-4">
+            <span className="text-amber-400">
+              {localUser?.nickname || '사용자'}님 환영합니다!
+            </span>
+            <button
+              onClick={handleLocalLogout}
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-colors"
+            >
+              로그아웃
+            </button>
+          </div>
+        )}
+        
         <div className="text-center max-w-2xl mx-auto">
           {/* 관상 분석 완료 결과 표시 */}
           <div className="bg-green-500/20 border border-green-400 rounded-2xl p-6 mb-8">
@@ -1938,6 +2096,21 @@ function FaceReadingAppContent() {
   if (integratedAnalysisStep === "result") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white p-6 overflow-y-auto">
+        {/* 로그인 상태 표시 */}
+        {(isLoggedIn || localUser) && (
+          <div className="absolute top-6 right-6 flex items-center gap-4 z-10">
+            <span className="text-amber-400">
+              {localUser?.nickname || '사용자'}님 환영합니다!
+            </span>
+            <button
+              onClick={handleLocalLogout}
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-colors"
+            >
+              로그아웃
+            </button>
+          </div>
+        )}
+        
         <div className="max-w-4xl mx-auto">
           {/* 상단 요약 카드 영역 */}
           <div className="bg-white/10 rounded-3xl p-8 mb-8 text-center">

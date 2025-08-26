@@ -1,13 +1,30 @@
 "use client"
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
 
 export default function AuthCallback() {
   const router = useRouter()
+  const [supabase, setSupabase] = useState<any>(null)
 
   useEffect(() => {
+    const initializeSupabase = async () => {
+      try {
+        const { supabase: supabaseClient } = await import('@/lib/supabase')
+        setSupabase(supabaseClient)
+      } catch (error) {
+        console.log('Supabase 초기화 실패:', error)
+        router.push('/?auth=error')
+        return
+      }
+    }
+
+    initializeSupabase()
+  }, [router])
+
+  useEffect(() => {
+    if (!supabase) return
+
     const handleAuthCallback = async () => {
       try {
         const { data, error } = await supabase.auth.getSession()
@@ -35,7 +52,7 @@ export default function AuthCallback() {
     }
 
     handleAuthCallback()
-  }, [router])
+  }, [supabase, router])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex flex-col items-center justify-center p-6">
