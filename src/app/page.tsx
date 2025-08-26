@@ -2263,10 +2263,24 @@ function FaceReadingAppContent() {
                       <div className="text-3xl">✨</div>
                       <div>
                         <h3 className="text-xl font-semibold text-pink-300 mb-3">당신의 연애 이야기</h3>
-                        <p className="text-gray-200 leading-relaxed text-lg">
-                          {faceReadingResults.find(r => r.description)?.description || 
-                           `${profileData.nickname || "당신"}님의 얼굴을 보는 순간, 마치 따뜻한 봄날 햇살처럼 부드럽고 포근한 기운이 느껴집니다. 당신은 사랑을 할 때 마음을 완전히 열고, 상대방의 감정에 깊이 공감하는 타입이에요. 연애 초반에는 조심스럽게 다가가지만, 한번 마음을 열면 진심으로 사랑하는 사람입니다.`}
-                        </p>
+                        <div className="space-y-4 text-gray-200 leading-relaxed text-lg">
+                          <p>
+                            {faceReadingResults.find(r => r.description)?.description || 
+                             `${profileData.nickname || "당신"}님의 얼굴을 보는 순간, 마치 따뜻한 봄날 햇살처럼 부드럽고 포근한 기운이 느껴집니다. 마치 오랫동안 기다려온 봄날처럼, 당신의 존재 자체가 주변 사람들에게 안도감과 따뜻함을 선사하는 것 같아요.`}
+                          </p>
+                          
+                          <p>
+                            연애 초반에는 마치 아직 피지 않은 꽃봉오리처럼 조심스럽게 다가가지만, 한번 마음을 열면 그 안에서 피어나는 사랑은 정말 아름답습니다. 상대방의 감정에 깊이 공감하는 능력은 마치 상대방의 마음을 읽는 마법사 같아요. 상대방이 슬플 때는 함께 슬퍼하고, 기쁠 때는 함께 기뻐하며, 그 순간순간을 진심으로 공유하려고 노력하는 사람입니다.
+                          </p>
+                          
+                          <p>
+                            위기 상황에서는 마치 어려운 퍼즐을 함께 맞추려는 것처럼, 상대방을 이해하려고 노력하고 함께 해결책을 찾아가는 스타일이에요. "우리 함께 해결해보자"라는 마음가짐으로, 문제를 피하지 않고 정면으로 맞서는 용기와 지혜를 가지고 있습니다.
+                          </p>
+                          
+                          <p>
+                            당신의 사랑은 마치 깊은 숲속의 맑은 샘물처럼, 시간이 지날수록 더욱 깊어지고 맑아집니다. 한번 마음을 열면 그 사랑은 변함없이 지속되며, 상대방에게 안전한 항구가 되어주는 사람입니다. 이런 당신을 만난 사람은 정말 행운아라고 할 수 있어요.
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -2284,34 +2298,143 @@ function FaceReadingAppContent() {
                         
                         {/* 얼굴 분석 다이어그램 */}
                         <div className="bg-white/10 rounded-2xl p-6 mb-6">
-                          <div className="text-center mb-4">
-                            <div className="text-2xl font-bold text-green-300 mb-2">천(天) - 정신세계</div>
-                            <div className="text-4xl mb-2">🔥</div>
-                            <div className="text-sm text-gray-300">이마 (화火) - 권력, 성취, 이상</div>
+                          <div className="text-center mb-6">
+                            <div className="text-2xl font-bold text-green-300 mb-2">동양 철학 관상 분석</div>
+                            <div className="text-sm text-gray-300">당신의 얼굴에 담긴 운명의 이야기</div>
                           </div>
                           
-                          <div className="grid grid-cols-3 gap-4 mb-4">
-                            <div className="text-center">
-                              <div className="text-3xl mb-1">🌱</div>
-                              <div className="text-xs text-gray-300">눈 아래 (목木)</div>
-                              <div className="text-xs text-green-300">생명력, 사랑</div>
+                          {/* 얼굴 그림과 분석 영역 */}
+                          <div className="relative mx-auto w-64 h-80 mb-6">
+                            {/* 얼굴 기본 형태 */}
+                            <div className="absolute inset-0 bg-gradient-to-b from-amber-100 to-amber-200 rounded-full border-4 border-amber-300"></div>
+                            
+                            {/* 이마 (화火) - 천(天) */}
+                            <div className="absolute top-4 left-1/2 transform -translate-x-1/2">
+                              <div className="w-16 h-8 bg-red-500/80 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-red-600">
+                                1. 이마
+                              </div>
+                              <div className="text-center mt-1">
+                                <div className="text-lg">🔥</div>
+                                <div className="text-xs text-red-500 font-semibold">화(火)</div>
+                              </div>
                             </div>
-                            <div className="text-center">
-                              <div className="text-3xl mb-1">🌍</div>
-                              <div className="text-xs text-gray-300">뺨 (토土)</div>
-                              <div className="text-xs text-green-300">기반, 조화</div>
+                            
+                            {/* 눈 아래 (목木) */}
+                            <div className="absolute top-20 left-12">
+                              <div className="w-12 h-6 bg-green-500/80 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-green-600">
+                                2. 눈
+                              </div>
+                              <div className="text-center mt-1">
+                                <div className="text-lg">🌱</div>
+                                <div className="text-xs text-green-500 font-semibold">목(木)</div>
+                              </div>
                             </div>
-                            <div className="text-center">
-                              <div className="text-3xl mb-1">⚔️</div>
-                              <div className="text-xs text-gray-300">인중 (금金)</div>
-                              <div className="text-xs text-green-300">강인함, 의지</div>
+                            
+                            <div className="absolute top-20 right-12">
+                              <div className="w-12 h-6 bg-green-500/80 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-green-600">
+                                2. 눈
+                              </div>
+                              <div className="text-center mt-1">
+                                <div className="text-lg">🌱</div>
+                                <div className="text-xs text-green-500 font-semibold">목(木)</div>
+                              </div>
+                            </div>
+                            
+                            {/* 뺨 (토土) */}
+                            <div className="absolute top-32 left-8">
+                              <div className="w-14 h-7 bg-yellow-500/80 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-yellow-600">
+                                3. 뺨
+                              </div>
+                              <div className="text-center mt-1">
+                                <div className="text-lg">🌍</div>
+                                <div className="text-xs text-yellow-500 font-semibold">토(土)</div>
+                              </div>
+                            </div>
+                            
+                            <div className="absolute top-32 right-8">
+                              <div className="w-14 h-7 bg-yellow-500/80 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-yellow-600">
+                                3. 뺨
+                              </div>
+                              <div className="text-center mt-1">
+                                <div className="text-lg">🌍</div>
+                                <div className="text-xs text-yellow-500 font-semibold">토(土)</div>
+                              </div>
+                            </div>
+                            
+                            {/* 인중 (금金) */}
+                            <div className="absolute top-48 left-1/2 transform -translate-x-1/2">
+                              <div className="w-16 h-6 bg-gray-500/80 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-gray-600">
+                                4. 인중
+                              </div>
+                              <div className="text-center mt-1">
+                                <div className="text-lg">⚔️</div>
+                                <div className="text-xs text-gray-500 font-semibold">금(金)</div>
+                              </div>
+                            </div>
+                            
+                            {/* 턱 (수水) - 지(地) */}
+                            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+                              <div className="w-16 h-8 bg-blue-500/80 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-blue-600">
+                                5. 턱
+                              </div>
+                              <div className="text-center mt-1">
+                                <div className="text-lg">💧</div>
+                                <div className="text-xs text-blue-500 font-semibold">수(水)</div>
+                              </div>
                             </div>
                           </div>
                           
-                          <div className="text-center">
-                            <div className="text-2xl font-bold text-green-300 mb-2">지(地) - 물질세계</div>
-                            <div className="text-4xl mb-2">💧</div>
-                            <div className="text-sm text-gray-300">턱 (수水) - 지혜, 여정, 성숙</div>
+                          {/* 분석 영역별 상세 설명 */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="bg-red-500/20 rounded-lg p-4 border border-red-400/30">
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="text-lg">🔥</span>
+                                <span className="font-semibold text-red-400">1. 이마 (화火) - 천(天)</span>
+                              </div>
+                              <p className="text-sm text-gray-300">
+                                정신세계와 야망을 나타냅니다. 연애에서의 이상과 정신적 접근법을 보여주며, 깊이 있는 사고와 열정적인 사랑을 추구하는 성향이 있어요.
+                              </p>
+                            </div>
+                            
+                            <div className="bg-green-500/20 rounded-lg p-4 border border-green-400/30">
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="text-lg">🌱</span>
+                                <span className="font-semibold text-green-400">2. 눈 아래 (목木)</span>
+                              </div>
+                              <p className="text-sm text-gray-300">
+                                생명력과 사랑의 열정을 나타냅니다. 새로운 관계에서 항상 성장하려는 의지와 생동감을 가지고 있으며, 사랑에 대한 생명력이 넘쳐요.
+                              </p>
+                            </div>
+                            
+                            <div className="bg-yellow-500/20 rounded-lg p-4 border border-yellow-400/30">
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="text-lg">🌍</span>
+                                <span className="font-semibold text-yellow-400">3. 뺨 (토土)</span>
+                              </div>
+                              <p className="text-sm text-gray-300">
+                                삶의 기반과 조화 능력을 나타냅니다. 연애에서의 안정성과 포용력을 보여주며, 모든 가능성이 피어나는 대지처럼 균형감을 가지고 있어요.
+                              </p>
+                            </div>
+                            
+                            <div className="bg-gray-500/20 rounded-lg p-4 border border-gray-400/30">
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="text-lg">⚔️</span>
+                                <span className="font-semibold text-gray-400">4. 인중 (금金)</span>
+                              </div>
+                              <p className="text-sm text-gray-300">
+                                내면의 강인함과 의지력을 나타냅니다. 연애에서의 의지력과 숨겨진 강인함을 보여주며, 땅속 깊이 숨겨진 보물 같은 내면의 힘을 가지고 있어요.
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <div className="bg-blue-500/20 rounded-lg p-4 border border-blue-400/30 mt-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-lg">💧</span>
+                              <span className="font-semibold text-blue-400">5. 턱 (수水) - 지(地)</span>
+                            </div>
+                            <p className="text-sm text-gray-300">
+                              지혜와 삶의 여정을 나타냅니다. 연애에서의 지혜와 성숙함을 보여주며, 잔잔히 흐르는 강물처럼 지속성과 성숙함을 가지고 있어요.
+                            </p>
                           </div>
                         </div>
                         
