@@ -2351,8 +2351,9 @@ function FaceReadingAppContent() {
                                   {profileData.gender === '남성' ? (
                                     /* 남성 얼굴 이미지 - 첫 번째 이미지 기반 */
                                     <div className="relative w-full h-full">
-                                      {/* 베이지색 배경의 계란형 얼굴 */}
-                                      <div className="absolute inset-0 bg-gradient-to-b from-amber-50 via-amber-100 to-amber-200 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] border-4 border-amber-300 shadow-lg"></div>
+                                      {/* 제공해주신 남성 얼굴 이미지와 동일한 스타일 */}
+                                      {/* 밝은 노란색 배경의 만화 스타일 얼굴 */}
+                                      <div className="absolute inset-0 bg-yellow-300 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] border-4 border-amber-400 shadow-lg"></div>
                                       
                                       {/* 짙은 갈색 머리카락 - 옆으로 넘겨진 스타일 */}
                                       <div className="absolute -top-2 -left-2 -right-2 h-16 bg-gradient-to-b from-amber-800 via-amber-700 to-amber-600 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] opacity-90"></div>
@@ -2378,8 +2379,9 @@ function FaceReadingAppContent() {
                                   ) : (
                                     /* 여성 얼굴 이미지 - 두 번째 이미지 기반 */
                                     <div className="relative w-full h-full">
-                                      {/* 연한 살구색 배경의 부드러운 계란형 얼굴 */}
-                                      <div className="absolute inset-0 bg-gradient-to-b from-pink-50 via-pink-100 to-pink-200 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] border-4 border-pink-300 shadow-lg"></div>
+                                      {/* 제공해주신 여성 얼굴 이미지와 동일한 스타일 */}
+                                      {/* 밝은 베이지색 배경의 부드러운 얼굴 */}
+                                      <div className="absolute inset-0 bg-gradient-to-b from-amber-50 via-amber-100 to-amber-200 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] border-4 border-amber-300 shadow-lg"></div>
                                       
                                       {/* 긴 갈색 머리카락 - 중간 갈라진 스타일, 어깨까지 */}
                                       <div className="absolute -top-4 -left-4 -right-4 h-20 bg-gradient-to-b from-amber-800 via-amber-700 to-amber-600 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] opacity-90"></div>
