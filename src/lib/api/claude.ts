@@ -49,7 +49,7 @@ export class ClaudeService {
   async generateLoveReport(request: ClaudeAnalysisRequest): Promise<ClaudeAnalysisResponse> {
     try {
       if (!this.client) {
-        return this.generateDummyResponse(request);
+        return ClaudeResponseParser.generateDummyResponse(request);
       }
 
       // 1. RAG를 통한 관련 전통 문헌 검색
@@ -85,7 +85,7 @@ export class ClaudeService {
       return ClaudeResponseParser.parseAdvancedResponse(content.text, traditionalTexts);
     } catch (error) {
       console.error('Claude API 호출 중 오류:', error);
-      return this.generateDummyResponse(request);
+      return ClaudeResponseParser.generateDummyResponse(request);
     }
   }
 
