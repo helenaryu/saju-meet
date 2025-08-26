@@ -2271,30 +2271,195 @@ function FaceReadingAppContent() {
                     </div>
                   </div>
 
-                  {/* 관상 해석 */}
+                  {/* 관상 해석 - 시각적 분석 */}
                   <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-2xl p-8 border border-green-400/30">
                     <div className="flex items-start gap-4 mb-6">
                       <div className="text-3xl">👁️</div>
                       <div>
                         <h3 className="text-xl font-semibold text-green-300 mb-3">동양 철학으로 본 당신의 얼굴</h3>
-                        <p className="text-gray-200 leading-relaxed text-lg">
+                        <p className="text-gray-200 leading-relaxed text-lg mb-6">
                           {faceReadingResults.find(r => r.keyword.includes("눈") || r.keyword.includes("입"))?.description || 
-                           `당신의 얼굴을 동양 철학의 오행 관상학으로 바라보니, 정말 아름다운 운명의 지도가 펼쳐져 있어요. 이마(화火)에서 느껴지는 정신적 성향은 연애에서도 깊이 있는 사고와 이상을 추구하는 모습을 보여줍니다. 눈 아래(목木)의 생동감은 사랑에 대한 생명력과 열정이 넘치는 것을 말해주고, 뺨(토土)의 넉넉함은 연애에서의 안정성과 조화 능력을 보여줍니다. 인중(금金)의 형태는 연애에서의 의지력과 숨겨진 강인함을, 턱(수水)은 연애에서의 지혜와 성숙함을 나타냅니다.`}
+                           `당신의 얼굴을 동양 철학의 오행 관상학으로 바라보니, 정말 아름다운 운명의 지도가 펼쳐져 있어요.`}
                         </p>
+                        
+                        {/* 얼굴 분석 다이어그램 */}
+                        <div className="bg-white/10 rounded-2xl p-6 mb-6">
+                          <div className="text-center mb-4">
+                            <div className="text-2xl font-bold text-green-300 mb-2">천(天) - 정신세계</div>
+                            <div className="text-4xl mb-2">🔥</div>
+                            <div className="text-sm text-gray-300">이마 (화火) - 권력, 성취, 이상</div>
+                          </div>
+                          
+                          <div className="grid grid-cols-3 gap-4 mb-4">
+                            <div className="text-center">
+                              <div className="text-3xl mb-1">🌱</div>
+                              <div className="text-xs text-gray-300">눈 아래 (목木)</div>
+                              <div className="text-xs text-green-300">생명력, 사랑</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-3xl mb-1">🌍</div>
+                              <div className="text-xs text-gray-300">뺨 (토土)</div>
+                              <div className="text-xs text-green-300">기반, 조화</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-3xl mb-1">⚔️</div>
+                              <div className="text-xs text-gray-300">인중 (금金)</div>
+                              <div className="text-xs text-green-300">강인함, 의지</div>
+                            </div>
+                          </div>
+                          
+                          <div className="text-center">
+                            <div className="text-2xl font-bold text-green-300 mb-2">지(地) - 물질세계</div>
+                            <div className="text-4xl mb-2">💧</div>
+                            <div className="text-sm text-gray-300">턱 (수水) - 지혜, 여정, 성숙</div>
+                          </div>
+                        </div>
+                        
+                        {/* 오행별 상세 분석 */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="bg-white/10 rounded-lg p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-2xl">🔥</span>
+                              <span className="font-semibold text-green-300">이마 (화火)</span>
+                            </div>
+                            <p className="text-sm text-gray-300">
+                              연애에서의 정신적 접근법과 이상을 추구하는 모습을 보여줍니다. 깊이 있는 사고와 열정적인 사랑을 추구하는 성향이 있어요.
+                            </p>
+                          </div>
+                          
+                          <div className="bg-white/10 rounded-lg p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-2xl">🌱</span>
+                              <span className="font-semibold text-green-300">눈 아래 (목木)</span>
+                            </div>
+                            <p className="text-sm text-gray-300">
+                              사랑에 대한 생명력과 열정이 넘치는 것을 말해줍니다. 새로운 관계에서 항상 성장하려는 의지와 생동감을 가지고 있어요.
+                            </p>
+                          </div>
+                          
+                          <div className="bg-white/10 rounded-lg p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-2xl">🌍</span>
+                              <span className="font-semibold text-green-300">뺨 (토土)</span>
+                            </div>
+                            <p className="text-sm text-gray-300">
+                              연애에서의 안정성과 조화 능력을 보여줍니다. 모든 가능성이 피어나는 대지처럼 포용력과 균형감을 가지고 있어요.
+                            </p>
+                          </div>
+                          
+                          <div className="bg-white/10 rounded-lg p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-2xl">⚔️</span>
+                              <span className="font-semibold text-green-300">인중 (금金)</span>
+                            </div>
+                            <p className="text-sm text-gray-300">
+                              연애에서의 의지력과 숨겨진 강인함을 나타냅니다. 땅속 깊이 숨겨진 보물처럼 내면의 강인함을 가지고 있어요.
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="bg-white/10 rounded-lg p-4 mt-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-2xl">💧</span>
+                            <span className="font-semibold text-green-300">턱 (수水)</span>
+                          </div>
+                          <p className="text-sm text-gray-300">
+                            연애에서의 지혜와 성숙함을 나타냅니다. 잔잔히 흐르는 강물처럼 지속성과 성숙함을 가지고 있어요.
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* 사주 해석 */}
+                  {/* 사주 해석 - 시각적 분석 */}
                   <div className="bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-2xl p-8 border border-blue-400/30">
                     <div className="flex items-start gap-4 mb-6">
                       <div className="text-3xl">🔮</div>
                       <div>
                         <h3 className="text-xl font-semibold text-blue-300 mb-3">당신의 사주가 들려주는 이야기</h3>
-                        <p className="text-gray-200 leading-relaxed text-lg">
+                        <p className="text-gray-200 leading-relaxed text-lg mb-6">
                           {sajuResults.find(r => r.description)?.description || 
-                           `사주를 보니, 당신은 감정을 솔직하게 표현하는 성향을 타고 태어나셨어요. 연애에서 주도적으로 이끌어가는 스타일은 아니지만, 상대방의 감정에 깊이 공감하고 함께 성장하려는 마음이 강합니다. 새로운 경험을 추구하는 성격이라 연애에서도 항상 새로운 시도와 도전을 즐기시는 분이에요.`}
+                           `사주를 보니, 당신은 감정을 솔직하게 표현하는 성향을 타고 태어나셨어요.`}
                         </p>
+                        
+                        {/* 사주 오행 분석 */}
+                        <div className="bg-white/10 rounded-2xl p-6 mb-6">
+                          <div className="text-center mb-4">
+                            <div className="text-2xl font-bold text-blue-300 mb-2">사주 오행 분석</div>
+                            <div className="text-sm text-gray-300">당신의 연애 성향을 오행으로 분석해보았어요</div>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                            <div className="text-center">
+                              <div className="text-3xl mb-2">🔥</div>
+                              <div className="text-xs font-semibold text-red-400">화(火)</div>
+                              <div className="text-xs text-gray-300">열정, 활력</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-3xl mb-2">🌱</div>
+                              <div className="text-xs font-semibold text-green-400">목(木)</div>
+                              <div className="text-xs text-gray-300">성장, 확장</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-3xl mb-2">🌍</div>
+                              <div className="text-xs font-semibold text-yellow-400">토(土)</div>
+                              <div className="text-xs text-gray-300">안정, 조화</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-3xl mb-2">⚔️</div>
+                              <div className="text-xs font-semibold text-gray-400">금(金)</div>
+                              <div className="text-xs text-gray-300">의지, 결단</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-3xl mb-2">💧</div>
+                              <div className="text-xs font-semibold text-blue-400">수(水)</div>
+                              <div className="text-xs text-gray-300">지혜, 유연</div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* 연애 성향 분석 */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="bg-white/10 rounded-lg p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-2xl">💝</span>
+                              <span className="font-semibold text-blue-300">감정 표현</span>
+                            </div>
+                            <p className="text-sm text-gray-300">
+                              연애에서 주도적으로 이끌어가는 스타일은 아니지만, 상대방의 감정에 깊이 공감하고 함께 성장하려는 마음이 강합니다.
+                            </p>
+                          </div>
+                          
+                          <div className="bg-white/10 rounded-lg p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-2xl">🚀</span>
+                              <span className="font-semibold text-blue-300">새로운 경험</span>
+                            </div>
+                            <p className="text-sm text-gray-300">
+                              새로운 경험을 추구하는 성격이라 연애에서도 항상 새로운 시도와 도전을 즐기시는 분이에요.
+                            </p>
+                          </div>
+                          
+                          <div className="bg-white/10 rounded-lg p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-2xl">🤝</span>
+                              <span className="font-semibold text-blue-300">공감 능력</span>
+                            </div>
+                            <p className="text-sm text-gray-300">
+                              상대방의 감정을 깊이 이해하고 공감하는 능력이 뛰어나, 깊이 있는 관계를 형성할 수 있어요.
+                            </p>
+                          </div>
+                          
+                          <div className="bg-white/10 rounded-lg p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-2xl">🌱</span>
+                              <span className="font-semibold text-blue-300">성장 지향</span>
+                            </div>
+                            <p className="text-sm text-gray-300">
+                              함께 성장하려는 마음이 강해 파트너와의 관계를 통해 서로 발전할 수 있는 기회를 만들어요.
+                            </p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
