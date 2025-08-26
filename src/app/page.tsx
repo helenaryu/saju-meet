@@ -2727,7 +2727,13 @@ function FaceReadingAppContent() {
                         </div>
                         
                         {/* 나의 연애 성향 분석 */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-2xl p-6 mb-6 border border-blue-400/30">
+                          <div className="text-center mb-6">
+                            <div className="text-2xl font-bold text-blue-300 mb-2">🌟 나의 연애 성향 분석</div>
+                            <div className="text-sm text-gray-300">당신의 연애 스타일과 성향을 분석했어요</div>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="bg-white/10 rounded-lg p-4">
                             <div className="flex items-center gap-2 mb-2">
                               <span className="text-2xl">💝</span>
