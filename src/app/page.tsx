@@ -2929,7 +2929,7 @@ function FaceReadingAppContent() {
                     </div>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           </div>
 
