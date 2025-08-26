@@ -2344,7 +2344,7 @@ function FaceReadingAppContent() {
                                   <p className="text-gray-400 text-sm">사주 정보에서 성별을 선택해주세요</p>
                                 </div>
                               </div>
-                            ) : profileData.gender === '남성' ? (
+                            ) : (
                               <>
                                 {/* 실제 얼굴 이미지 - 제공해주신 이미지 기반 */}
                                 <div className="absolute inset-0 flex items-center justify-center">
@@ -2479,6 +2479,16 @@ function FaceReadingAppContent() {
                             </div>
                           </div>
                           
+                          {/* 기본 관상 분석 타이틀 */}
+                          <div className="text-center mb-6">
+                            <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-full border border-blue-400/30">
+                              <span className="text-2xl">🔮</span>
+                              <span className="text-xl font-bold text-blue-300">기본 관상 분석</span>
+                              <span className="text-2xl">🔮</span>
+                            </div>
+                            <p className="text-gray-400 text-sm mt-2">동양 철학의 오행을 바탕으로 한 기본 관상 해석</p>
+                          </div>
+                          
                           {/* 분석 영역별 상세 설명 */}
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="bg-red-500/20 rounded-lg p-4 border border-red-400/30">
@@ -2531,10 +2541,20 @@ function FaceReadingAppContent() {
                               지혜와 삶의 여정을 나타냅니다. 연애에서의 지혜와 성숙함을 보여주며, 잔잔히 흐르는 강물처럼 지속성과 성숙함을 가지고 있어요.
                             </p>
                           </div>
-                        </div>
-                        
-                        {/* 오행별 상세 분석 */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                  </div>
+                          
+                          {/* 구역 분리 타이틀 */}
+                          <div className="text-center my-8">
+                            <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full border border-purple-400/30">
+                              <span className="text-2xl">💕</span>
+                              <span className="text-xl font-bold text-purple-300">연애 성향 관상 분석</span>
+                              <span className="text-2xl">💕</span>
+                            </div>
+                            <p className="text-gray-400 text-sm mt-2">동양 철학의 오행을 바탕으로 한 연애 특성 해석</p>
+                          </div>
+                          
+                          {/* 오행별 상세 분석 */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="bg-white/10 rounded-lg p-4">
                             <div className="flex items-center gap-2 mb-2">
                               <span className="text-2xl">🔥</span>
