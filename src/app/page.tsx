@@ -2769,7 +2769,7 @@ function FaceReadingAppContent() {
                           </div>
                         </div>
                         
-                        {/* 이상적인 연애 상대 분석 */}
+                        {/* 상대에 대한 분석 */}
                         <div className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-2xl p-6 mb-6 border border-pink-400/30">
                           <div className="text-center mb-6">
                             <div className="text-2xl font-bold text-pink-300 mb-2">💕 상대에 대한 분석</div>
