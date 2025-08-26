@@ -2247,80 +2247,140 @@ function FaceReadingAppContent() {
             </div>
           </div>
 
-          {/* 통합 연애 리포트 */}
-          <div className="bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-blue-500/20 border border-pink-400 rounded-2xl p-8 mb-8">
-            <h2 className="text-2xl font-bold text-amber-400 mb-6 text-center">💕 연애 리포트</h2>
-            <div className="text-lg text-white leading-relaxed whitespace-pre-line">
+          {/* 감성적 연애 리포트 */}
+          <div className="bg-gradient-to-br from-pink-500/10 via-purple-500/10 to-blue-500/10 border border-pink-400/30 rounded-3xl p-8 mb-8">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-amber-400 mb-2">💕 연애 리포트</h2>
+              <p className="text-gray-400 italic">당신만을 위한 특별한 이야기</p>
+            </div>
+            
+            <div className="text-lg text-white leading-relaxed">
               {faceReadingResults && faceReadingResults.length > 0 && sajuResults && sajuResults.length > 0 ? (
-                <div className="space-y-6">
-                  {/* 연애 스타일 요약 */}
-                  <div className="bg-white/10 rounded-lg p-6">
-                    <h3 className="font-semibold text-pink-400 mb-3 text-lg">💕 연애 스타일</h3>
-                    <p className="text-gray-300 leading-relaxed">
-                      {faceReadingResults.find(r => r.description)?.description || 
-                       `${profileData.nickname || "당신"}님의 얼굴을 보는 순간, 마치 따뜻한 봄날 햇살처럼 부드럽고 포근한 기운이 느껴집니다. 당신은 사랑을 할 때 마음을 완전히 열고, 상대방의 감정에 깊이 공감하는 타입이에요.`}
-                    </p>
+                <div className="space-y-8">
+                  {/* 메인 스토리 */}
+                  <div className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-2xl p-8 border border-pink-400/30">
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="text-3xl">✨</div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-pink-300 mb-3">당신의 연애 이야기</h3>
+                        <p className="text-gray-200 leading-relaxed text-lg">
+                          {faceReadingResults.find(r => r.description)?.description || 
+                           `${profileData.nickname || "당신"}님의 얼굴을 보는 순간, 마치 따뜻한 봄날 햇살처럼 부드럽고 포근한 기운이 느껴집니다. 당신은 사랑을 할 때 마음을 완전히 열고, 상대방의 감정에 깊이 공감하는 타입이에요. 연애 초반에는 조심스럽게 다가가지만, 한번 마음을 열면 진심으로 사랑하는 사람입니다.`}
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* 관상 & 인상 해석 */}
-                  <div className="bg-white/10 rounded-lg p-6">
-                    <h3 className="font-semibold text-green-400 mb-3 text-lg">👁️ 관상 & 인상 해석</h3>
-                    <p className="text-gray-300 leading-relaxed">
-                      {faceReadingResults.find(r => r.keyword.includes("눈") || r.keyword.includes("입"))?.description || 
-                       `당신의 눈을 보니, 마음을 읽는 능력이 뛰어난 분이라는 걸 알 수 있어요. 입술의 곡선은 따뜻한 말씨와 공감 능력을, 턱의 형태는 의지력과 리더십을 보여줍니다.`}
-                    </p>
+                  {/* 관상 해석 */}
+                  <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-2xl p-8 border border-green-400/30">
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="text-3xl">👁️</div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-green-300 mb-3">당신의 얼굴이 말하는 이야기</h3>
+                        <p className="text-gray-200 leading-relaxed text-lg">
+                          {faceReadingResults.find(r => r.keyword.includes("눈") || r.keyword.includes("입"))?.description || 
+                           `당신의 눈을 보니, 마음을 읽는 능력이 뛰어난 분이라는 걸 알 수 있어요. 입술의 곡선은 따뜻한 말씨와 공감 능력을, 턱의 형태는 의지력과 리더십을 보여줍니다. 실제로 대화할 때 상대방은 "이 사람은 정말 내 마음을 이해해주는구나"라는 느낌을 받을 거예요.`}
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* 사주 기반 성향 분석 */}
-                  <div className="bg-white/10 rounded-lg p-6">
-                    <h3 className="font-semibold text-blue-400 mb-3 text-lg">🔮 사주 기반 성향 분석</h3>
-                    <p className="text-gray-300 leading-relaxed">
-                      {sajuResults.find(r => r.description)?.description || 
-                       `사주를 보니, 당신은 감정을 솔직하게 표현하는 성향을 타고 태어나셨어요. 연애에서 주도적으로 이끌어가는 스타일은 아니지만, 상대방의 감정에 깊이 공감하고 함께 성장하려는 마음이 강합니다.`}
-                    </p>
+                  {/* 사주 해석 */}
+                  <div className="bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-2xl p-8 border border-blue-400/30">
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="text-3xl">🔮</div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-blue-300 mb-3">당신의 사주가 들려주는 이야기</h3>
+                        <p className="text-gray-200 leading-relaxed text-lg">
+                          {sajuResults.find(r => r.description)?.description || 
+                           `사주를 보니, 당신은 감정을 솔직하게 표현하는 성향을 타고 태어나셨어요. 연애에서 주도적으로 이끌어가는 스타일은 아니지만, 상대방의 감정에 깊이 공감하고 함께 성장하려는 마음이 강합니다. 새로운 경험을 추구하는 성격이라 연애에서도 항상 새로운 시도와 도전을 즐기시는 분이에요.`}
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
                   {/* 궁합 해석 */}
-                  <div className="bg-white/10 rounded-lg p-6">
-                    <h3 className="font-semibold text-purple-400 mb-3 text-lg">💫 궁합 해석</h3>
-                    <p className="text-gray-300 leading-relaxed">
-                      {sajuResults.find(r => r.keyword.includes("궁합") || r.keyword.includes("시너지"))?.description || 
-                       `당신과 상대방이 만났을 때는 따뜻하고 안정적인 분위기가 만들어질 거예요. 감정적 교감과 지적 성장을 중시하는 파트너와 만나면 시너지를 낼 수 있을 것입니다.`}
-                    </p>
+                  <div className="bg-gradient-to-r from-purple-500/20 to-violet-500/20 rounded-2xl p-8 border border-purple-400/30">
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="text-3xl">💫</div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-purple-300 mb-3">당신과 상대방이 만날 때</h3>
+                        <p className="text-gray-200 leading-relaxed text-lg">
+                          {sajuResults.find(r => r.keyword.includes("궁합") || r.keyword.includes("시너지"))?.description || 
+                           `당신과 상대방이 만났을 때는 따뜻하고 안정적인 분위기가 만들어질 거예요. 감정적 교감과 지적 성장을 중시하는 파트너와 만나면 시너지를 낼 수 있을 것입니다. 함께 배우고 성장할 수 있는 관계를 추구하는 분과 만나면 더욱 깊이 있는 사랑을 경험할 수 있을 거예요.`}
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
                   {/* 이상형 제안 */}
-                  <div className="bg-white/10 rounded-lg p-6">
-                    <h3 className="font-semibold text-yellow-400 mb-3 text-lg">🌈 이상형 제안</h3>
-                    <p className="text-gray-300 leading-relaxed">
-                      {sajuResults.find(r => r.keyword.includes("이상형") || r.keyword.includes("파트너"))?.description || 
-                       `당신과 가장 잘 맞는 사람은 당신의 따뜻함을 진심으로 이해하고 함께 성장할 수 있는 파트너예요. 감정적 교감과 지적 대화를 중시하며, 서로의 꿈과 목표를 공유할 수 있는 사람과 만나면 운명적인 사랑을 경험할 수 있을 거예요.`}
-                    </p>
+                  <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-2xl p-8 border border-yellow-400/30">
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="text-3xl">🌈</div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-yellow-300 mb-3">당신의 진정한 이상형</h3>
+                        <p className="text-gray-200 leading-relaxed text-lg">
+                          {sajuResults.find(r => r.keyword.includes("이상형") || r.keyword.includes("파트너"))?.description || 
+                           `당신과 가장 잘 맞는 사람은 당신의 따뜻함을 진심으로 이해하고 함께 성장할 수 있는 파트너예요. 감정적 교감과 지적 대화를 중시하며, 서로의 꿈과 목표를 공유할 수 있는 사람과 만나면 운명적인 사랑을 경험할 수 있을 거예요. 특히 당신의 공감 능력을 진가로 알아주고, 함께 새로운 모험을 떠날 준비가 된 사람이 이상적입니다.`}
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
                   {/* 연애 키워드 */}
-                  <div className="bg-white/10 rounded-lg p-6">
-                    <h3 className="font-semibold text-amber-400 mb-3 text-lg">🏷️ 연애 키워드</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {[...(faceReadingResults.slice(0, 3).map(r => `#${r.keyword}`)), ...(sajuResults.slice(0, 2).map(r => `#${r.keyword}`))].map((keyword, index) => (
-                        <span key={index} className="bg-amber-500/20 text-amber-400 px-3 py-1 rounded-full text-sm border border-amber-400">
-                          {keyword}
-                        </span>
-                      ))}
+                  <div className="bg-gradient-to-r from-amber-500/20 to-yellow-500/20 rounded-2xl p-8 border border-amber-400/30">
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="text-3xl">🏷️</div>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-semibold text-amber-300 mb-3">당신의 연애 키워드</h3>
+                        <div className="flex flex-wrap gap-3">
+                          {[...(faceReadingResults.slice(0, 3).map(r => `#${r.keyword}`)), ...(sajuResults.slice(0, 2).map(r => `#${r.keyword}`))].map((keyword, index) => (
+                            <span key={index} className="bg-amber-500/30 text-amber-200 px-4 py-2 rounded-full text-sm font-medium border border-amber-400/50 hover:bg-amber-500/40 transition-colors">
+                              {keyword}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="text-center space-y-4">
-                  <p className="text-gray-300 leading-relaxed">
-                    {`${profileData.nickname || "당신"}님의 얼굴을 보는 순간, 마치 따뜻한 봄날 햇살처럼 부드럽고 포근한 기운이 느껴집니다. 당신은 사랑을 할 때 마음을 완전히 열고, 상대방의 감정에 깊이 공감하는 타입이에요.`}
-                  </p>
-                  <p className="text-gray-300 leading-relaxed">
-                    사주를 보니, 당신은 감정을 솔직하게 표현하는 성향을 타고 태어나셨어요. 연애에서 주도적으로 이끌어가는 스타일은 아니지만, 상대방의 감정에 깊이 공감하고 함께 성장하려는 마음이 강합니다.
-                  </p>
-                  <p className="text-gray-300 leading-relaxed">
-                    당신과 가장 잘 맞는 사람은 당신의 따뜻함을 진심으로 이해하고 함께 성장할 수 있는 파트너예요. 감정적 교감과 지적 대화를 중시하며, 서로의 꿈과 목표를 공유할 수 있는 사람과 만나면 운명적인 사랑을 경험할 수 있을 거예요.
-                  </p>
+                <div className="space-y-6">
+                  <div className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-2xl p-8 border border-pink-400/30">
+                    <div className="flex items-start gap-4">
+                      <div className="text-3xl">✨</div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-pink-300 mb-3">당신의 연애 이야기</h3>
+                        <p className="text-gray-200 leading-relaxed text-lg">
+                          {`${profileData.nickname || "당신"}님의 얼굴을 보는 순간, 마치 따뜻한 봄날 햇살처럼 부드럽고 포근한 기운이 느껴집니다. 당신은 사랑을 할 때 마음을 완전히 열고, 상대방의 감정에 깊이 공감하는 타입이에요.`}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-2xl p-8 border border-blue-400/30">
+                    <div className="flex items-start gap-4">
+                      <div className="text-3xl">🔮</div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-blue-300 mb-3">당신의 사주가 들려주는 이야기</h3>
+                        <p className="text-gray-200 leading-relaxed text-lg">
+                          사주를 보니, 당신은 감정을 솔직하게 표현하는 성향을 타고 태어나셨어요. 연애에서 주도적으로 이끌어가는 스타일은 아니지만, 상대방의 감정에 깊이 공감하고 함께 성장하려는 마음이 강합니다.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-2xl p-8 border border-yellow-400/30">
+                    <div className="flex items-start gap-4">
+                      <div className="text-3xl">🌈</div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-yellow-300 mb-3">당신의 진정한 이상형</h3>
+                        <p className="text-gray-200 leading-relaxed text-lg">
+                          당신과 가장 잘 맞는 사람은 당신의 따뜻함을 진심으로 이해하고 함께 성장할 수 있는 파트너예요. 감정적 교감과 지적 대화를 중시하며, 서로의 꿈과 목표를 공유할 수 있는 사람과 만나면 운명적인 사랑을 경험할 수 있을 거예요.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
