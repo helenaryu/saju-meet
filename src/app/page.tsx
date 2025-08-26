@@ -2346,51 +2346,60 @@ function FaceReadingAppContent() {
                               </div>
                             ) : profileData.gender === '남성' ? (
                               <>
-                                {/* 얼굴 기본 형태 - 더 자연스러운 계란형 */}
-                                <div className="absolute inset-0 bg-gradient-to-b from-amber-50 via-amber-100 to-amber-200 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] border-4 border-amber-300 shadow-lg"></div>
-                                
-                                {/* 머리카락 - 남자 스타일 */}
-                                <div className="absolute -top-2 -left-2 -right-2 h-16 bg-gradient-to-b from-amber-800 via-amber-700 to-amber-600 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] opacity-90"></div>
-                                
-                                {/* 눈 - 더 자연스러운 형태 */}
-                                <div className="absolute top-24 left-10 w-6 h-4 bg-black rounded-full opacity-80"></div>
-                                <div className="absolute top-24 right-10 w-6 h-4 bg-black rounded-full opacity-80"></div>
-                                
-                                {/* 눈썹 */}
-                                <div className="absolute top-20 left-8 w-8 h-2 bg-amber-800 rounded-full opacity-80"></div>
-                                <div className="absolute top-20 right-8 w-8 h-2 bg-amber-800 rounded-full opacity-80"></div>
-                                
-                                {/* 코 - 부드러운 곡선 */}
-                                <div className="absolute top-32 left-1/2 transform -translate-x-1/2 w-1 h-8 bg-amber-300 rounded-full"></div>
-                                
-                                {/* 입 - 부드러운 미소 */}
-                                <div className="absolute top-44 left-1/2 transform -translate-x-1/2 w-8 h-3 bg-pink-300 rounded-full opacity-80"></div>
-                                
-                                {/* 귀 */}
-                                <div className="absolute top-28 -left-1 w-3 h-8 bg-amber-200 rounded-full opacity-80"></div>
-                                <div className="absolute top-28 -right-1 w-3 h-8 bg-amber-200 rounded-full opacity-80"></div>
-                              </>
-                            ) : (
-                              <>
-                                {/* 여성 얼굴 */}
-                                <div className="absolute inset-0 bg-gradient-to-b from-pink-50 via-pink-100 to-pink-200 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] border-4 border-pink-300 shadow-lg"></div>
-                                
-                                {/* 머리카락 - 여자 스타일 (긴 머리) */}
-                                <div className="absolute -top-4 -left-4 -right-4 h-20 bg-gradient-to-b from-amber-800 via-amber-700 to-amber-600 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] opacity-90"></div>
-                                
-                                {/* 눈 - 아몬드형 */}
-                                <div className="absolute top-26 left-10 w-7 h-4 bg-black rounded-full opacity-80"></div>
-                                <div className="absolute top-26 right-10 w-7 h-4 bg-black rounded-full opacity-80"></div>
-                                
-                                {/* 코 - 더 작고 섬세하게 */}
-                                <div className="absolute top-34 left-1/2 transform -translate-x-1/2 w-1 h-6 bg-pink-300 rounded-full"></div>
-                                
-                                {/* 입 - 부드러운 미소 */}
-                                <div className="absolute top-46 left-1/2 transform -translate-x-1/2 w-6 h-2 bg-pink-400 rounded-full opacity-80"></div>
-                                
-                                {/* 귀 */}
-                                <div className="absolute top-30 -left-1 w-2 h-6 bg-pink-200 rounded-full opacity-80"></div>
-                                <div className="absolute top-30 -right-1 w-2 h-6 bg-pink-200 rounded-full opacity-80"></div>
+                                {/* 실제 얼굴 이미지 - 제공해주신 이미지 기반 */}
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  {profileData.gender === '남성' ? (
+                                    /* 남성 얼굴 이미지 - 첫 번째 이미지 기반 */
+                                    <div className="relative w-full h-full">
+                                      {/* 베이지색 배경의 계란형 얼굴 */}
+                                      <div className="absolute inset-0 bg-gradient-to-b from-amber-50 via-amber-100 to-amber-200 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] border-4 border-amber-300 shadow-lg"></div>
+                                      
+                                      {/* 짙은 갈색 머리카락 - 옆으로 넘겨진 스타일 */}
+                                      <div className="absolute -top-2 -left-2 -right-2 h-16 bg-gradient-to-b from-amber-800 via-amber-700 to-amber-600 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] opacity-90"></div>
+                                      
+                                      {/* 두꺼운 눈썹 - 자연스러운 아치형 */}
+                                      <div className="absolute top-20 left-8 w-8 h-2 bg-amber-800 rounded-full opacity-80"></div>
+                                      <div className="absolute top-20 right-8 w-8 h-2 bg-amber-800 rounded-full opacity-80"></div>
+                                      
+                                      {/* 눈 - 검은색 타원형, 정면 응시 */}
+                                      <div className="absolute top-24 left-10 w-6 h-4 bg-black rounded-full opacity-80"></div>
+                                      <div className="absolute top-24 right-10 w-6 h-4 bg-black rounded-full opacity-80"></div>
+                                      
+                                      {/* 코 - 부드러운 곡선, 콧대와 콧망울 연결 */}
+                                      <div className="absolute top-32 left-1/2 transform -translate-x-1/2 w-1 h-8 bg-amber-300 rounded-full"></div>
+                                      
+                                      {/* 입 - 살짝 미소, 얇은 입술 */}
+                                      <div className="absolute top-44 left-1/2 transform -translate-x-1/2 w-8 h-3 bg-pink-300 rounded-full opacity-80"></div>
+                                      
+                                      {/* 귀 - 깔끔하게 붙어있는 형태 */}
+                                      <div className="absolute top-28 -left-1 w-3 h-8 bg-amber-200 rounded-full opacity-80"></div>
+                                      <div className="absolute top-28 -right-1 w-3 h-8 bg-amber-200 rounded-full opacity-80"></div>
+                                    </div>
+                                  ) : (
+                                    /* 여성 얼굴 이미지 - 두 번째 이미지 기반 */
+                                    <div className="relative w-full h-full">
+                                      {/* 연한 살구색 배경의 부드러운 계란형 얼굴 */}
+                                      <div className="absolute inset-0 bg-gradient-to-b from-pink-50 via-pink-100 to-pink-200 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] border-4 border-pink-300 shadow-lg"></div>
+                                      
+                                      {/* 긴 갈색 머리카락 - 중간 갈라진 스타일, 어깨까지 */}
+                                      <div className="absolute -top-4 -left-4 -right-4 h-20 bg-gradient-to-b from-amber-800 via-amber-700 to-amber-600 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] opacity-90"></div>
+                                      
+                                      {/* 눈 - 아몬드형, 더 큰 크기 */}
+                                      <div className="absolute top-26 left-10 w-7 h-4 bg-black rounded-full opacity-80"></div>
+                                      <div className="absolute top-26 right-10 w-7 h-4 bg-black rounded-full opacity-80"></div>
+                                      
+                                      {/* 코 - 작고 섬세한 형태 */}
+                                      <div className="absolute top-34 left-1/2 transform -translate-x-1/2 w-1 h-6 bg-pink-300 rounded-full"></div>
+                                      
+                                      {/* 입 - 부드러운 미소, 작은 크기 */}
+                                      <div className="absolute top-46 left-1/2 transform -translate-x-1/2 w-6 h-2 bg-pink-400 rounded-full opacity-80"></div>
+                                      
+                                      {/* 귀 - 머리카락에 부분적으로 가려진 형태 */}
+                                      <div className="absolute top-30 -left-1 w-2 h-6 bg-pink-200 rounded-full opacity-80"></div>
+                                      <div className="absolute top-30 -right-1 w-2 h-6 bg-pink-200 rounded-full opacity-80"></div>
+                                    </div>
+                                  )}
+                                </div>
                               </>
                             )}
                             
