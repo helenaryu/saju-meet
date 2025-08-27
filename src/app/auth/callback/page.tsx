@@ -57,7 +57,7 @@ function AuthCallbackContent() {
         if (data.session) {
           console.log('인증 성공:', data.session)
           // 인증 성공 후 integrated-analysis로 이동
-          router.push('/?step=integrated-analysis&auth=success')
+          router.push('/integrated-analysis')
         } else {
           console.log('인증 세션 없음')
           // 세션이 없으면 로그아웃 처리

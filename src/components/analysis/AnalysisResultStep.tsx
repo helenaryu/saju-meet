@@ -29,6 +29,7 @@ interface AnalysisResultStepProps {
   sajuResults: AnalysisResult[]
   onLogout: () => void
   localUser: any
+  onProfileSetup: () => void  // 프로필 설정 콜백 추가
 }
 
 export default function AnalysisResultStep({
@@ -37,7 +38,8 @@ export default function AnalysisResultStep({
   faceReadingResults,
   sajuResults,
   onLogout,
-  localUser
+  localUser,
+  onProfileSetup  // props에 추가
 }: AnalysisResultStepProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white p-6 overflow-y-auto">
@@ -197,14 +199,27 @@ export default function AnalysisResultStep({
           </div>
         </div>
 
-        {/* 하단 액션 버튼 */}
-        <div className="text-center">
-          <button
-            onClick={() => window.location.reload()}
-            className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black px-8 py-4 rounded-full text-lg font-bold transition-colors"
-          >
-            다시 분석하기
-          </button>
+        {/* 하단 액션 버튼들 */}
+        <div className="text-center space-y-4">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={onProfileSetup}
+              className="bg-gradient-to-r from-blue-400 to-indigo-500 hover:from-blue-500 hover:to-indigo-600 text-white px-8 py-4 rounded-full text-lg font-bold transition-colors"
+            >
+              프로필 설정하기
+            </button>
+            
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black px-8 py-4 rounded-full text-lg font-bold transition-colors"
+            >
+              다시 분석하기
+            </button>
+          </div>
+          
+          <p className="text-gray-400 text-sm">
+            프로필을 설정하면 이상형 매칭과 더 많은 서비스를 이용할 수 있어요!
+          </p>
         </div>
       </div>
     </div>

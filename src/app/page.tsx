@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect, Suspense } from "react"
-import { AppStep, ProfileData, SajuData, ChatMessage } from "@/types"
-import { FACE_READING_KEYWORDS, SAJU_KEYWORDS, IDEAL_TYPE_KEYWORDS, dummyMatches, dummyAnalysisReport } from "@/constants/data"
-import { useSearchParams } from "next/navigation"
+import { AppStep, ProfileData, SajuData } from "@/types"
+import { FACE_READING_KEYWORDS, SAJU_KEYWORDS, IDEAL_TYPE_KEYWORDS } from "@/constants/data"
+import { useSearchParams, useRouter } from "next/navigation"
 import { sajuService } from "@/lib/api/saju"
 
 // 분리된 컴포넌트들 import
@@ -14,9 +14,11 @@ import AuthLoadingStep from "@/components/auth/AuthLoadingStep"
 import IntegratedAnalysisInput from "@/components/analysis/IntegratedAnalysisInput"
 import AnalysisLoadingStep from "@/components/analysis/AnalysisLoadingStep"
 import AnalysisResultStep from "@/components/analysis/AnalysisResultStep"
+import ProfileRegistrationStep from "@/components/profile/ProfileRegistrationStep"
 
 function FaceReadingAppContent() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const [currentStep, setCurrentStep] = useState<AppStep>("onboarding")
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
   const [additionalPhotos, setAdditionalPhotos] = useState<string[]>([])
@@ -54,15 +56,10 @@ function FaceReadingAppContent() {
   const [sajuErrors, setSajuErrors] = useState<Record<string, string>>({})
   const [selectedIdealKeywords, setSelectedIdealKeywords] = useState<string[]>([])
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const [showMatches, setShowMatches] = useState(false)
 
-  const [isEditingProfile, setIsEditingProfile] = useState(false)
-  const [editProfileData, setEditProfileData] = useState(profileData)
 
-  const [selectedUser, setSelectedUser] = useState<any>(null)
 
-  const [messages, setMessages] = useState<ChatMessage[]>([])
-  const [newMessage, setNewMessage] = useState("")
+
   const [isAuthenticating, setIsAuthenticating] = useState(false)
   const [authProvider, setAuthProvider] = useState<"google" | "kakao" | null>(null)
 
@@ -90,79 +87,9 @@ function FaceReadingAppContent() {
     initializeSupabase()
   }, [])
 
-  const initializeChatMessages = (userName: string) => {
-    const dummyMessages: ChatMessage[] = [
-      {
-        id: "1",
-        text: "안녕하세요! 프로필을 보고 연락드렸어요 😊",
-        sender: "me",
-        timestamp: new Date(Date.now() - 3600000), // 1시간 전
-        isRead: true,
-      },
-      {
-        id: "2",
-        text: "안녕하세요! 관상 궁합이 높다고 나와서 신기했어요 ㅎㅎ",
-        sender: "other",
-        timestamp: new Date(Date.now() - 3000000), // 50분 전
-        isRead: true,
-      },
-      {
-        id: "3",
-        text: "저도요! 분석 결과를 보니 정말 잘 맞을 것 같더라고요. 어떤 일 하세요?",
-        sender: "me",
-        timestamp: new Date(Date.now() - 2400000), // 40분 전
-        isRead: true,
-      },
-      {
-        id: "4",
-        text: `${userName === "김민준" ? "디자인" : userName === "이서연" ? "마케팅" : "개발"} 일을 하고 있어요. 프로필에서 보니 관상이 정말 따뜻해 보이시더라구요!`,
-        sender: "other",
-        timestamp: new Date(Date.now() - 1800000), // 30분 전
-        isRead: true,
-      },
-      {
-        id: "5",
-        text: "감사해요! 시간 되실 때 커피 한 잔 어떠세요?",
-        sender: "me",
-        timestamp: new Date(Date.now() - 900000), // 15분 전
-        isRead: true,
-      },
-    ]
-    setMessages(dummyMessages)
-  }
 
-  const sendMessage = () => {
-    if (newMessage.trim()) {
-      const message: ChatMessage = {
-        id: Date.now().toString(),
-        text: newMessage.trim(),
-        sender: "me",
-        timestamp: new Date(),
-        isRead: false,
-      }
-      setMessages((prev) => [...prev, message])
-      setNewMessage("")
 
-      // 상대방 자동 응답 시뮬레이션
-      setTimeout(() => {
-        const responses = [
-          "좋아요! 언제가 좋으실까요?",
-          "네, 좋은 생각이에요 😊",
-          "시간 맞춰서 연락드릴게요!",
-          "기대되네요 ㅎㅎ",
-        ]
-        const randomResponse = responses[Math.floor(Math.random() * responses.length)]
-        const autoReply: ChatMessage = {
-          id: (Date.now() + 1).toString(),
-          text: randomResponse,
-          sender: "other",
-          timestamp: new Date(),
-          isRead: false,
-        }
-        setMessages((prev) => [...prev, autoReply])
-      }, 2000)
-    }
-  }
+
 
   const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -441,74 +368,77 @@ function FaceReadingAppContent() {
     setAdditionalPhotos((prev) => prev.filter((_, i) => i !== index))
   }
 
-  const handleEditProfileChange = (field: string, value: any) => {
-    setEditProfileData((prev) => ({ ...prev, [field]: value }))
-  }
 
-  const saveProfileChanges = () => {
-    setProfileData(editProfileData)
-    setIsEditingProfile(false)
-  }
 
-  const cancelProfileEdit = () => {
-    setEditProfileData(profileData)
-    setIsEditingProfile(false)
-  }
-
-  // URL 파라미터 감지하여 상태 업데이트
+  // URL 파라미터 감지하여 상태 업데이트 (간소화)
   useEffect(() => {
-    const step = searchParams.get('step')
     const auth = searchParams.get('auth')
-    
-    if (step === 'integrated-analysis') {
-      setCurrentStep('integrated-analysis')
-              // integrated-analysis 단계에서는 input 단계로 자동 이동
-        setIntegratedAnalysisStep('input')
-      // 인증 상태 초기화
-      setIsAuthenticating(false)
-      setAuthProvider(null)
-    }
     
     if (auth === 'error') {
       alert('인증에 실패했습니다. 다시 시도해주세요.')
       setIsAuthenticating(false)
       setAuthProvider(null)
+      // URL 파라미터 정리
+      window.history.replaceState({}, '', '/')
     }
   }, [searchParams])
 
-  // 인증 상태 확인 및 초기화 (Supabase가 설정된 경우에만)
+  // Supabase 세션 확인 함수
+  const checkSupabaseSession = async () => {
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession()
+      
+      if (error) {
+        console.error('세션 확인 오류:', error)
+        return
+      }
+
+      if (session) {
+        console.log('Supabase 세션 확인됨:', session.user.email)
+        
+        // Supabase 사용자 정보를 로컬 상태에 저장
+        const user = {
+          id: session.user.id,
+          email: session.user.email || '',
+          nickname: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || '사용자',
+          createdAt: session.user.created_at || new Date().toISOString()
+        }
+        
+        setLocalUser(user)
+        setIsLoggedIn(true)
+        localStorage.setItem('localUser', JSON.stringify(user))
+        
+        // integrated-analysis로 이동
+        setCurrentStep('integrated-analysis')
+        setIntegratedAnalysisStep('input')
+      } else {
+        console.log('Supabase 세션 없음')
+        // 세션이 없으면 onboarding으로 유지
+        setCurrentStep('onboarding')
+      }
+    } catch (error) {
+      console.error('세션 확인 예외:', error)
+      setCurrentStep('onboarding')
+    }
+  }
+
+  // 페이지 초기 로딩 시 로그인 상태 확인
   useEffect(() => {
-    if (!supabaseAvailable || !supabase) {
-      console.log('Supabase가 설정되지 않아 인증 기능을 건너뜁니다.')
+    // 로컬 사용자 정보가 있으면 integrated-analysis로 이동
+    if (localUser || isLoggedIn) {
+      setCurrentStep('integrated-analysis')
+      setIntegratedAnalysisStep('input')
       return
     }
 
-    const checkAuthStatus = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession()
-        
-        if (error) {
-          console.error('인증 상태 확인 오류:', error)
-          return
-        }
-
-        if (session) {
-          console.log('로그인된 사용자:', session.user.email)
-          // 로그인된 상태라면 integrated-analysis로 이동
-          setCurrentStep('integrated-analysis')
-        } else {
-          console.log('로그인되지 않은 상태')
-          // 로그인되지 않은 상태라면 onboarding으로 유지
-          setCurrentStep('onboarding')
-        }
-      } catch (error) {
-        console.error('인증 상태 확인 예외:', error)
-        setCurrentStep('onboarding')
-      }
+    // Supabase가 설정되어 있으면 세션 확인
+    if (supabaseAvailable && supabase) {
+      checkSupabaseSession()
+    } else {
+      // Supabase가 없으면 onboarding으로 유지
+      setCurrentStep('onboarding')
     }
-
-    checkAuthStatus()
-  }, [supabaseAvailable, supabase])
+  }, [supabaseAvailable, supabase, localUser, isLoggedIn])
 
   // 로컬 인증 상태 (Supabase 없이도 작동)
   const handleLocalLogin = (email: string, password: string) => {
@@ -735,13 +665,62 @@ function FaceReadingAppContent() {
           sajuResults={sajuResults}
           onLogout={handleLocalLogout}
           localUser={localUser}
+          onProfileSetup={() => setCurrentStep("profile")}
         />
       )
     }
   }
 
-  // 기존 코드는 그대로 유지 (프로필, 홈, 매칭 등)
-  // ... (기존 코드 유지)
+  // 프로필 설정 완료 처리
+  const handleProfileComplete = () => {
+    // 프로필 데이터 검증
+    if (!profileData.nickname || !profileData.gender || !profileData.birthDate || !profileData.region || !profileData.job) {
+      alert('필수 항목을 모두 입력해주세요.')
+      return
+    }
+
+    // 프로필 완료 후 홈으로 이동
+    setCurrentStep("home")
+    
+    // 로컬 스토리지에 프로필 데이터 저장 (선택사항)
+    localStorage.setItem('sajuMeetProfile', JSON.stringify(profileData))
+    localStorage.setItem('sajuMeetAdditionalPhotos', JSON.stringify(additionalPhotos))
+    localStorage.setItem('sajuMeetIdealKeywords', JSON.stringify(selectedIdealKeywords))
+  }
+
+  // 프로필 설정 단계
+  if (currentStep === "profile") {
+    return (
+      <ProfileRegistrationStep
+        profileData={profileData}
+        additionalPhotos={additionalPhotos}
+        selectedIdealKeywords={selectedIdealKeywords}
+        errors={errors}
+        onInputChange={handleInputChange}
+        onAdditionalPhotoUpload={handleAdditionalPhotoUpload}
+        onRemoveAdditionalPhoto={removeAdditionalPhoto}
+        onIdealTypeToggle={handleIdealTypeToggle}
+        onValidateAndProceed={handleProfileComplete}
+        onBack={() => {
+          setCurrentStep("integrated-analysis")
+          setIntegratedAnalysisStep("result")
+        }}
+        IDEAL_TYPE_KEYWORDS={IDEAL_TYPE_KEYWORDS}
+      />
+    )
+  }
+
+  // 홈/대시보드 단계 (프로필 완료 후) - 별도 페이지로 이동
+  if (currentStep === "home") {
+    router.push('/home')
+    return null
+  }
+
+  // 이상형 매칭 단계 - 별도 페이지로 이동
+  if (currentStep === "ideal-match") {
+    router.push('/ideal-match')
+    return null
+  }
 
   return null
 }
