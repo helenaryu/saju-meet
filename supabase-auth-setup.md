@@ -13,6 +13,7 @@
   - `https://saju-meet.vercel.app/auth/callback`
   - `https://saju-meet.vercel.app/profile`
   - `http://localhost:3000/auth/callback` (개발용)
+  - `http://localhost:3000/profile` (개발용)
 
 ### 1.3 이메일 템플릿 설정
 - **Confirm signup**: 사용자 정의 템플릿
@@ -41,6 +42,17 @@
 3. **Client ID**: Google Cloud Console에서 가져온 값
 4. **Client Secret**: Google Cloud Console에서 가져온 값
 5. **Redirect URL**: `https://saju-meet.vercel.app/auth/callback`
+
+### 2.4 Google Cloud Console 설정 (중요!)
+1. **Google Cloud Console**에서 프로젝트 선택
+2. **APIs & Services** > **Credentials**로 이동
+3. **OAuth 2.0 Client IDs**에서 클라이언트 선택
+4. **Authorized redirect URIs**에 다음 URL들을 추가:
+   - `https://saju-meet.vercel.app/auth/callback` (프로덕션)
+   - `http://localhost:3000/auth/callback` (개발용)
+5. **Authorized JavaScript origins**에 다음 URL들을 추가:
+   - `https://saju-meet.vercel.app` (프로덕션)
+   - `http://localhost:3000` (개발용)
 
 ## 🔧 3단계: Next.js 인증 컴포넌트 생성
 

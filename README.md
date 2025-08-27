@@ -1,94 +1,36 @@
-# 관상 사주 매칭 앱 (Saju Meet)
+# Saju Meet - AI 기반 사주 상담 서비스
 
-관상과 사주를 바탕으로 한 AI 기반 연애 매칭 서비스입니다.
+## 🌟 프로젝트 개요
 
-## 🏗️ 프로젝트 구조
+Saju Meet는 AI 기술을 활용하여 사주, 관상, 통합 분석을 제공하는 현대적인 상담 플랫폼입니다.
 
-### 컴포넌트 구조 (리팩토링 완료)
+## ✨ 주요 기능
 
-```
-src/
-├── components/
-│   ├── auth/                    # 인증 관련 컴포넌트
-│   │   ├── OnboardingStep.tsx   # 온보딩 화면
-│   │   ├── LoginStep.tsx        # 로그인 화면
-│   │   ├── SignupStep.tsx       # 회원가입 화면
-│   │   └── AuthLoadingStep.tsx  # 인증 로딩 화면
-│   ├── analysis/                # 분석 관련 컴포넌트
-│   │   ├── IntegratedAnalysisInput.tsx  # 통합 분석 입력
-│   │   ├── AnalysisLoadingStep.tsx      # 분석 로딩
-│   │   └── AnalysisResultStep.tsx       # 분석 결과
-│   └── profile/                 # 프로필 관련 컴포넌트
-│       └── ProfileRegistrationStep.tsx  # 프로필 등록
-├── lib/
-│   ├── api/
-│   │   ├── services/            # API 서비스 분리
-│   │   │   ├── ClaudePromptBuilder.ts   # Claude 프롬프트 빌더
-│   │   │   └── ClaudeResponseParser.ts  # Claude 응답 파서
-│   │   ├── claude.ts            # Claude API 서비스
-│   │   ├── faceReading.ts       # 관상 분석 API
-│   │   ├── saju.ts              # 사주 분석 API
-│   │   ├── knowledgeBase.ts     # 지식베이스 API
-│   │   └── integratedAnalysis.ts # 통합 분석 API
-│   └── supabase.ts              # Supabase 설정
-├── types/
-│   └── index.ts                 # 타입 정의
-├── constants/
-│   └── data.ts                  # 상수 데이터
-└── app/
-    ├── page.tsx                 # 메인 페이지 (리팩토링됨)
-    ├── layout.tsx               # 레이아웃
-    └── api/
-        └── analysis/
-            └── route.ts         # 분석 API 라우트
-```
+- **🔮 사주 분석**: 생년월일과 시간을 기반으로 한 정확한 사주 해석
+- **👁️ 관상 분석**: AI가 분석한 얼굴 특징과 성격 분석
+- **🤖 AI 통합 분석**: Claude와 OpenAI를 활용한 개인 맞춤형 상담
+- **🔐 소셜 로그인**: Google, Kakao, Naver OAuth 지원
+- **📱 반응형 디자인**: 모든 디바이스에서 최적화된 사용자 경험
 
-## 🚀 주요 기능
+## 🚀 기술 스택
 
-### 1. 인증 시스템
-- **온보딩**: 서비스 소개 및 시작 화면
-- **로그인/회원가입**: 이메일, Google, Kakao OAuth 지원
-- **로컬 인증**: Supabase 없이도 작동하는 로컬 인증
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS 4
+- **Backend**: Supabase (Auth, Database)
+- **AI Services**: Claude (Anthropic), OpenAI
+- **Deployment**: Vercel
+- **Authentication**: Supabase Auth with OAuth providers
 
-### 2. 관상 분석
-- **MediaPipe 기반**: 얼굴 랜드마크 추출 및 분석
-- **오행 관상학**: 동양 철학 기반 얼굴 특징 해석
-- **연애 성향 분석**: 관상을 통한 연애 스타일 분석
+## 🎯 사용자 플로우
 
-### 3. 사주 분석
-- **천간지지 계산**: 생년월일 기반 사주 계산
-- **오행 분석**: 목화토금수 기반 성향 분석
-- **연애운 분석**: 사주를 통한 연애 성향 분석
+1. **온보딩**: 서비스 소개 및 시작
+2. **인증**: 소셜 로그인 또는 회원가입
+3. **프로필 설정**: 기본 정보 및 이상형 입력
+4. **사진 업로드**: 얼굴 사진 업로드
+5. **AI 분석**: 통합 분석 실행
+6. **결과 확인**: 상세한 분석 리포트 확인
 
-### 4. AI 통합 분석
-- **Claude AI**: 관상과 사주 결과를 종합한 연애 리포트 생성
-- **감성적 해석**: 따뜻하고 공감적인 톤의 분석 결과
-- **전통 문헌 참조**: RAG를 통한 관련 전통 문헌 검색
-
-### 5. 매칭 시스템
-- **궁합 분석**: 관상과 사주 기반 궁합 점수 계산
-- **프로필 매칭**: 이상형 키워드 기반 매칭
-- **채팅 기능**: 매칭된 사용자와의 대화
-
-## 🛠️ 기술 스택
-
-### Frontend
-- **Next.js 14**: App Router 기반
-- **TypeScript**: 타입 안전성
-- **Tailwind CSS**: 스타일링
-- **React Hooks**: 상태 관리
-
-### Backend & AI
-- **Claude 3 Sonnet**: AI 분석 엔진
-- **MediaPipe**: 얼굴 랜드마크 추출
-- **Supabase**: 인증 및 데이터베이스 (선택사항)
-
-### API 구조
-- **RESTful API**: 분석 요청 처리
-- **FormData**: 이미지 업로드
-- **WebSocket**: 실시간 채팅 (향후 구현 예정)
-
-## 📦 설치 및 실행
+## 🔧 설치 및 실행
 
 ### 1. 의존성 설치
 ```bash
@@ -101,6 +43,10 @@ npm install
 ANTHROPIC_API_KEY=your_claude_api_key
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+
+# 배포 환경에서 필요한 설정
+NEXT_PUBLIC_SITE_URL=https://saju-meet.vercel.app
 ```
 
 ### 3. 개발 서버 실행
@@ -188,3 +134,7 @@ MIT License
 ## 📞 문의
 
 프로젝트에 대한 문의사항이 있으시면 이슈를 생성해주세요.
+
+## 🚀 배포 상태
+
+**최신 업데이트**: 환경 변수 설정 완료 및 Google OAuth 리다이렉트 문제 해결
