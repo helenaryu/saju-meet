@@ -121,6 +121,14 @@ export default function SajuReadingVisual({
     return (
       <div className="relative w-48 h-48 mx-auto mb-6">
         <svg width="192" height="192" viewBox="0 0 192 192" className="transform -rotate-90">
+          <defs>
+            {ohaengElements.map((element) => (
+              <linearGradient key={element.name} id={element.name.replace(/[()]/g, '')} x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor={element.color.split(' ')[1]} />
+                <stop offset="100%" stopColor={element.color.split(' ')[3]} />
+              </linearGradient>
+            ))}
+          </defs>
           {ohaengElements.map((element, index) => {
             const percentage = (element.strength / total) * 100
             const angle = (percentage / 100) * 360
@@ -147,16 +155,6 @@ export default function SajuReadingVisual({
             )
           })}
         </svg>
-        
-        {/* 그라데이션 정의 */}
-        <defs>
-          {ohaengElements.map((element) => (
-            <linearGradient key={element.name} id={element.name.replace(/[()]/g, '')} x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor={element.color.split(' ')[1]} />
-              <stop offset="100%" stopColor={element.color.split(' ')[3]} />
-            </linearGradient>
-          ))}
-        </defs>
         
         {/* 중앙 텍스트 */}
         <div className="absolute inset-0 flex items-center justify-center">
