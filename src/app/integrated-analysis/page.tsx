@@ -20,7 +20,7 @@ export default function IntegratedAnalysisPage() {
 
   const [profileData, setProfileData] = useState<ProfileData>({
     nickname: "",
-    gender: "남성",
+    gender: "male",
     birthDate: "",
     birthTime: "",
     region: "",

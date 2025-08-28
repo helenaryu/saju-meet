@@ -24,7 +24,7 @@ export interface SajuKeyword {
 
 export interface ProfileData {
   nickname: string
-  gender: string
+  gender: 'male' | 'female'
   birthDate: string
   birthTime: string
   region: string

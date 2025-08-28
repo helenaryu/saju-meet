@@ -35,7 +35,7 @@ function FaceReadingAppContent() {
 
   const [profileData, setProfileData] = useState<ProfileData>({
     nickname: "",
-    gender: "남성", // 기본값을 남성으로 설정
+    gender: "male", // 기본값을 남성으로 설정
     birthDate: "",
     birthTime: "",
     region: "",

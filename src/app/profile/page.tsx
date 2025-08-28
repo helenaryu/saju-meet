@@ -10,7 +10,7 @@ export default function ProfilePage() {
   const router = useRouter()
   const [profileData, setProfileData] = useState<ProfileData>({
     nickname: "",
-    gender: "남성",
+    gender: "male",
     birthDate: "",
     birthTime: "",
     region: "",

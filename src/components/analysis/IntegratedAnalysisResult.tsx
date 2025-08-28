@@ -3,21 +3,7 @@
 import React from 'react'
 import FaceReadingVisual from './FaceReadingVisual'
 import SajuReadingVisual from './SajuReadingVisual'
-
-interface ProfileData {
-  nickname: string
-  gender: 'male' | 'female'
-  birthDate: string
-  birthTime: string
-  region: string
-  height: string
-  bodyType: string
-  job: string
-  education: string
-  school: string
-  introduction: string
-  idealKeywords: string[]
-}
+import { ProfileData } from '@/types'
 
 interface AnalysisResult {
   keyword: string
@@ -283,21 +269,42 @@ export default function IntegratedAnalysisResult({
           </div>
         </div>
 
+        {/* 총합 관상/사주 분석 요약 */}
+        <div className="bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-red-500/10 rounded-3xl p-8 mb-8 border border-amber-400/30">
+          <div className="text-center mb-6">
+            <h2 className="text-3xl font-bold text-amber-300 mb-2">📊 총합 관상/사주 분석</h2>
+            <p className="text-gray-400 italic">두 분석을 종합한 핵심 요약</p>
+          </div>
+          
+          <div className="text-center text-gray-200 leading-relaxed text-lg">
+            <p className="mb-4">
+              관상 분석 결과, 당신은 {getGender(profileData.gender) === 'male' ? '균형 잡힌 얼굴 형태로 감정과 이성의 조화가 잘 이루어진 성향' : '부드럽고 조화로운 얼굴 형태로 따뜻하고 포용력 있는 성향'}을 가지고 있습니다. 
+              사주 분석에서는 {sajuResults.length > 0 ? sajuResults[0].keyword : '창의성'}과 {sajuResults.length > 1 ? sajuResults[1].keyword : '성장'}의 기운이 강하게 나타나고 있어, 
+              연애에서도 이러한 특성을 잘 활용할 수 있을 것입니다.
+            </p>
+            <p>
+              두 분석을 종합하면, 당신은 상대방과의 깊이 있는 교감을 추구하며, 함께 성장해나가는 관계를 만드는 데 탁월한 능력을 가지고 있습니다. 
+              특히 감정적 안정성과 지적 교류를 모두 중시하는 균형 잡힌 연애 스타일을 가지고 있어, 
+              장기적인 관계 형성에 매우 적합한 성향을 보여줍니다.
+            </p>
+          </div>
+        </div>
+
         {/* 하단 액션 버튼들 */}
         <div className="text-center space-y-4">
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={onProfileSetup}
-              className="bg-gradient-to-r from-blue-400 to-indigo-500 hover:from-blue-500 hover:to-indigo-600 text-white px-8 py-4 rounded-full text-lg font-bold transition-all duration-300 shadow-lg"
-            >
-              🎯 프로필 설정하기
-            </button>
-            
-            <button
               onClick={() => window.location.reload()}
               className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black px-8 py-4 rounded-full text-lg font-bold transition-all duration-300 shadow-lg"
             >
-              🔄 다시 분석하기
+              🔄 다시하기
+            </button>
+            
+            <button
+              onClick={onProfileSetup}
+              className="bg-gradient-to-r from-blue-400 to-indigo-500 hover:from-blue-500 hover:to-indigo-600 text-white px-8 py-4 rounded-full text-lg font-bold transition-all duration-300 shadow-lg"
+            >
+              🎯 프로필 등록하기
             </button>
           </div>
           

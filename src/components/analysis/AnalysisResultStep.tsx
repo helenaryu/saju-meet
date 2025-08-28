@@ -2,21 +2,7 @@
 
 import React from 'react'
 import IntegratedAnalysisResult from './IntegratedAnalysisResult'
-
-interface ProfileData {
-  nickname: string
-  gender: string
-  birthDate: string
-  birthTime: string
-  region: string
-  height: string
-  bodyType: string
-  job: string
-  education: string
-  school: string
-  introduction: string
-  idealKeywords: string[]
-}
+import { ProfileData } from '@/types'
 
 interface AnalysisResult {
   keyword: string
