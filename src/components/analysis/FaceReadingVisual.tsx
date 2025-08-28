@@ -98,22 +98,6 @@ export default function FaceReadingVisual({ gender, facePoints, className = '' }
           <h3 className="text-2xl font-bold text-green-300 mb-2">👁️ 관상 분석</h3>
           <p className="text-gray-400 italic">얼굴 부위별 의미와 연애 성향</p>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {points.map((point, index) => (
-            <div key={point.id} className="bg-white/5 rounded-xl p-4 border border-white/10">
-              <div className="flex items-start gap-3 mb-3">
-                <div className={`flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-r ${getCategoryColor(point.category)} flex items-center justify-center text-white font-bold text-sm`}>
-                  {index + 1}
-                </div>
-                <div className="flex-1">
-                  <h4 className="text-lg font-semibold text-green-300 mb-2">{point.label}</h4>
-                  <p className="text-gray-200 text-sm leading-relaxed">{point.analysis}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
       
       {/* 관상 종합 분석 */}
