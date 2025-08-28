@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 
 interface OhaengElement {
   name: string
@@ -113,120 +113,138 @@ export default function SajuReadingVisual({
     return `${monthDescriptions[month as keyof typeof monthDescriptions]} ${day}일, 당신이 이 세상에 태어난 특별한 순간입니다.`
   }
 
-  // 깔끔한 파이 차트 렌더링 함수
+  // Canvas 기반 인터랙티브 파이 차트 렌더링 함수
   const renderPieChart = () => {
-    const total = ohaengElements.reduce((sum, element) => sum + element.strength, 0)
-    let currentAngle = 0
-    
-    // 전통적인 오행 색상 정의
-    const ohaengColors = {
-      '목(木)': '#4CAF50', // 나무 - 녹색
-      '화(火)': '#F44336', // 불 - 빨간색
-      '토(土)': '#FF9800', // 흙 - 주황색
-      '금(金)': '#FFC107', // 쇠 - 노란색
-      '수(水)': '#2196F3'  // 물 - 파란색
-    }
-    
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+    const total = ohaengElements.reduce((sum, element) => sum + element.strength, 0);
+    const data = ohaengElements.map(element => element.strength);
+    const colors = ['#4CAF50', '#F44336', '#FF9800', '#FFC107', '#2196F3']; // 전통적인 오행 색상
+
+    useEffect(() => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // Canvas 초기화
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const radius = 140;
+      let startAngle = -0.5 * Math.PI;
+
+      // 파이 차트 그리기
+      data.forEach((value, i) => {
+        const sliceAngle = (value / total) * 2 * Math.PI;
+        
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
+        ctx.fillStyle = colors[i];
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // 퍼센트 텍스트 그리기
+        const textAngle = startAngle + sliceAngle / 2;
+        const textRadius = radius * 0.7;
+        const textX = centerX + textRadius * Math.cos(textAngle);
+        const textY = centerY + textRadius * Math.sin(textAngle);
+
+        ctx.save();
+        ctx.translate(textX, textY);
+        ctx.rotate(textAngle + Math.PI / 2);
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 16px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.shadowColor = 'rgba(0,0,0,0.8)';
+        ctx.shadowBlur = 2;
+        ctx.fillText(`${Math.round((value / total) * 100)}%`, 0, 0);
+        ctx.restore();
+
+        startAngle += sliceAngle;
+      });
+
+      // 중앙 텍스트 그리기
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 24px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('오행', centerX, centerY - 10);
+      ctx.font = '14px Arial';
+      ctx.fillStyle = '#ccc';
+      ctx.fillText('분석', centerX, centerY + 15);
+
+      // 클릭 이벤트 처리
+      const handleClick = (e: MouseEvent) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left - centerX;
+        const y = e.clientY - rect.top - centerY;
+        const distance = Math.sqrt(x * x + y * y);
+
+        if (distance > radius) {
+          setSelectedIndex(null);
+          return;
+        }
+
+        let angle = Math.atan2(y, x);
+        if (angle < -0.5 * Math.PI) angle += 2 * Math.PI;
+        
+        let accAngle = -0.5 * Math.PI;
+        for (let i = 0; i < data.length; i++) {
+          const slice = (data[i] / total) * 2 * Math.PI;
+          if (angle >= accAngle && angle < accAngle + slice) {
+            setSelectedIndex(i);
+            break;
+          }
+          accAngle += slice;
+        }
+      };
+
+      canvas.addEventListener('click', handleClick);
+      return () => canvas.removeEventListener('click', handleClick);
+    }, [data, total, colors]);
+
     return (
-      <div className="relative w-96 h-96 mx-auto mb-8">
-        {/* 심플한 파이 차트 */}
-        <svg width="384" height="384" viewBox="0 0 384 384" className="transform -rotate-90">
-          {ohaengElements.map((element, index) => {
-            const percentage = (element.strength / total) * 100
-            const angle = (percentage / 100) * 360
-            const largeArcFlag = angle > 180 ? 1 : 0
-            
-            const x1 = 192 + 130 * Math.cos(currentAngle * Math.PI / 180)
-            const y1 = 192 + 130 * Math.sin(currentAngle * Math.PI / 180)
-            const x2 = 192 + 130 * Math.cos((currentAngle + angle) * Math.PI / 180)
-            const y2 = 192 + 130 * Math.sin((currentAngle + angle) * Math.PI / 180)
-            
-            const path = `M 192 192 L ${x1} ${y1} A 130 130 0 ${largeArcFlag} 1 ${x2} ${y2} Z`
-            
-            // 퍼센트 텍스트 위치 계산
-            const textAngle = currentAngle + (angle / 2)
-            const textRadius = 90
-            const textX = 192 + textRadius * Math.cos(textAngle * Math.PI / 180)
-            const textY = 192 + textRadius * Math.sin(textAngle * Math.PI / 180)
-            
-            currentAngle += angle
-            
-            return (
-              <g key={index}>
-                <path
-                  d={path}
-                  fill={ohaengColors[element.name as keyof typeof ohaengColors] || '#9E9E9E'}
-                  stroke="white"
-                  strokeWidth="2"
-                  className="hover:opacity-80 transition-opacity cursor-pointer"
-                />
-                {/* 퍼센트 텍스트 */}
-                <text
-                  x={textX}
-                  y={textY}
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  className="text-sm font-bold fill-white"
-                  style={{ fontSize: '16px', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
-                >
-                  {Math.round(percentage)}%
-                </text>
-              </g>
-            )
-          })}
-        </svg>
+      <div className="flex flex-col items-center space-y-6">
+        <canvas 
+          ref={canvasRef} 
+          width={400} 
+          height={400} 
+          className="bg-transparent rounded-xl cursor-pointer shadow-lg"
+        />
         
-        {/* 중앙 텍스트 */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-white">오행</div>
-            <div className="text-sm text-gray-300">분석</div>
-          </div>
-        </div>
-        
-        {/* 심플한 정보 박스들 */}
-        <div className="absolute inset-0">
-          {ohaengElements.map((element, index) => {
-            const percentage = (element.strength / total) * 100
-            const angle = (percentage / 100) * 360
-            const totalAngle = ohaengElements.slice(0, index).reduce((sum, el) => sum + (el.strength / total) * 360, 0)
-            const segmentAngle = totalAngle + (angle / 2)
-            
-            // 정보 박스 위치 계산 (4방향)
-            let boxX, boxY
-            if (segmentAngle >= 0 && segmentAngle < 90) {
-              boxX = 192 + 180
-              boxY = 192 - 180
-            } else if (segmentAngle >= 90 && segmentAngle < 180) {
-              boxX = 192 - 180
-              boxY = 192 - 180
-            } else if (segmentAngle >= 180 && segmentAngle < 270) {
-              boxX = 192 - 180
-              boxY = 192 + 180
-            } else {
-              boxX = 192 + 180
-              boxY = 192 + 180
-            }
-            
-            return (
-              <div key={index} className="absolute" style={{ left: boxX - 80, top: boxY - 25 }}>
-                {/* 심플한 정보 박스 */}
-                <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 border border-white/30 min-w-[160px] shadow-lg">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="text-xl">{element.icon}</div>
-                    <div className="text-sm font-bold text-white">{element.name}</div>
-                  </div>
-                  <div className="text-xs text-gray-200 leading-tight">
-                    {element.description}
-                  </div>
-                </div>
+        {/* 선택된 요소 상세 정보 */}
+        {selectedIndex !== null && (
+          <div className="w-full max-w-md p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 animate-fade-in">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="text-2xl">{ohaengElements[selectedIndex].icon}</div>
+              <div>
+                <h3 className="text-lg font-bold text-white">{ohaengElements[selectedIndex].name}</h3>
+                <p className="text-sm text-gray-300">{Math.round((data[selectedIndex] / total) * 100)}%</p>
               </div>
-            )
-          })}
-        </div>
+            </div>
+            <p className="text-sm text-gray-200 leading-relaxed mb-3">
+              {ohaengElements[selectedIndex].description}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {ohaengElements[selectedIndex].keywords.slice(0, 3).map((keyword, idx) => (
+                <span key={idx} className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full text-xs border border-blue-400/30">
+                  {keyword}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div className={`space-y-6 ${className}`}>
