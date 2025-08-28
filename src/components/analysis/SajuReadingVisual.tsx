@@ -102,113 +102,124 @@ export default function SajuReadingVisual({
       4: '꽃이 만발하는 달',
       5: '푸른 생명의 달',
       6: '여름의 열정이 가득한 달',
-      7: '한여름의 에너지가 넘치는 달',
-      8: '성숙의 달',
-      9: '가을의 지혜가 깃든 달',
-      10: '수확의 기쁨이 가득한 달',
+      7: '무더위 속 시원한 달',
+      8: '가을의 서늘함이 느껴지는 달',
+      9: '황금빛 가을의 달',
+      10: '단풍이 아름다운 달',
       11: '낙엽이 떨어지는 달',
-      12: '한 해를 마무리하는 달'
+      12: '겨울의 고요함이 있는 달'
     }
     
-    return monthDescriptions[month as keyof typeof monthDescriptions] || '특별한 달'
+    return `${monthDescriptions[month as keyof typeof monthDescriptions]} ${day}일, 당신이 이 세상에 태어난 특별한 순간입니다.`
   }
 
-  return (
-    <div className={`space-y-8 ${className}`}>
-      {/* 생년월일 정보 - 감성적 표현 */}
-      <div className="bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 rounded-2xl p-8 border border-purple-400/30">
-        <div className="text-center mb-6">
-          <h3 className="text-2xl font-bold text-purple-300 mb-2">🌟 당신의 탄생 이야기</h3>
-          <p className="text-gray-400 italic">우주가 당신을 선택한 특별한 순간</p>
-        </div>
+  // 파이 차트 렌더링 함수
+  const renderPieChart = () => {
+    const total = ohaengElements.reduce((sum, element) => sum + element.strength, 0)
+    let currentAngle = 0
+    
+    return (
+      <div className="relative w-48 h-48 mx-auto mb-6">
+        <svg width="192" height="192" viewBox="0 0 192 192" className="transform -rotate-90">
+          {ohaengElements.map((element, index) => {
+            const percentage = (element.strength / total) * 100
+            const angle = (percentage / 100) * 360
+            const largeArcFlag = angle > 180 ? 1 : 0
+            
+            const x1 = 96 + 80 * Math.cos(currentAngle * Math.PI / 180)
+            const y1 = 96 + 80 * Math.sin(currentAngle * Math.PI / 180)
+            const x2 = 96 + 80 * Math.cos((currentAngle + angle) * Math.PI / 180)
+            const y2 = 96 + 80 * Math.sin((currentAngle + angle) * Math.PI / 180)
+            
+            const path = `M 96 96 L ${x1} ${y1} A 80 80 0 ${largeArcFlag} 1 ${x2} ${y2} Z`
+            
+            currentAngle += angle
+            
+            return (
+              <path
+                key={index}
+                d={path}
+                fill={`url(#${element.name.replace(/[()]/g, '')})`}
+                stroke="white"
+                strokeWidth="2"
+                className="hover:opacity-80 transition-opacity cursor-pointer"
+              />
+            )
+          })}
+        </svg>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center p-6 bg-white/5 rounded-xl border border-white/10">
-            <div className="text-4xl mb-3">📅</div>
-            <h4 className="text-lg font-semibold text-purple-300 mb-2">탄생의 달</h4>
-            <p className="text-gray-200">{getBirthDateDescription()}</p>
-            <p className="text-sm text-gray-400 mt-2">{birthDate}</p>
-          </div>
-          
-          <div className="text-center p-6 bg-white/5 rounded-xl border border-white/10">
-            <div className="text-4xl mb-3">⏰</div>
-            <h4 className="text-lg font-semibold text-purple-300 mb-2">운명의 시간</h4>
-            <p className="text-gray-200">{birthTime}</p>
-            <p className="text-sm text-gray-400 mt-2">우주의 기운이 가장 강했던 순간</p>
-          </div>
-          
-          <div className="text-center p-6 bg-white/5 rounded-xl border border-white/10">
-            <div className="text-4xl mb-3">📍</div>
-            <h4 className="text-lg font-semibold text-purple-300 mb-2">기운의 땅</h4>
-            <p className="text-gray-200">{birthPlace}</p>
-            <p className="text-sm text-gray-400 mt-2">당신의 뿌리가 자리잡은 곳</p>
+        {/* 그라데이션 정의 */}
+        <defs>
+          {ohaengElements.map((element) => (
+            <linearGradient key={element.name} id={element.name.replace(/[()]/g, '')} x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor={element.color.split(' ')[1]} />
+              <stop offset="100%" stopColor={element.color.split(' ')[3]} />
+            </linearGradient>
+          ))}
+        </defs>
+        
+        {/* 중앙 텍스트 */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-white">오행</div>
+            <div className="text-sm text-gray-300">분석</div>
           </div>
         </div>
       </div>
+    )
+  }
 
-      {/* 오행 분석 - 시각적 표현 */}
-      <div className="bg-gradient-to-r from-green-500/10 via-blue-500/10 to-purple-500/10 rounded-2xl p-8 border border-green-400/30">
-        <div className="text-center mb-8">
-          <h3 className="text-2xl font-bold text-green-300 mb-2">🌿 오행 기운 분석</h3>
-          <p className="text-gray-400 italic">당신 안에 흐르는 우주의 기운들</p>
+  return (
+    <div className={`space-y-6 ${className}`}>
+      {/* 사주 분석 요약 */}
+      <div className="bg-gradient-to-r from-blue-500/10 to-indigo-500/10 rounded-2xl p-6 border border-blue-400/30">
+        <div className="text-center mb-6">
+          <h3 className="text-2xl font-bold text-blue-300 mb-2">🔮 사주 분석</h3>
+          <p className="text-gray-400 italic">생년월일시가 말하는 당신의 운명 이야기</p>
         </div>
         
-        <div className="space-y-6">
+        {/* 생년월일 감성적 표현 */}
+        <div className="text-center mb-6">
+          <p className="text-gray-200 text-lg leading-relaxed italic">
+            {getBirthDateDescription()}
+          </p>
+        </div>
+        
+        {/* 오행 파이 차트 */}
+        <div className="mb-6">
+          <h4 className="text-lg font-semibold text-blue-300 mb-4 text-center">🌟 오행 기운 분석</h4>
+          {renderPieChart()}
+        </div>
+        
+        {/* 오행 요소별 상세 설명 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {ohaengElements.map((element, index) => (
-            <div key={element.name} className="group">
-              <div className="flex items-center gap-4 p-6 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300">
-                {/* 오행 아이콘 */}
-                <div className="flex-shrink-0 w-16 h-16 rounded-full bg-gradient-to-r from-white/20 to-white/10 flex items-center justify-center text-3xl">
-                  {element.icon}
-                </div>
-                
-                {/* 오행 정보 */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-3">
-                    <h4 className="text-xl font-semibold text-green-300">
-                      {element.name}
-                    </h4>
-                    <span className="text-sm text-gray-400 bg-gray-700 px-3 py-1 rounded-full">
-                      {element.strength}%
-                    </span>
-                  </div>
-                  
-                  <p className="text-gray-200 mb-3">{element.description}</p>
-                  
-                  {/* 키워드들 */}
-                  <div className="flex flex-wrap gap-2">
-                    {element.keywords.map((keyword, idx) => (
-                      <span 
-                        key={idx} 
-                        className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full border border-green-400/30"
-                      >
-                        {keyword}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* 강도 바 */}
-                <div className="flex-shrink-0 w-32">
-                  <div className="w-full bg-gray-700 rounded-full h-3">
-                    <div 
-                      className={`h-3 bg-gradient-to-r ${element.color} rounded-full transition-all duration-1000 ease-out`}
-                      style={{ width: `${element.strength}%` }}
-                    />
-                  </div>
-                  <p className="text-center text-xs text-gray-400 mt-1">{element.strength}%</p>
+            <div key={index} className="bg-white/5 rounded-xl p-4 border border-white/10 hover:bg-white/10 transition-all duration-300">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="text-2xl">{element.icon}</div>
+                <div>
+                  <h5 className="text-lg font-semibold text-blue-300">{element.name}</h5>
+                  <div className="text-sm text-gray-400">{element.description}</div>
                 </div>
               </div>
-              
-              {/* 호버 시 상세 설명 */}
-              <div className="mt-3 p-4 bg-white/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <p className="text-sm text-gray-300 leading-relaxed">
-                  {element.name === '목(木)' && '목의 기운이 강한 당신은 끊임없이 성장하고 확장하려는 욕구가 강합니다. 새로운 도전을 두려워하지 않고, 창의적인 아이디어로 주변을 놀라게 하는 타입입니다.'}
-                  {element.name === '화(火)' && '화의 기운이 넘치는 당신은 타고난 리더십과 카리스마를 가지고 있습니다. 열정적이고 에너지 넘치는 성격으로, 주변 사람들을 끌어들이는 매력이 있습니다.'}
-                  {element.name === '토(土)' && '토의 기운으로 안정감이 넘치는 당신은 신뢰할 수 있고 책임감이 강합니다. 균형 잡힌 사고와 조화를 추구하는 성향으로, 주변 사람들에게 안도감을 제공합니다.'}
-                  {element.name === '금(金)' && '금의 기운으로 정의감이 강한 당신은 원칙을 중시하고 정직한 성격입니다. 결단력 있고 정리정돈을 잘하며, 공정한 판단으로 존경받는 타입입니다.'}
-                  {element.name === '수(水)' && '수의 기운으로 지혜가 깃든 당신은 직관적이고 깊이 있는 사고를 합니다. 유연하고 적응력이 뛰어나며, 상황에 따라 지혜롭게 대처하는 능력이 있습니다.'}
-                </p>
+              <div className="mb-3">
+                <div className="flex justify-between text-sm text-gray-300 mb-1">
+                  <span>강도</span>
+                  <span>{element.strength}%</span>
+                </div>
+                <div className="w-full bg-gray-700 rounded-full h-2">
+                  <div 
+                    className={`h-2 rounded-full bg-gradient-to-r ${element.color}`}
+                    style={{ width: `${element.strength}%` }}
+                  ></div>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {element.keywords.slice(0, 3).map((keyword, idx) => (
+                  <span key={idx} className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full text-xs border border-blue-400/30">
+                    {keyword}
+                  </span>
+                ))}
               </div>
             </div>
           ))}
