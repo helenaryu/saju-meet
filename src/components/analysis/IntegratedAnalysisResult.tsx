@@ -129,15 +129,6 @@ export default function IntegratedAnalysisResult({
       <div className="max-w-6xl mx-auto">
         {/* 상단 요약 카드 영역 */}
         <div className="bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-red-500/10 rounded-3xl p-8 mb-8 text-center border border-amber-400/30">
-          <div className="flex items-center justify-center mb-6">
-            {uploadedImage && (
-              <img 
-                src={uploadedImage} 
-                alt="프로필" 
-                className="w-24 h-24 rounded-full object-cover border-4 border-amber-400 shadow-lg"
-              />
-            )}
-          </div>
           <h1 className="text-4xl font-bold text-amber-400 mb-4">
             ✨ {profileData.nickname || "사용자"}님의 운명 분석 ✨
           </h1>
@@ -162,11 +153,32 @@ export default function IntegratedAnalysisResult({
           </div>
         </div>
 
+        {/* 총합 관상/사주 분석 요약 - 관상 분석 리포트 위로 이동 */}
+        <div className="bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-red-500/10 rounded-3xl p-8 mb-8 border border-amber-400/30">
+          <div className="text-center mb-6">
+            <h2 className="text-3xl font-bold text-amber-300 mb-2">📊 총합 관상/사주 분석</h2>
+            <p className="text-gray-400 italic">두 분석을 종합한 핵심 요약</p>
+          </div>
+          
+          <div className="text-center text-gray-200 leading-relaxed text-lg">
+            <p className="mb-4">
+              관상 분석 결과, 당신은 {getGender(profileData.gender) === 'male' ? '균형 잡힌 얼굴 형태로 감정과 이성의 조화가 잘 이루어진 성향' : '부드럽고 조화로운 얼굴 형태로 따뜻하고 포용력 있는 성향'}을 가지고 있습니다. 
+              사주 분석에서는 {sajuResults.length > 0 ? sajuResults[0].keyword : '창의성'}과 {sajuResults.length > 1 ? sajuResults[1].keyword : '성장'}의 기운이 강하게 나타나고 있어, 
+              연애에서도 이러한 특성을 잘 활용할 수 있을 것입니다.
+            </p>
+            <p>
+              두 분석을 종합하면, 당신은 상대방과의 깊이 있는 교감을 추구하며, 함께 성장해나가는 관계를 만드는 데 탁월한 능력을 가지고 있습니다. 
+              특히 감정적 안정성과 지적 교류를 모두 중시하는 균형 잡힌 연애 스타일을 가지고 있어, 
+              장기적인 관계 형성에 매우 적합한 성향을 보여줍니다.
+            </p>
+          </div>
+        </div>
+
         {/* 관상 분석 섹션 */}
         <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-3xl p-8 mb-8 border border-green-400/30">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-green-300 mb-2">👁️ 관상 분석 리포트</h2>
-            <p className="text-gray-400 italic">AI가 분석한 당신의 얼굴이 전하는 메시지</p>
+            <p className="text-gray-400 italic">AI가 분석한 당신의 얼굴이 전하는 마법 같은 메시지</p>
           </div>
           
           <FaceReadingVisual 
@@ -175,17 +187,50 @@ export default function IntegratedAnalysisResult({
             className="mb-6"
           />
           
-          {/* 관상 키워드 상세 설명 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
-            {faceReadingResults.map((result, index) => (
-              <div key={index} className="bg-white/5 rounded-xl p-4 border border-white/10 hover:bg-white/10 transition-all duration-300">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="text-2xl">✨</div>
-                  <h4 className="text-lg font-semibold text-green-300">{result.keyword}</h4>
+          {/* 관상 키워드 상세 설명 - 더 상세하고 감성적으로 작성 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+            {faceReadingResults.slice(0, 2).map((result, index) => (
+              <div key={index} className="bg-white/5 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="text-3xl">✨</div>
+                  <h4 className="text-xl font-semibold text-green-300">{result.keyword}</h4>
                 </div>
-                <p className="text-gray-200 text-sm leading-relaxed">{result.description}</p>
+                <div className="space-y-3 text-gray-200 text-base leading-relaxed">
+                  <p>당신의 {result.keyword}한 특성은 주변 사람들에게 따뜻한 에너지를 전달합니다. 마치 봄날의 햇살처럼 자연스럽게 사람들의 마음을 녹여내는 힘이 있어요.</p>
+                  <p>이러한 매력은 연애에서도 상대방의 마음을 자연스럽게 끌어당기는 힘이 되어줄 거예요. 특히 첫 만남에서부터 상대방이 당신에게 호감을 느끼게 되는 이유가 바로 이 {result.keyword}한 특성 때문일 거예요.</p>
+                  <p>관상학적으로 볼 때, 이 특성은 당신의 얼굴에서 가장 빛나는 부분으로, 연애에서 큰 강점이 될 것입니다.</p>
+                </div>
               </div>
             ))}
+          </div>
+
+          {/* 관상 종합 분석 - 더 상세하고 감성적으로 */}
+          <div className="mt-8 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-2xl p-6 border border-green-400/30">
+            <h3 className="text-xl font-semibold text-green-300 mb-4 text-center">🔮 관상 종합 분석</h3>
+            <div className="text-center text-gray-200 leading-relaxed">
+              <p className="mb-3">
+                당신의 얼굴을 보면 마치 아름다운 풍경화를 보는 것 같은 느낌이 들어요. 각 부위가 조화롭게 어우러져 있어서, 
+                전체적으로 균형 잡힌 인상을 주고 있습니다. 특히 뺨과 턱 부위의 균형이 좋아서, 
+                연애에서 안정감과 따뜻함을 제공할 수 있는 분이라는 것을 알 수 있어요.
+              </p>
+              <p>
+                관상학적으로 볼 때, 당신은 감정적 안정성과 지적 깊이를 동시에 가지고 있는 사람입니다. 
+                이는 연애에서 상대방에게 안전감을 주면서도, 함께 성장할 수 있는 깊이 있는 관계를 만들어갈 수 있다는 의미예요. 
+                당신의 얼굴이 말하는 이야기는 "진정성 있는 사랑"을 추구하는 사람이라는 것입니다.
+              </p>
+            </div>
+          </div>
+
+          {/* 주요 키워드 섹션 추가 */}
+          <div className="mt-6 text-center">
+            <h4 className="text-lg font-semibold text-green-300 mb-3">🌟 주요 키워드</h4>
+            <div className="flex flex-wrap justify-center gap-2">
+              {faceReadingResults.slice(0, 5).map((result, index) => (
+                <span key={index} className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm border border-green-400">
+                  {result.keyword}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -204,7 +249,7 @@ export default function IntegratedAnalysisResult({
             className="mb-6"
           />
           
-          {/* 사주 키워드 상세 설명 */}
+          {/* 사주 키워드 상세 설명 - 더 상세하게 */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
             {sajuResults.map((result, index) => (
               <div key={index} className="bg-white/5 rounded-xl p-4 border border-white/10 hover:bg-white/10 transition-all duration-300">
@@ -222,7 +267,7 @@ export default function IntegratedAnalysisResult({
         <div className="bg-gradient-to-r from-pink-500/10 via-purple-500/10 to-blue-500/10 rounded-3xl p-8 mb-8 border border-pink-400/30">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-pink-300 mb-2">💕 통합 연애 분석</h2>
-            <p className="text-gray-400 italic">관상과 사주가 만나 전하는 연애 이야기</p>
+            <p className="text-gray-400 italic">관상과 사주가 만나 전하는 마법 같은 연애 이야기</p>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -253,7 +298,7 @@ export default function IntegratedAnalysisResult({
             </div>
           </div>
           
-          {/* 연애 조언 */}
+          {/* 연애 조언 - 더 상세하고 감성적으로 */}
           <div className="mt-8 bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-2xl p-6 border border-pink-400/30">
             <h3 className="text-xl font-semibold text-pink-300 mb-4 text-center">💡 연애 조언</h3>
             <div className="text-center text-gray-200 leading-relaxed">
@@ -266,27 +311,6 @@ export default function IntegratedAnalysisResult({
                 당신의 따뜻함과 공감 능력은 상대방에게 안전한 항구가 되어줄 거예요. ✨
               </p>
             </div>
-          </div>
-        </div>
-
-        {/* 총합 관상/사주 분석 요약 */}
-        <div className="bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-red-500/10 rounded-3xl p-8 mb-8 border border-amber-400/30">
-          <div className="text-center mb-6">
-            <h2 className="text-3xl font-bold text-amber-300 mb-2">📊 총합 관상/사주 분석</h2>
-            <p className="text-gray-400 italic">두 분석을 종합한 핵심 요약</p>
-          </div>
-          
-          <div className="text-center text-gray-200 leading-relaxed text-lg">
-            <p className="mb-4">
-              관상 분석 결과, 당신은 {getGender(profileData.gender) === 'male' ? '균형 잡힌 얼굴 형태로 감정과 이성의 조화가 잘 이루어진 성향' : '부드럽고 조화로운 얼굴 형태로 따뜻하고 포용력 있는 성향'}을 가지고 있습니다. 
-              사주 분석에서는 {sajuResults.length > 0 ? sajuResults[0].keyword : '창의성'}과 {sajuResults.length > 1 ? sajuResults[1].keyword : '성장'}의 기운이 강하게 나타나고 있어, 
-              연애에서도 이러한 특성을 잘 활용할 수 있을 것입니다.
-            </p>
-            <p>
-              두 분석을 종합하면, 당신은 상대방과의 깊이 있는 교감을 추구하며, 함께 성장해나가는 관계를 만드는 데 탁월한 능력을 가지고 있습니다. 
-              특히 감정적 안정성과 지적 교류를 모두 중시하는 균형 잡힌 연애 스타일을 가지고 있어, 
-              장기적인 관계 형성에 매우 적합한 성향을 보여줍니다.
-            </p>
           </div>
         </div>
 
