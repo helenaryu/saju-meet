@@ -128,26 +128,26 @@ export default function SajuReadingVisual({
     }
     
     return (
-      <div className="relative w-72 h-72 mx-auto mb-8">
+      <div className="relative w-96 h-96 mx-auto mb-8">
         {/* 심플한 파이 차트 */}
-        <svg width="288" height="288" viewBox="0 0 288 288" className="transform -rotate-90">
+        <svg width="384" height="384" viewBox="0 0 384 384" className="transform -rotate-90">
           {ohaengElements.map((element, index) => {
             const percentage = (element.strength / total) * 100
             const angle = (percentage / 100) * 360
             const largeArcFlag = angle > 180 ? 1 : 0
             
-            const x1 = 144 + 100 * Math.cos(currentAngle * Math.PI / 180)
-            const y1 = 144 + 100 * Math.sin(currentAngle * Math.PI / 180)
-            const x2 = 144 + 100 * Math.cos((currentAngle + angle) * Math.PI / 180)
-            const y2 = 144 + 100 * Math.sin((currentAngle + angle) * Math.PI / 180)
+            const x1 = 192 + 130 * Math.cos(currentAngle * Math.PI / 180)
+            const y1 = 192 + 130 * Math.sin(currentAngle * Math.PI / 180)
+            const x2 = 192 + 130 * Math.cos((currentAngle + angle) * Math.PI / 180)
+            const y2 = 192 + 130 * Math.sin((currentAngle + angle) * Math.PI / 180)
             
-            const path = `M 144 144 L ${x1} ${y1} A 100 100 0 ${largeArcFlag} 1 ${x2} ${y2} Z`
+            const path = `M 192 192 L ${x1} ${y1} A 130 130 0 ${largeArcFlag} 1 ${x2} ${y2} Z`
             
             // 퍼센트 텍스트 위치 계산
             const textAngle = currentAngle + (angle / 2)
-            const textRadius = 70
-            const textX = 144 + textRadius * Math.cos(textAngle * Math.PI / 180)
-            const textY = 144 + textRadius * Math.cos(textAngle * Math.PI / 180)
+            const textRadius = 90
+            const textX = 192 + textRadius * Math.cos(textAngle * Math.PI / 180)
+            const textY = 192 + textRadius * Math.sin(textAngle * Math.PI / 180)
             
             currentAngle += angle
             
@@ -195,17 +195,17 @@ export default function SajuReadingVisual({
             // 정보 박스 위치 계산 (4방향)
             let boxX, boxY
             if (segmentAngle >= 0 && segmentAngle < 90) {
-              boxX = 144 + 140
-              boxY = 144 - 140
+              boxX = 192 + 180
+              boxY = 192 - 180
             } else if (segmentAngle >= 90 && segmentAngle < 180) {
-              boxX = 144 - 140
-              boxY = 144 - 140
+              boxX = 192 - 180
+              boxY = 192 - 180
             } else if (segmentAngle >= 180 && segmentAngle < 270) {
-              boxX = 144 - 140
-              boxY = 144 + 140
+              boxX = 192 - 180
+              boxY = 192 + 180
             } else {
-              boxX = 144 + 140
-              boxY = 144 + 140
+              boxX = 192 + 180
+              boxY = 192 + 180
             }
             
             return (
@@ -245,43 +245,9 @@ export default function SajuReadingVisual({
         </div>
         
         {/* 오행 파이 차트 */}
-        <div className="mb-6">
-          <h4 className="text-lg font-semibold text-blue-300 mb-4 text-center">🌟 오행 기운 분석</h4>
+        <div className="mb-8">
+          <h4 className="text-xl font-semibold text-blue-300 mb-6 text-center">🌟 오행 기운 분석</h4>
           {renderPieChart()}
-        </div>
-        
-        {/* 오행 요소별 상세 설명 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {ohaengElements.map((element, index) => (
-            <div key={index} className="bg-white/5 rounded-xl p-4 border border-white/10 hover:bg-white/10 transition-all duration-300">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="text-2xl">{element.icon}</div>
-                <div>
-                  <h5 className="text-lg font-semibold text-blue-300">{element.name}</h5>
-                  <div className="text-sm text-gray-400">{element.description}</div>
-                </div>
-              </div>
-              <div className="mb-3">
-                <div className="flex justify-between text-sm text-gray-300 mb-1">
-                  <span>강도</span>
-                  <span>{element.strength}%</span>
-                </div>
-                <div className="w-full bg-gray-700 rounded-full h-2">
-                  <div 
-                    className={`h-2 rounded-full bg-gradient-to-r ${element.color}`}
-                    style={{ width: `${element.strength}%` }}
-                  ></div>
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-1">
-                {element.keywords.slice(0, 3).map((keyword, idx) => (
-                  <span key={idx} className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full text-xs border border-blue-400/30">
-                    {keyword}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
         </div>
       </div>
 
