@@ -6,7 +6,7 @@ interface FacePoint {
   id: string
   label: string
   analysis: string
-  category: 'forehead' | 'eyes' | 'nose' | 'mouth' | 'cheeks' | 'chin'
+  category: 'forehead' | 'eyes' | 'nose' | 'mouth' | 'cheeks' | 'chin' | 'ears'
 }
 
 interface FaceReadingVisualProps {
@@ -84,7 +84,8 @@ export default function FaceReadingVisual({ gender, facePoints, className = '' }
       nose: 'from-green-400 to-emerald-500',
       mouth: 'from-pink-400 to-rose-500',
       cheeks: 'from-purple-400 to-violet-500',
-      chin: 'from-teal-400 to-cyan-500'
+      chin: 'from-teal-400 to-cyan-500',
+      ears: 'from-indigo-400 to-purple-500'
     }
     return colors[category as keyof typeof colors] || 'from-gray-400 to-gray-500'
   }
