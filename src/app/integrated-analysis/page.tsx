@@ -1,18 +1,18 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import IntegratedAnalysisInput from '@/components/analysis/IntegratedAnalysisInput'
 import AnalysisLoadingStep from '@/components/analysis/AnalysisLoadingStep'
 import AnalysisResultStep from '@/components/analysis/AnalysisResultStep'
-import { ProfileData, SajuData } from '@/types'
+import { ProfileData, SajuData, FaceReadingKeyword, SajuKeyword } from '@/types'
 
 export default function IntegratedAnalysisPage() {
   const router = useRouter()
   const [integratedAnalysisStep, setIntegratedAnalysisStep] = useState<"input" | "analyzing" | "result">("input")
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
-  const [faceReadingResults, setFaceReadingResults] = useState<Array<{ keyword: string; description: string }>>([])
-  const [sajuResults, setSajuResults] = useState<Array<{ keyword: string; description: string }>>([])
+  const [faceReadingResults, setFaceReadingResults] = useState<FaceReadingKeyword[]>([])
+  const [sajuResults, setSajuResults] = useState<SajuKeyword[]>([])
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [analysisProgress, setAnalysisProgress] = useState(3)
   const [isSajuAnalyzing, setIsSajuAnalyzing] = useState(false)
@@ -42,6 +42,29 @@ export default function IntegratedAnalysisPage() {
 
   const [localUser, setLocalUser] = useState<any>(null)
 
+  // Supabase 세션 확인 (선택사항)
+  const checkSupabaseSession = useCallback(async () => {
+    try {
+      const { supabase } = await import('@/lib/supabase')
+      if (supabase) {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        if (session && !localUser) {
+          // Supabase 세션이 있지만 로컬 사용자 정보가 없는 경우
+          const user = {
+            id: session.user.id,
+            email: session.user.email || '',
+            nickname: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || '사용자',
+            createdAt: session.user.created_at || new Date().toISOString()
+          }
+          setLocalUser(user)
+          localStorage.setItem('localUser', JSON.stringify(user))
+        }
+      }
+    } catch (error) {
+      console.log('Supabase 세션 확인 실패:', error)
+    }
+  }, [localUser])
+
   // 페이지 로드 시 사용자 정보 확인
   useEffect(() => {
     // 로컬 스토리지에서 사용자 정보 확인
@@ -60,34 +83,11 @@ export default function IntegratedAnalysisPage() {
     } else {
       // 사용자 정보가 없으면 로그인 페이지로 리다이렉트
       router.push('/')
-      return
-    }
-
-    // Supabase 세션 확인 (선택사항)
-    const checkSupabaseSession = async () => {
-      try {
-        const { supabase } = await import('@/lib/supabase')
-        if (supabase) {
-          const { data: { session }, error } = await supabase.auth.getSession()
-          if (session && !localUser) {
-            // Supabase 세션이 있지만 로컬 사용자 정보가 없는 경우
-            const user = {
-              id: session.user.id,
-              email: session.user.email || '',
-              nickname: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || '사용자',
-              createdAt: session.user.created_at || new Date().toISOString()
-            }
-            setLocalUser(user)
-            localStorage.setItem('localUser', JSON.stringify(user))
-          }
-        }
-      } catch (error) {
-        console.log('Supabase 세션 확인 실패:', error)
-      }
+        return
     }
 
     checkSupabaseSession()
-  }, [router])
+  }, [router, localUser, checkSupabaseSession])
 
   const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -173,15 +173,15 @@ export default function IntegratedAnalysisPage() {
       const { FACE_READING_KEYWORDS, SAJU_KEYWORDS } = await import('@/constants/data')
       const shuffledFace = [...FACE_READING_KEYWORDS].sort(() => 0.5 - Math.random())
       const selectedFace = shuffledFace.slice(0, Math.floor(Math.random() * 3) + 3)
-      setFaceReadingResults(selectedFace.map(keyword => ({
-        keyword,
+      setFaceReadingResults(selectedFace.map(item => ({
+        keyword: item.keyword,
         description: '관상 분석 결과입니다.'
       })))
       
       const shuffledSaju = [...SAJU_KEYWORDS].sort(() => 0.5 - Math.random())
       const selectedSaju = shuffledSaju.slice(0, Math.floor(Math.random() * 3) + 3)
-      setSajuResults(selectedSaju.map(keyword => ({
-        keyword,
+      setSajuResults(selectedSaju.map(item => ({
+        keyword: item.keyword,
         description: '사주 분석 결과입니다.'
       })))
       

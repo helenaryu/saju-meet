@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, Suspense } from "react"
+import { useState, useEffect, Suspense, useCallback } from "react"
 import { AppStep, ProfileData, SajuData } from "@/types"
 import { FACE_READING_KEYWORDS, SAJU_KEYWORDS, IDEAL_TYPE_KEYWORDS } from "@/constants/data"
 import { useSearchParams, useRouter } from "next/navigation"
@@ -384,7 +384,7 @@ function FaceReadingAppContent() {
   }, [searchParams])
 
   // Supabase 세션 확인 함수
-  const checkSupabaseSession = async () => {
+  const checkSupabaseSession = useCallback(async () => {
     try {
       const { data: { session }, error } = await supabase.auth.getSession()
       
@@ -420,7 +420,7 @@ function FaceReadingAppContent() {
       console.error('세션 확인 예외:', error)
       setCurrentStep('onboarding')
     }
-  }
+  }, [supabase])
 
   // 페이지 초기 로딩 시 로그인 상태 확인
   useEffect(() => {
@@ -438,7 +438,7 @@ function FaceReadingAppContent() {
       // Supabase가 없으면 onboarding으로 유지
       setCurrentStep('onboarding')
     }
-  }, [supabaseAvailable, supabase, localUser, isLoggedIn])
+  }, [supabaseAvailable, supabase, localUser, isLoggedIn, checkSupabaseSession])
 
   // 로컬 인증 상태 (Supabase 없이도 작동)
   const handleLocalLogin = (email: string, password: string) => {
