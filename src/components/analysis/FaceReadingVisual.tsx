@@ -92,14 +92,6 @@ export default function FaceReadingVisual({ gender, facePoints, className = '' }
 
   return (
     <div className={`space-y-6 ${className}`}>
-      {/* 관상 분석 요약 */}
-      <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-2xl p-6 border border-green-400/30">
-        <div className="text-center mb-6">
-          <h3 className="text-2xl font-bold text-green-300 mb-2">👁️ 관상 분석</h3>
-          <p className="text-gray-400 italic">얼굴 부위별 의미와 연애 성향</p>
-        </div>
-      </div>
-      
       {/* 관상 종합 분석 */}
       <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-2xl p-6 border border-green-400/30">
         <h3 className="text-xl font-semibold text-green-300 mb-4 text-center">📋 관상 종합 분석</h3>
