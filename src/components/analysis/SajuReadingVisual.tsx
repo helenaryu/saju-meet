@@ -113,15 +113,22 @@ export default function SajuReadingVisual({
     return `${monthDescriptions[month as keyof typeof monthDescriptions]} ${day}일, 당신이 이 세상에 태어난 특별한 순간입니다.`
   }
 
-  // 파이 차트 렌더링 함수
+  // 3D 도넛 차트 렌더링 함수
   const renderPieChart = () => {
     const total = ohaengElements.reduce((sum, element) => sum + element.strength, 0)
     let currentAngle = 0
     
     return (
-      <div className="relative w-48 h-48 mx-auto mb-6">
-        <svg width="192" height="192" viewBox="0 0 192 192" className="transform -rotate-90">
+      <div className="relative w-80 h-80 mx-auto mb-8">
+        {/* 3D 도넛 차트 */}
+        <svg width="320" height="320" viewBox="0 0 320 320" className="transform -rotate-90">
           <defs>
+            {/* 3D 효과를 위한 그림자 필터 */}
+            <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="3" dy="3" stdDeviation="3" floodColor="rgba(0,0,0,0.3)"/>
+            </filter>
+            
+            {/* 그라데이션 정의 */}
             {ohaengElements.map((element) => (
               <linearGradient key={element.name} id={element.name.replace(/[()]/g, '')} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor={element.color.split(' ')[1]} />
@@ -129,29 +136,58 @@ export default function SajuReadingVisual({
               </linearGradient>
             ))}
           </defs>
+          
+          {/* 도넛 차트 세그먼트들 */}
           {ohaengElements.map((element, index) => {
             const percentage = (element.strength / total) * 100
             const angle = (percentage / 100) * 360
             const largeArcFlag = angle > 180 ? 1 : 0
             
-            const x1 = 96 + 80 * Math.cos(currentAngle * Math.PI / 180)
-            const y1 = 96 + 80 * Math.sin(currentAngle * Math.PI / 180)
-            const x2 = 96 + 80 * Math.cos((currentAngle + angle) * Math.PI / 180)
-            const y2 = 96 + 80 * Math.sin((currentAngle + angle) * Math.PI / 180)
+            const x1 = 160 + 120 * Math.cos(currentAngle * Math.PI / 180)
+            const y1 = 160 + 120 * Math.sin(currentAngle * Math.PI / 180)
+            const x2 = 160 + 120 * Math.cos((currentAngle + angle) * Math.PI / 180)
+            const y2 = 160 + 120 * Math.sin((currentAngle + angle) * Math.PI / 180)
             
-            const path = `M 96 96 L ${x1} ${y1} A 80 80 0 ${largeArcFlag} 1 ${x2} ${y2} Z`
+            // 도넛 차트를 위한 내부 반지름
+            const innerRadius = 60
+            const x1Inner = 160 + innerRadius * Math.cos(currentAngle * Math.PI / 180)
+            const y1Inner = 160 + innerRadius * Math.sin(currentAngle * Math.PI / 180)
+            const x2Inner = 160 + innerRadius * Math.cos((currentAngle + angle) * Math.PI / 180)
+            const y2Inner = 160 + innerRadius * Math.sin((currentAngle + angle) * Math.PI / 180)
+            
+            // 도넛 차트 경로
+            const path = `M ${x1} ${y1} A 120 120 0 ${largeArcFlag} 1 ${x2} ${y2} L ${x2Inner} ${y2Inner} A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 0 ${x1Inner} ${y1Inner} Z`
+            
+            // 퍼센트 텍스트 위치 계산
+            const textAngle = currentAngle + (angle / 2)
+            const textRadius = 100
+            const textX = 160 + textRadius * Math.cos(textAngle * Math.PI / 180)
+            const textY = 160 + textRadius * Math.sin(textAngle * Math.PI / 180)
             
             currentAngle += angle
             
             return (
-              <path
-                key={index}
-                d={path}
-                fill={`url(#${element.name.replace(/[()]/g, '')})`}
-                stroke="white"
-                strokeWidth="2"
-                className="hover:opacity-80 transition-opacity cursor-pointer"
-              />
+              <g key={index}>
+                <path
+                  d={path}
+                  fill={`url(#${element.name.replace(/[()]/g, '')})`}
+                  stroke="white"
+                  strokeWidth="2"
+                  filter="url(#shadow)"
+                  className="hover:opacity-80 transition-opacity cursor-pointer"
+                />
+                {/* 퍼센트 텍스트 */}
+                <text
+                  x={textX}
+                  y={textY}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  className="text-sm font-bold fill-white"
+                  style={{ fontSize: '14px' }}
+                >
+                  {Math.round(percentage)}%
+                </text>
+              </g>
             )
           })}
         </svg>
@@ -162,6 +198,63 @@ export default function SajuReadingVisual({
             <div className="text-2xl font-bold text-white">오행</div>
             <div className="text-sm text-gray-300">분석</div>
           </div>
+        </div>
+        
+        {/* 연결선과 정보 박스들 */}
+        <div className="absolute inset-0">
+          {ohaengElements.map((element, index) => {
+            const percentage = (element.strength / total) * 100
+            const angle = (percentage / 100) * 360
+            const totalAngle = ohaengElements.slice(0, index).reduce((sum, el) => sum + (el.strength / total) * 360, 0)
+            const segmentAngle = totalAngle + (angle / 2)
+            
+            // 연결선 시작점 (도넛 차트 가장자리)
+            const lineStartX = 160 + 140 * Math.cos(segmentAngle * Math.PI / 180)
+            const lineStartY = 160 + 140 * Math.sin(segmentAngle * Math.PI / 180)
+            
+            // 정보 박스 위치 계산
+            let boxX, boxY
+            if (segmentAngle >= 0 && segmentAngle < 90) {
+              boxX = lineStartX + 40
+              boxY = lineStartY - 40
+            } else if (segmentAngle >= 90 && segmentAngle < 180) {
+              boxX = lineStartX - 40
+              boxY = lineStartY - 40
+            } else if (segmentAngle >= 180 && segmentAngle < 270) {
+              boxX = lineStartX - 40
+              boxY = lineStartY + 40
+            } else {
+              boxX = lineStartX + 40
+              boxY = lineStartY + 40
+            }
+            
+            return (
+              <div key={index} className="absolute" style={{ left: boxX - 60, top: boxY - 30 }}>
+                {/* 연결선 */}
+                <svg className="absolute" width="100" height="100" style={{ left: -50, top: -50 }}>
+                  <line
+                    x1="50"
+                    y1="50"
+                    x2={lineStartX - boxX + 50}
+                    y2={lineStartY - boxY + 50}
+                    stroke="rgba(255,255,255,0.6)"
+                    strokeWidth="2"
+                  />
+                </svg>
+                
+                {/* 정보 박스 */}
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20 min-w-[120px]">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="text-lg">{element.icon}</div>
+                    <div className="text-sm font-bold text-white">{element.name}</div>
+                  </div>
+                  <div className="text-xs text-gray-300 leading-tight">
+                    {element.description}
+                  </div>
+                </div>
+              </div>
+            )
+          })}
         </div>
       </div>
     )
