@@ -155,3 +155,4 @@ export default function IdealMatchPage() {
     </div>
   )
 }
+

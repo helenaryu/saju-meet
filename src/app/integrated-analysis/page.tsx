@@ -67,6 +67,24 @@ export default function IntegratedAnalysisPage() {
 
   // 페이지 로드 시 사용자 정보 확인
   useEffect(() => {
+    // URL 파라미터에서 임시 인증 확인
+    const urlParams = new URLSearchParams(window.location.search)
+    const isTempAuth = urlParams.get('auth') === 'temp'
+    
+    if (isTempAuth) {
+      // 임시 인증 상태 - 테스트용 사용자 정보 생성
+      const tempUser = {
+        id: 'temp-user-' + Date.now(),
+        email: 'temp@example.com',
+        nickname: '테스트 사용자',
+        createdAt: new Date().toISOString()
+      }
+      setLocalUser(tempUser)
+      localStorage.setItem('localUser', JSON.stringify(tempUser))
+      console.log('✅ 임시 인증으로 접근 - 테스트 모드')
+      return
+    }
+    
     // 로컬 스토리지에서 사용자 정보 확인
     const savedUser = localStorage.getItem('localUser')
     if (savedUser) {
@@ -83,7 +101,7 @@ export default function IntegratedAnalysisPage() {
     } else {
       // 사용자 정보가 없으면 로그인 페이지로 리다이렉트
       router.push('/')
-        return
+      return
     }
 
     checkSupabaseSession()

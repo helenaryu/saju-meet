@@ -26,6 +26,14 @@ const supabaseAnonKey = process.env.SUPABASE_SUPABASE_ANON_KEY ||
                         process.env.SUPABASE_NEXT_PUBLIC_SUPABASE_ANON || 
                         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
+// 디버깅을 위한 로그
+if (typeof window !== 'undefined') {
+  console.log('🔧 Supabase 설정 확인:')
+  console.log('URL:', supabaseUrl ? '설정됨' : '설정되지 않음')
+  console.log('Anon Key:', supabaseAnonKey ? '설정됨' : '설정되지 않음')
+}
+
+// Supabase 클라이언트 생성 (설정이 없으면 null 반환)
 export const supabase = supabaseUrl && supabaseAnonKey 
   ? createClient(supabaseUrl, supabaseAnonKey, {
       auth: {
@@ -64,4 +72,14 @@ export const isSupabaseAvailable = () => {
 // 환경별 리다이렉트 URL 가져오기
 export const getAuthRedirectUrl = () => {
   return getRedirectUrl()
+}
+
+// 임시 인증 처리 함수 (Supabase가 설정되지 않은 경우)
+export const handleAuthWithoutSupabase = () => {
+  console.log('⚠️ Supabase가 설정되지 않아 임시 인증 처리 중...')
+  // 임시로 성공 상태를 시뮬레이션
+  return {
+    success: true,
+    message: 'Supabase 설정이 필요합니다. 환경 변수를 확인해주세요.'
+  }
 }
