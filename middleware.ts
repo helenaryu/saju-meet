@@ -5,7 +5,7 @@ export function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl
   
   // OAuth 코드가 있는 경우 즉시 콜백 페이지로 리다이렉트
-  if (pathname === '/' && searchParams?.get('code')) {
+  if (pathname === '/' && searchParams.get('code')) {
     const code = searchParams.get('code')
     const error = searchParams.get('error')
     const errorDescription = searchParams.get('error_description')
