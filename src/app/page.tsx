@@ -94,11 +94,31 @@ function FaceReadingAppContent() {
   const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
+      // 파일 크기 검증 (10MB 제한)
+      if (file.size > 10 * 1024 * 1024) {
+        alert('파일 크기는 10MB 이하여야 합니다.')
+        return
+      }
+      
+      // 파일 타입 검증
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+      if (!allowedTypes.includes(file.type)) {
+        alert('지원하지 않는 이미지 형식입니다. JPEG, PNG, WebP만 지원합니다.')
+        return
+      }
+      
       const reader = new FileReader()
       reader.onload = (e) => {
         const imageData = e.target?.result as string
-        setUploadedImage(imageData)
-        // 사진 업로드만 하고 분석은 하지 않음 (통합 분석 버튼에서 처리)
+        if (imageData) {
+          setUploadedImage(imageData)
+          // 사진 업로드만 하고 분석은 하지 않음 (통합 분석 버튼에서 처리)
+        } else {
+          alert('이미지 파일을 읽을 수 없습니다.')
+        }
+      }
+      reader.onerror = () => {
+        alert('이미지 파일 읽기 중 오류가 발생했습니다.')
       }
       reader.readAsDataURL(file)
     }
@@ -117,7 +137,13 @@ function FaceReadingAppContent() {
     try {
       // 이미지 파일을 File 객체로 변환
       const response = await fetch(uploadedImage)
+      if (!response.ok) {
+        throw new Error(`이미지 로드 실패: ${response.status}`)
+      }
       const blob = await response.blob()
+      if (blob.size === 0) {
+        throw new Error('이미지 파일이 비어있습니다.')
+      }
       const imageFile = new File([blob], 'profile-image.jpg', { type: 'image/jpeg' })
 
       // FormData 생성
@@ -135,10 +161,18 @@ function FaceReadingAppContent() {
       })
 
       if (!apiResponse.ok) {
-        throw new Error('API 호출에 실패했습니다.')
+        const errorText = await apiResponse.text()
+        console.error('API 응답 오류:', apiResponse.status, errorText)
+        throw new Error(`API 호출에 실패했습니다. (${apiResponse.status})`)
       }
 
-      const result = await apiResponse.json()
+      let result
+      try {
+        result = await apiResponse.json()
+      } catch (jsonError) {
+        console.error('JSON 파싱 오류:', jsonError)
+        throw new Error('서버 응답을 처리할 수 없습니다.')
+      }
       
       if (result.success) {
         // 관상 결과 저장
@@ -188,7 +222,13 @@ function FaceReadingAppContent() {
     try {
       // 이미지 파일을 File 객체로 변환
       const response = await fetch(imageData)
+      if (!response.ok) {
+        throw new Error(`이미지 로드 실패: ${response.status}`)
+      }
       const blob = await response.blob()
+      if (blob.size === 0) {
+        throw new Error('이미지 파일이 비어있습니다.')
+      }
       const imageFile = new File([blob], 'profile-image.jpg', { type: 'image/jpeg' })
 
       // FormData 생성 (기본값 사용)
@@ -202,10 +242,18 @@ function FaceReadingAppContent() {
       })
 
       if (!apiResponse.ok) {
-        throw new Error('API 호출에 실패했습니다.')
+        const errorText = await apiResponse.text()
+        console.error('API 응답 오류:', apiResponse.status, errorText)
+        throw new Error(`API 호출에 실패했습니다. (${apiResponse.status})`)
       }
 
-      const result = await apiResponse.json()
+      let result
+      try {
+        result = await apiResponse.json()
+      } catch (jsonError) {
+        console.error('JSON 파싱 오류:', jsonError)
+        throw new Error('서버 응답을 처리할 수 없습니다.')
+      }
       
       if (result.success) {
         // API 결과를 상태에 저장
@@ -372,21 +420,15 @@ function FaceReadingAppContent() {
 
   // URL 파라미터 감지하여 상태 업데이트 (간소화)
   useEffect(() => {
+    if (!searchParams) return
+    
     const auth = searchParams.get('auth')
-    const code = searchParams.get('code')
     
-    console.log('URL 파라미터 확인:', { auth, code })
-    
-    // OAuth 인증 코드가 있으면 콜백 페이지로 리다이렉트
-    if (code) {
-      console.log('OAuth 코드 감지, 콜백 페이지로 리다이렉트:', code)
-      // 즉시 리다이렉트
-      window.location.href = `/auth/callback?code=${code}`
-      return
-    }
+    console.log('URL 파라미터 확인:', { auth })
     
     if (auth === 'error') {
-      alert('인증에 실패했습니다. 다시 시도해주세요.')
+      const reason = searchParams.get('reason')
+      alert(`인증에 실패했습니다: ${reason || '알 수 없는 오류'}`)
       setIsAuthenticating(false)
       setAuthProvider(null)
       // URL 파라미터 정리

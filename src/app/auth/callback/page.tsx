@@ -24,7 +24,7 @@ function AuthCallbackContent() {
           setDebugInfo('Supabase 클라이언트가 null - 환경 변수 확인 필요')
           
           // 임시 인증 처리 - 코드가 있으면 성공으로 간주
-          const code = searchParams.get('code')
+          const code = searchParams?.get('code')
           if (code) {
             console.log('OAuth 코드가 있으므로 임시 인증 성공으로 처리')
             setTimeout(() => {
@@ -64,6 +64,16 @@ function AuthCallbackContent() {
         setDebugInfo('인증 콜백 처리 중...')
         
         // URL 파라미터 확인
+        if (!searchParams) {
+          console.error('❌ searchParams가 null입니다')
+          setError('URL 파라미터를 읽을 수 없습니다.')
+          setDebugInfo('searchParams null')
+          setTimeout(() => {
+            router.push('/?auth=error&reason=no_params')
+          }, 3000)
+          return
+        }
+        
         const code = searchParams.get('code')
         const errorParam = searchParams.get('error')
         const errorDescription = searchParams.get('error_description')
