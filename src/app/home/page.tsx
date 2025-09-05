@@ -75,6 +75,10 @@ export default function HomePage() {
     router.push('/integrated-analysis')
   }
 
+  const handleViewProfile = (userId: string, nickname: string) => {
+    router.push(`/other-profile?userId=${userId}&nickname=${nickname}`)
+  }
+
   // 로딩 중이거나 사용자 정보가 없는 경우
   if (!localUser) {
     return (
@@ -116,6 +120,62 @@ export default function HomePage() {
           <p className="text-gray-300 text-lg">
             이제 이상형 매칭과 더 많은 서비스를 이용할 수 있어요.
           </p>
+        </div>
+
+        {/* 매칭된 사용자들 */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-amber-400 mb-6 text-center">💕 매칭된 사용자들</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {dummyMatches.map((match) => (
+              <div
+                key={match.id}
+                className="bg-white/10 rounded-2xl p-6 hover:bg-white/20 transition-colors cursor-pointer"
+                onClick={() => handleViewProfile(match.id, match.name)}
+              >
+                <div className="flex items-center mb-4">
+                  <img
+                    src={match.photos[0]}
+                    alt={match.name}
+                    className="w-16 h-16 rounded-full object-cover border-2 border-amber-400"
+                  />
+                  <div className="ml-4">
+                    <h3 className="text-lg font-bold text-white">{match.name}</h3>
+                    <p className="text-gray-400 text-sm">{match.age}세 • {match.region}</p>
+                  </div>
+                </div>
+                
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm text-gray-400">전체 궁합</span>
+                    <span className="text-lg font-bold text-amber-400">{match.totalCompatibility}%</span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div
+                      className="bg-gradient-to-r from-pink-500 to-purple-500 h-2 rounded-full"
+                      style={{ width: `${match.totalCompatibility}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-1 mb-4">
+                  {match.keywords.slice(0, 3).map((keyword, index) => (
+                    <span
+                      key={index}
+                      className="px-2 py-1 bg-amber-500/20 text-amber-300 rounded-full text-xs"
+                    >
+                      {keyword}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="text-center">
+                  <button className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300">
+                    프로필 보기
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* 서비스 메뉴 */}

@@ -54,7 +54,10 @@ export const dummyMatches: MatchUser[] = [
     height: "163cm",
     education: "대학교 졸업",
     introduction: "안녕하세요! 긍정적인 에너지를 나누는 것을 좋아합니다.",
-    photos: ["/placeholder.svg", "/placeholder.svg"],
+    photos: [
+      "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face"
+    ],
     faceKeywords: ["온화한", "지적인"],
     sajuKeywords: ["안정 추구", "균형 감각"],
     faceAnalysis: "부드러운 인상으로 감성적 소통이 잘 맞음",
@@ -74,7 +77,10 @@ export const dummyMatches: MatchUser[] = [
     height: "178cm",
     education: "대학교 졸업",
     introduction: "새로운 사람들과의 만남을 즐겁게 생각합니다.",
-    photos: ["/placeholder.svg", "/placeholder.svg"],
+    photos: [
+      "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face"
+    ],
     faceKeywords: ["카리스마", "세련된"],
     sajuKeywords: ["직진", "감정교류"],
     faceAnalysis: "카리스마 있는 인상으로 리더십 궁합이 완벽함",
@@ -94,7 +100,10 @@ export const dummyMatches: MatchUser[] = [
     height: "167cm",
     education: "대학원 졸업",
     introduction: "예술과 자연을 사랑하는 감성적인 사람입니다.",
-    photos: ["/placeholder.svg", "/placeholder.svg"],
+    photos: [
+      "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face"
+    ],
     faceKeywords: ["귀여운", "순수한"],
     sajuKeywords: ["로맨틱", "안정"],
     faceAnalysis: "순수한 인상으로 감성적 교감이 깊어질 것",
