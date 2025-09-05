@@ -137,13 +137,22 @@ export class OhaengAnalysisService {
 `;
 
     try {
-      const response = await claudeService.generateResponse(prompt);
-      const parsedResponse = JSON.parse(response);
+      const claudeRequest = {
+        nickname: request.nickname,
+        gender: request.gender,
+        birthDate: request.birthDate,
+        faceReadingKeywords: request.faceReadingKeywords,
+        sajuKeywords: request.sajuKeywords,
+        faceReadingFeatures: {},
+        sajuElements: request.sajuElements
+      };
+      
+      const response = await claudeService.generateLoveReport(claudeRequest);
       
       return {
-        descriptions: parsedResponse.descriptions || [],
-        personalTraits: parsedResponse.personalTraits || [],
-        overallInterpretation: parsedResponse.overallInterpretation || ''
+        descriptions: response.detailedAnalysis.personalityInsights ? [response.detailedAnalysis.personalityInsights] : [],
+        personalTraits: response.recommendedKeywords || [],
+        overallInterpretation: response.detailedAnalysis.relationshipAdvice || ''
       };
     } catch (error) {
       console.error('Claude 오행 해석 생성 중 오류:', error);

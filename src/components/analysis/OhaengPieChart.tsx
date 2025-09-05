@@ -12,9 +12,9 @@ interface OhaengPieChartProps {
 }
 
 const OhaengPieChart = ({ ohaengData }: OhaengPieChartProps) => {
-  const canvasRef = useRef(null);
-  const [selectedIndex, setSelectedIndex] = useState(null);
-  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   // 기본 데이터 (props가 없을 때 사용)
   const defaultLabels = ["목(木)", "화(火)", "토(土)", "금(金)", "수(水)"];
@@ -44,7 +44,10 @@ const OhaengPieChart = ({ ohaengData }: OhaengPieChartProps) => {
 
   useEffect(() => {
     const canvas = canvasRef.current;
+    if (!canvas) return;
+    
     const ctx = canvas.getContext("2d");
+    if (!ctx) return;
     const total = data.reduce((sum, val) => sum + val, 0);
     let startAngle = -0.5 * Math.PI;
     const centerX = 200;
@@ -52,7 +55,7 @@ const OhaengPieChart = ({ ohaengData }: OhaengPieChartProps) => {
     const outerRadius = 140;
     const innerRadius = 80; // 도넛 모양을 위한 내부 반지름
 
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
       const x = e.clientX - rect.left - centerX;
       const y = e.clientY - rect.top - centerY;
@@ -80,7 +83,7 @@ const OhaengPieChart = ({ ohaengData }: OhaengPieChartProps) => {
       setHoveredIndex(null);
     };
 
-    const handleClick = (e) => {
+    const handleClick = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
       const x = e.clientX - rect.left - centerX;
       const y = e.clientY - rect.top - centerY;

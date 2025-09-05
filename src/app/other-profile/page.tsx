@@ -1,11 +1,11 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import CompatibilityReport from '@/components/profile/CompatibilityReport'
 import { ProfileData } from '@/types'
 
-export default function OtherProfilePage() {
+function OtherProfileContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [otherUser, setOtherUser] = useState<any>(null)
@@ -299,5 +299,21 @@ export default function OtherProfilePage() {
         />
       )}
     </div>
+  )
+}
+
+export default function OtherProfilePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex flex-col items-center justify-center p-6">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-amber-400 mx-auto mb-4"></div>
+          <h1 className="text-2xl font-bold text-amber-400 mb-4">로딩 중...</h1>
+          <p className="text-white">잠시만 기다려주세요.</p>
+        </div>
+      </div>
+    }>
+      <OtherProfileContent />
+    </Suspense>
   )
 }

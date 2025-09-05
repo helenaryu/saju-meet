@@ -45,7 +45,7 @@ function AuthCallbackContent() {
     }
 
     initializeSupabase()
-  }, [])
+  }, [router])
 
   useEffect(() => {
     if (!supabase) return

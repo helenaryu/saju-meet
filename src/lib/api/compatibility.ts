@@ -131,7 +131,7 @@ export class CompatibilityService {
     }
 
     // 사주 상성 분석
-    const sajuScore = this.analyzeSajuCompatibility(user1Analysis, user2Analysis);
+    const sajuScore = this.calculateSajuCompatibility(user1Analysis, user2Analysis);
     compatibilityScore += sajuScore;
 
     // 최종 점수 조정
@@ -190,7 +190,7 @@ export class CompatibilityService {
     return Math.min(compatibilityScore, 20);
   }
 
-  private analyzeSajuCompatibility(user1Analysis?: any, user2Analysis?: any): number {
+  private calculateSajuCompatibility(user1Analysis?: any, user2Analysis?: any): number {
     // 간단한 사주 궁합 점수 계산
     let score = 0;
     
@@ -198,7 +198,7 @@ export class CompatibilityService {
       // 해석 내용의 유사성 분석 (간단한 키워드 매칭)
       const user1Words = user1Analysis.해석.split(' ');
       const user2Words = user2Analysis.해석.split(' ');
-      const commonWords = user1Words.filter(word => user2Words.includes(word));
+      const commonWords = user1Words.filter((word: string) => user2Words.includes(word));
       
       score += Math.min(commonWords.length * 2, 15);
     }
@@ -377,7 +377,7 @@ export class CompatibilityService {
           '지속적인 소통과 이해',
           '함께 성장하는 관계 유지'
         ],
-        traditionalWisdom: claudeResponse.traditionalWisdom.map(wisdom => wisdom.text) || [
+        traditionalWisdom: claudeResponse.traditionalWisdom.map(wisdom => wisdom.content) || [
           '상생상극의 원리에 따라 서로를 보완하는 관계가 가장 이상적입니다.',
           '오행의 조화를 통해 안정적이고 행복한 관계를 이룰 수 있습니다.'
         ]
