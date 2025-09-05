@@ -23,14 +23,17 @@ function AuthCallbackContent() {
           setError('Supabase 설정이 완료되지 않았습니다.')
           setDebugInfo('Supabase 클라이언트가 null - 환경 변수 확인 필요')
           
-          // 임시 인증 처리
-          if (handleAuthWithoutSupabase) {
-            const tempAuth = handleAuthWithoutSupabase()
-            if (tempAuth.success) {
-              setTimeout(() => {
-                router.push('/integrated-analysis?auth=temp')
-              }, 2000)
-            }
+          // 임시 인증 처리 - 코드가 있으면 성공으로 간주
+          const code = searchParams.get('code')
+          if (code) {
+            console.log('OAuth 코드가 있으므로 임시 인증 성공으로 처리')
+            setTimeout(() => {
+              router.push('/integrated-analysis?auth=temp')
+            }, 2000)
+          } else {
+            setTimeout(() => {
+              router.push('/?auth=error&reason=no_supabase')
+            }, 3000)
           }
           return
         }
@@ -50,7 +53,10 @@ function AuthCallbackContent() {
   }, [router])
 
   useEffect(() => {
-    if (!supabase) return
+    if (!supabase) {
+      console.log('Supabase가 아직 초기화되지 않음, 잠시 대기...')
+      return
+    }
 
     const handleAuthCallback = async () => {
       try {

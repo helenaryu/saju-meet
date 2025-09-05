@@ -373,6 +373,14 @@ function FaceReadingAppContent() {
   // URL 파라미터 감지하여 상태 업데이트 (간소화)
   useEffect(() => {
     const auth = searchParams.get('auth')
+    const code = searchParams.get('code')
+    
+    // OAuth 인증 코드가 있으면 콜백 페이지로 리다이렉트
+    if (code) {
+      console.log('OAuth 코드 감지, 콜백 페이지로 리다이렉트:', code)
+      router.push(`/auth/callback?code=${code}`)
+      return
+    }
     
     if (auth === 'error') {
       alert('인증에 실패했습니다. 다시 시도해주세요.')
@@ -381,7 +389,7 @@ function FaceReadingAppContent() {
       // URL 파라미터 정리
       window.history.replaceState({}, '', '/')
     }
-  }, [searchParams])
+  }, [searchParams, router])
 
   // Supabase 세션 확인 함수
   const checkSupabaseSession = useCallback(async () => {
