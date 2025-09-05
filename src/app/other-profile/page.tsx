@@ -14,6 +14,8 @@ function OtherProfileContent() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (!searchParams) return
+    
     // URL 파라미터에서 상대방 정보 가져오기
     const userId = searchParams.get('userId')
     const nickname = searchParams.get('nickname')

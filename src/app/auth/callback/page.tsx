@@ -50,7 +50,7 @@ function AuthCallbackContent() {
     }
 
     initializeSupabase()
-  }, [router])
+  }, [router, searchParams])
 
   useEffect(() => {
     if (!supabase) {

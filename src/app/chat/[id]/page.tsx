@@ -14,16 +14,23 @@ interface Message {
 export default function ChatPage() {
   const router = useRouter()
   const params = useParams()
-  const matchId = params.id as string
   
   const [localUser, setLocalUser] = useState<any>(null)
   const [match, setMatch] = useState<any>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [newMessage, setNewMessage] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  
+  const matchId = params?.id as string
 
   // 페이지 로드 시 사용자 정보 및 매칭 정보 확인
   useEffect(() => {
+    // params null 체크
+    if (!params || !params.id) {
+      router.push('/ideal-match')
+      return
+    }
+    
     // 로컬 스토리지에서 사용자 정보 확인
     const savedUser = localStorage.getItem('localUser')
     if (savedUser) {
@@ -40,11 +47,11 @@ export default function ChatPage() {
       router.push('/')
       return
     }
-  }, [router])
+  }, [router, params])
 
   // localUser가 설정된 후 매칭 정보 확인 및 초기 메시지 설정
   useEffect(() => {
-    if (!localUser) return
+    if (!localUser || !matchId) return
 
     // 매칭 정보 찾기
     const foundMatch = dummyMatches.find(m => m.id === matchId)
@@ -116,6 +123,24 @@ export default function ChatPage() {
 
   const handleBackToMatches = () => {
     router.push('/ideal-match')
+  }
+
+  // params null 체크
+  if (!params || !params.id) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex flex-col items-center justify-center p-6">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-amber-400 mb-4">잘못된 접근입니다</h1>
+          <p className="text-white mb-4">매칭 ID를 찾을 수 없습니다.</p>
+          <button
+            onClick={() => router.push('/ideal-match')}
+            className="bg-amber-400 hover:bg-amber-500 text-black px-6 py-3 rounded-full font-semibold transition-colors"
+          >
+            이상형 매칭으로 돌아가기
+          </button>
+        </div>
+      </div>
+    )
   }
 
   if (isLoading) {
