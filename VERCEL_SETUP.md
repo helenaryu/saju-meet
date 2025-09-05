@@ -31,13 +31,15 @@ NEXT_PUBLIC_SUPABASE_URL=https://ydykauldznfysemdjxdm.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... (anon public 키)
 SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... (service_role secret 키)
 
-# 사이트 URL
+# 사이트 URL (중요: localhost 리다이렉트 문제 해결)
 NEXT_PUBLIC_SITE_URL=https://saju-meet.vercel.app
 
 # AI API 키
 ANTHROPIC_API_KEY=your_claude_api_key
 OPENAI_API_KEY=your_openai_api_key
 ```
+
+**⚠️ 중요**: `NEXT_PUBLIC_SITE_URL`은 반드시 설정해야 합니다. 이 변수가 없으면 localhost로 리다이렉트되는 문제가 발생합니다.
 
 #### 2.3 환경 변수 설정 옵션
 - **Environment**: `Production`, `Preview`, `Development` 모두 선택
@@ -65,6 +67,25 @@ Supabase 설정이 완료되었습니다.
 
 ### 문제 3: OAuth 로그인 실패
 **해결**: `NEXT_PUBLIC_SITE_URL` 설정 확인
+
+### 문제 4: Vercel에서 localhost로 리다이렉트되는 문제 ⚠️
+**원인**: 
+- `NEXT_PUBLIC_SITE_URL` 환경 변수가 설정되지 않음
+- 미들웨어에서 상대 URL 사용
+- Supabase 리다이렉트 URL 설정 오류
+
+**해결 방법**:
+1. **Vercel 환경 변수에서 `NEXT_PUBLIC_SITE_URL=https://saju-meet.vercel.app` 설정** (가장 중요!)
+2. **Supabase 대시보드에서 Site URL을 `https://saju-meet.vercel.app`로 설정**
+3. **Google OAuth 콘솔에서 승인된 리다이렉트 URI에 `https://saju-meet.vercel.app/auth/callback` 추가**
+4. **Vercel에서 "Redeploy" 실행**
+5. **브라우저 캐시 삭제 후 재시도**
+
+**추가 확인사항**:
+- Google Cloud Console > APIs & Services > Credentials > OAuth 2.0 Client IDs
+- 승인된 리다이렉트 URI에 다음 URL들이 모두 포함되어 있는지 확인:
+  - `https://saju-meet.vercel.app/auth/callback`
+  - `http://localhost:3000/auth/callback` (개발용)
 
 ## 📝 체크리스트
 

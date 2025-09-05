@@ -559,10 +559,21 @@ function FaceReadingAppContent() {
         throw new Error('Supabase auth가 초기화되지 않았습니다.')
       }
 
+      // 절대 URL 사용하여 localhost 리다이렉트 방지
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 
+        (process.env.NODE_ENV === 'production' ? 'https://saju-meet.vercel.app' : 'http://localhost:3000')
+      
+      // 디버깅을 위한 로그
+      console.log('🔧 OAuth 리다이렉트 URL 설정:')
+      console.log('NEXT_PUBLIC_SITE_URL:', process.env.NEXT_PUBLIC_SITE_URL)
+      console.log('NODE_ENV:', process.env.NODE_ENV)
+      console.log('계산된 baseUrl:', baseUrl)
+      console.log('최종 redirectTo:', `${baseUrl}/auth/callback`)
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google' as const,
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`
+          redirectTo: `${baseUrl}/auth/callback`
         }
       })
       
@@ -602,10 +613,14 @@ function FaceReadingAppContent() {
         throw new Error('Supabase auth가 초기화되지 않았습니다.')
       }
 
+      // 절대 URL 사용하여 localhost 리다이렉트 방지
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 
+        (process.env.NODE_ENV === 'production' ? 'https://saju-meet.vercel.app' : 'http://localhost:3000')
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'kakao' as const,
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`
+          redirectTo: `${baseUrl}/auth/callback`
         }
       })
       

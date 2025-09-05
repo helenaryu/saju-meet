@@ -3,9 +3,15 @@ import { createClient } from '@supabase/supabase-js'
 // 환경별 리다이렉트 URL 설정
 const getRedirectUrl = () => {
   if (typeof window !== 'undefined') {
-    // 클라이언트 사이드
+    // 클라이언트 사이드 - 현재 도메인 사용
     const protocol = window.location.protocol
     const host = window.location.host
+    
+    // Vercel 환경에서는 HTTPS 강제 사용
+    if (host.includes('vercel.app') || host.includes('vercel.com')) {
+      return `https://${host}/auth/callback`
+    }
+    
     return `${protocol}//${host}/auth/callback`
   }
   
@@ -31,6 +37,9 @@ if (typeof window !== 'undefined') {
   console.log('🔧 Supabase 설정 확인:')
   console.log('URL:', supabaseUrl ? '설정됨' : '설정되지 않음')
   console.log('Anon Key:', supabaseAnonKey ? '설정됨' : '설정되지 않음')
+  console.log('NEXT_PUBLIC_SITE_URL:', process.env.NEXT_PUBLIC_SITE_URL)
+  console.log('NODE_ENV:', process.env.NODE_ENV)
+  console.log('리다이렉트 URL:', getRedirectUrl())
 }
 
 // Supabase 클라이언트 생성 (설정이 없으면 null 반환)

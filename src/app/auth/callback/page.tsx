@@ -28,7 +28,18 @@ function AuthCallbackContent() {
           if (code) {
             console.log('OAuth 코드가 있으므로 임시 인증 성공으로 처리')
             setTimeout(() => {
-              window.location.href = '/integrated-analysis?auth=temp'
+              // 절대 URL 사용하여 localhost 리다이렉트 방지
+              const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 
+                (process.env.NODE_ENV === 'production' ? 'https://saju-meet.vercel.app' : 'http://localhost:3000')
+              
+              // 디버깅을 위한 로그
+              console.log('🔧 콜백 리다이렉트 URL 설정:')
+              console.log('NEXT_PUBLIC_SITE_URL:', process.env.NEXT_PUBLIC_SITE_URL)
+              console.log('NODE_ENV:', process.env.NODE_ENV)
+              console.log('계산된 baseUrl:', baseUrl)
+              console.log('최종 리다이렉트 URL:', `${baseUrl}/integrated-analysis?auth=temp`)
+              
+              window.location.href = `${baseUrl}/integrated-analysis?auth=temp`
             }, 2000)
           } else {
             setTimeout(() => {
@@ -119,8 +130,18 @@ function AuthCallbackContent() {
         if (data.session) {
           console.log('✅ 인증 성공:', data.session)
           setDebugInfo('인증 성공 - integrated-analysis로 이동')
-          // 인증 성공 후 integrated-analysis로 이동
-          window.location.href = '/integrated-analysis'
+          // 인증 성공 후 integrated-analysis로 이동 (절대 URL 사용)
+          const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 
+            (process.env.NODE_ENV === 'production' ? 'https://saju-meet.vercel.app' : 'http://localhost:3000')
+          
+          // 디버깅을 위한 로그
+          console.log('🔧 인증 성공 후 리다이렉트 URL 설정:')
+          console.log('NEXT_PUBLIC_SITE_URL:', process.env.NEXT_PUBLIC_SITE_URL)
+          console.log('NODE_ENV:', process.env.NODE_ENV)
+          console.log('계산된 baseUrl:', baseUrl)
+          console.log('최종 리다이렉트 URL:', `${baseUrl}/integrated-analysis`)
+          
+          window.location.href = `${baseUrl}/integrated-analysis`
         } else {
           console.log('⚠️ 인증 세션 없음')
           setDebugInfo('세션 없음 - 로그아웃 처리')
