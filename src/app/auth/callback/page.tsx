@@ -24,11 +24,13 @@ function AuthCallbackContent() {
           setDebugInfo('Supabase 클라이언트가 null - 환경 변수 확인 필요')
           
           // 임시 인증 처리
-          const tempAuth = handleAuthWithoutSupabase()
-          if (tempAuth.success) {
-            setTimeout(() => {
-              router.push('/integrated-analysis?auth=temp')
-            }, 2000)
+          if (handleAuthWithoutSupabase) {
+            const tempAuth = handleAuthWithoutSupabase()
+            if (tempAuth.success) {
+              setTimeout(() => {
+                router.push('/integrated-analysis?auth=temp')
+              }, 2000)
+            }
           }
           return
         }

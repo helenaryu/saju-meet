@@ -502,6 +502,10 @@ function FaceReadingAppContent() {
     setAuthProvider("google")
     
     try {
+      if (!supabase?.auth?.signInWithOAuth) {
+        throw new Error('Supabase auth가 초기화되지 않았습니다.')
+      }
+
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google' as const,
         options: {
@@ -541,6 +545,10 @@ function FaceReadingAppContent() {
     setAuthProvider("kakao")
     
     try {
+      if (!supabase?.auth?.signInWithOAuth) {
+        throw new Error('Supabase auth가 초기화되지 않았습니다.')
+      }
+
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'kakao' as const,
         options: {
