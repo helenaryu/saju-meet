@@ -3,6 +3,7 @@
 import React from 'react'
 import FaceReadingVisual from './FaceReadingVisual'
 import SajuReadingVisual from './SajuReadingVisual'
+import OhaengPieChart from './OhaengPieChart'
 import { ProfileData } from '@/types'
 
 interface AnalysisResult {
@@ -292,6 +293,11 @@ export default function IntegratedAnalysisResult({
               </div>
             ))}
           </div>
+        </div>
+
+        {/* 오행 분석 차트 */}
+        <div className="mb-8">
+          <OhaengPieChart />
         </div>
 
         {/* 통합 연애 분석 */}
