@@ -2,7 +2,6 @@
 
 import React from 'react'
 import FaceReadingVisual from './FaceReadingVisual'
-import SajuReadingVisual from './SajuReadingVisual'
 import OhaengPieChart from './OhaengPieChart'
 import { ProfileData } from '@/types'
 
@@ -16,6 +15,14 @@ interface IntegratedAnalysisResultProps {
   profileData: ProfileData
   faceReadingResults: AnalysisResult[]
   sajuResults: AnalysisResult[]
+  ohaengData?: {
+    labels: string[];
+    data: number[];
+    descriptions: string[];
+    personalTraits: string[];
+    colors: string[];
+    overallInterpretation?: string;
+  }
   onLogout: () => void
   localUser: any
   onProfileSetup: () => void
@@ -26,6 +33,7 @@ export default function IntegratedAnalysisResult({
   profileData,
   faceReadingResults,
   sajuResults,
+  ohaengData,
   onLogout,
   localUser,
   onProfileSetup
@@ -266,23 +274,25 @@ export default function IntegratedAnalysisResult({
           </div>
         </div>
 
-        {/* 사주 분석 섹션 */}
+        {/* 오행 분석 차트 */}
+        <div className="bg-gradient-to-r from-green-500/10 via-emerald-500/10 to-teal-500/10 rounded-3xl p-8 mb-8 border border-green-400/30">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-green-300 mb-2">🌿 오행 분석 리포트</h2>
+            <p className="text-gray-400 italic">당신의 기질과 성향을 오행으로 분석한 결과</p>
+          </div>
+          <OhaengPieChart 
+            ohaengData={ohaengData}
+          />
+        </div>
+
+        {/* 사주 키워드 상세 설명 */}
         <div className="bg-gradient-to-r from-blue-500/10 to-indigo-500/10 rounded-3xl p-8 mb-8 border border-blue-400/30">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-blue-300 mb-2">🔮 사주 분석 리포트</h2>
-            <p className="text-gray-400 italic">생년월일시가 말하는 당신의 운명 이야기</p>
+            <h2 className="text-3xl font-bold text-blue-300 mb-2">🔮 사주 키워드</h2>
+            <p className="text-gray-400 italic">당신의 운명을 나타내는 특별한 키워드들</p>
           </div>
           
-          <SajuReadingVisual 
-            birthDate={profileData.birthDate}
-            birthTime={profileData.birthTime}
-            birthPlace={profileData.region}
-            sajuKeywords={sajuResults.map(r => r.keyword)}
-            className="mb-6"
-          />
-          
-          {/* 사주 키워드 상세 설명 - 더 상세하게 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {sajuResults.map((result, index) => (
               <div key={index} className="bg-white/5 rounded-xl p-4 border border-white/10 hover:bg-white/10 transition-all duration-300">
                 <div className="flex items-center gap-3 mb-3">
@@ -293,11 +303,6 @@ export default function IntegratedAnalysisResult({
               </div>
             ))}
           </div>
-        </div>
-
-        {/* 오행 분석 차트 */}
-        <div className="mb-8">
-          <OhaengPieChart />
         </div>
 
         {/* 통합 연애 분석 */}

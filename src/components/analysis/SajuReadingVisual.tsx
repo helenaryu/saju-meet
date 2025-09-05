@@ -1,15 +1,6 @@
 "use client"
 
-import React, { useRef, useState, useEffect } from 'react'
-
-interface OhaengElement {
-  name: string
-  color: string
-  icon: string
-  description: string
-  strength: number // 0-100
-  keywords: string[]
-}
+import React from 'react'
 
 interface SajuReadingVisualProps {
   birthDate: string
@@ -30,71 +21,7 @@ export default function SajuReadingVisual({
   sajuKeywords, 
   className = '' 
 }: SajuReadingVisualProps) {
-  
-  // Move hooks to top level
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
-  // 오행 데이터 (기본값 또는 실제 데이터)
-  const getOhaengElements = (): OhaengElement[] => {
-    const defaultData = {
-      wood: 25,
-      fire: 20,
-      earth: 15,
-      metal: 25,
-      water: 15
-    }
-    
-    const data = ohaengData || defaultData
-    
-    return [
-      {
-        name: '목(木)',
-        color: 'from-green-400 to-emerald-600',
-        icon: '🌳',
-        description: '성장과 확장의 기운',
-        strength: data.wood || 25,
-        keywords: ['창의성', '성장', '도전', '활력', '진보']
-      },
-      {
-        name: '화(火)',
-        color: 'from-red-400 to-rose-600',
-        icon: '🔥',
-        description: '열정과 에너지의 기운',
-        strength: data.fire || 20,
-        keywords: ['열정', '에너지', '리더십', '카리스마', '활동성']
-      },
-      {
-        name: '토(土)',
-        color: 'from-amber-400 to-orange-600',
-        icon: '🏔️',
-        description: '안정과 균형의 기운',
-        strength: data.earth || 15,
-        keywords: ['안정성', '균형', '신뢰성', '책임감', '조화']
-      },
-      {
-        name: '금(金)',
-        color: 'from-gray-400 to-slate-600',
-        icon: '⚔️',
-        description: '정의와 결단의 기운',
-        strength: data.metal || 25,
-        keywords: ['정의감', '결단력', '정직', '원칙', '정리']
-      },
-      {
-        name: '수(水)',
-        color: 'from-blue-400 to-indigo-600',
-        icon: '🌊',
-        description: '지혜와 유연성의 기운',
-        strength: data.water || 15,
-        keywords: ['지혜', '유연성', '직관', '적응력', '깊이']
-      }
-    ]
-  }
-
-  const ohaengElements = getOhaengElements()
-  
-  // Calculate total for percentage calculations
-  const total = ohaengElements.reduce((sum, element) => sum + element.strength, 0);
   
   // 생년월일을 감성적으로 표현
   const getBirthDateDescription = () => {
@@ -120,101 +47,6 @@ export default function SajuReadingVisual({
     return `${monthDescriptions[month as keyof typeof monthDescriptions]} ${day}일, 당신이 이 세상에 태어난 특별한 순간입니다.`
   }
 
-  // Canvas 기반 인터랙티브 파이 차트 렌더링
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const data = ohaengElements.map(element => element.strength);
-    const colors = ['#4CAF50', '#F44336', '#FF9800', '#FFC107', '#2196F3']; // 전통적인 오행 색상
-
-    // Canvas 초기화
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const radius = 140;
-    let startAngle = -0.5 * Math.PI;
-
-    // 파이 차트 그리기
-    data.forEach((value, i) => {
-      const sliceAngle = (value / total) * 2 * Math.PI;
-      
-      ctx.beginPath();
-      ctx.moveTo(centerX, centerY);
-      ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
-      ctx.fillStyle = colors[i];
-      ctx.fill();
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // 퍼센트 텍스트 그리기
-      const textAngle = startAngle + sliceAngle / 2;
-      const textRadius = radius * 0.7;
-      const textX = centerX + textRadius * Math.cos(textAngle);
-      const textY = centerY + textRadius * Math.sin(textAngle);
-
-      ctx.save();
-      ctx.translate(textX, textY);
-      ctx.rotate(textAngle + Math.PI / 2);
-      ctx.fillStyle = '#fff';
-      ctx.font = 'bold 16px Arial';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.shadowColor = 'rgba(0,0,0,0.8)';
-      ctx.shadowBlur = 2;
-      ctx.fillText(`${Math.round((value / total) * 100)}%`, 0, 0);
-      ctx.restore();
-
-      startAngle += sliceAngle;
-    });
-
-    // 중앙 텍스트 그리기
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 24px Arial';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('오행', centerX, centerY - 10);
-    ctx.font = '14px Arial';
-    ctx.fillStyle = '#ccc';
-    ctx.fillText('분석', centerX, centerY + 15);
-
-    // 클릭 이벤트 처리
-    const handleClick = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left - centerX;
-      const y = e.clientY - rect.top - centerY;
-      const distance = Math.sqrt(x * x + y * y);
-
-      if (distance > radius) {
-        setSelectedIndex(null);
-        return;
-      }
-
-      let angle = Math.atan2(y, x);
-      if (angle < -0.5 * Math.PI) angle += 2 * Math.PI;
-      
-      let accAngle = -0.5 * Math.PI;
-      for (let i = 0; i < data.length; i++) {
-        const slice = (data[i] / total) * 2 * Math.PI;
-        if (angle >= accAngle && angle < accAngle + slice) {
-          setSelectedIndex(i);
-          break;
-        }
-        accAngle += slice;
-      }
-    };
-
-    canvas.addEventListener('click', handleClick);
-
-         return () => {
-       canvas.removeEventListener('click', handleClick);
-     };
-   }, [ohaengElements, total]);
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -232,41 +64,6 @@ export default function SajuReadingVisual({
           </p>
         </div>
         
-        {/* 오행 파이 차트 */}
-        <div className="mb-8">
-          <h4 className="text-xl font-semibold text-blue-300 mb-6 text-center">🌟 오행 기운 분석</h4>
-          <div className="flex flex-col items-center space-y-6">
-            <canvas 
-              ref={canvasRef} 
-              width={400} 
-              height={400} 
-              className="bg-transparent rounded-xl cursor-pointer shadow-lg"
-            />
-            
-            {/* 선택된 요소 상세 정보 */}
-            {selectedIndex !== null && (
-              <div className="w-full max-w-md p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 animate-fade-in">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="text-2xl">{ohaengElements[selectedIndex].icon}</div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white">{ohaengElements[selectedIndex].name}</h3>
-                    <p className="text-sm text-gray-300">{Math.round((ohaengElements[selectedIndex].strength / total) * 100)}%</p>
-                  </div>
-                </div>
-                <p className="text-sm text-gray-200 leading-relaxed mb-3">
-                  {ohaengElements[selectedIndex].description}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {ohaengElements[selectedIndex].keywords.slice(0, 3).map((keyword, idx) => (
-                    <span key={idx} className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full text-xs border border-blue-400/30">
-                      {keyword}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
       </div>
 
       {/* 사주 키워드 - 감성적 표현 */}

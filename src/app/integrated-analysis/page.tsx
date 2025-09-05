@@ -13,6 +13,14 @@ export default function IntegratedAnalysisPage() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
   const [faceReadingResults, setFaceReadingResults] = useState<FaceReadingKeyword[]>([])
   const [sajuResults, setSajuResults] = useState<SajuKeyword[]>([])
+  const [ohaengData, setOhaengData] = useState<{
+    labels: string[];
+    data: number[];
+    descriptions: string[];
+    personalTraits: string[];
+    colors: string[];
+    overallInterpretation?: string;
+  } | undefined>(undefined)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [analysisProgress, setAnalysisProgress] = useState(3)
   const [isSajuAnalyzing, setIsSajuAnalyzing] = useState(false)
@@ -91,6 +99,21 @@ export default function IntegratedAnalysisPage() {
       try {
         const user = JSON.parse(savedUser)
         setLocalUser(user)
+        
+        // 저장된 프로필 데이터 불러오기
+        const savedProfile = localStorage.getItem('sajuMeetProfile')
+        if (savedProfile) {
+          const profile = JSON.parse(savedProfile)
+          setProfileData(profile)
+        }
+        
+        // 저장된 사주 데이터 불러오기
+        const savedSajuData = localStorage.getItem('sajuMeetSajuData')
+        if (savedSajuData) {
+          const saju = JSON.parse(savedSajuData)
+          setSajuData(saju)
+        }
+        
       } catch (error) {
         console.error('저장된 사용자 정보 파싱 오류:', error)
         localStorage.removeItem('localUser')
@@ -120,11 +143,17 @@ export default function IntegratedAnalysisPage() {
   }
 
   const handleInputChange = (field: string, value: any) => {
-    setProfileData((prev) => ({ ...prev, [field]: value }))
+    const newProfileData = { ...profileData, [field]: value }
+    setProfileData(newProfileData)
+    // localStorage에 저장
+    localStorage.setItem('sajuMeetProfile', JSON.stringify(newProfileData))
   }
 
   const handleSajuInputChange = (field: string, value: string) => {
-    setSajuData((prev) => ({ ...prev, [field]: value }))
+    const newSajuData = { ...sajuData, [field]: value }
+    setSajuData(newSajuData)
+    // localStorage에 저장
+    localStorage.setItem('sajuMeetSajuData', JSON.stringify(newSajuData))
   }
 
   const startIntegratedAnalysis = async () => {
@@ -176,6 +205,18 @@ export default function IntegratedAnalysisPage() {
           description: result.data.saju.personality
         })))
         
+        // 오행 결과 저장
+        if (result.data.ohaeng) {
+          setOhaengData({
+            labels: result.data.ohaeng.labels,
+            data: result.data.ohaeng.data,
+            descriptions: result.data.ohaeng.descriptions,
+            personalTraits: result.data.ohaeng.personalTraits,
+            colors: result.data.ohaeng.colors,
+            overallInterpretation: result.data.ohaeng.overallInterpretation
+          })
+        }
+        
         console.log('통합 분석 완료:', result.data)
         
         // 결과 페이지로 이동
@@ -217,6 +258,10 @@ export default function IntegratedAnalysisPage() {
   }
 
   const handleProfileSetup = () => {
+    // 현재 입력된 데이터를 localStorage에 저장
+    localStorage.setItem('sajuMeetProfile', JSON.stringify(profileData))
+    localStorage.setItem('sajuMeetSajuData', JSON.stringify(sajuData))
+    
     router.push('/profile')
   }
 
@@ -261,6 +306,7 @@ export default function IntegratedAnalysisPage() {
         profileData={profileData}
         faceReadingResults={faceReadingResults}
         sajuResults={sajuResults}
+        ohaengData={ohaengData}
         onLogout={handleLogout}
         localUser={localUser}
         onProfileSetup={handleProfileSetup}

@@ -157,31 +157,6 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* 액션 버튼들 */}
-        <div className="text-center space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={handleIdealMatch}
-              className="bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 text-white px-8 py-4 rounded-full text-lg font-bold transition-colors"
-            >
-              이상형 찾기 시작하기
-            </button>
-            
-            <button
-              onClick={handleEditProfile}
-              className="bg-gradient-to-r from-blue-400 to-indigo-500 hover:from-blue-500 hover:to-indigo-600 text-white px-8 py-4 rounded-full text-lg font-bold transition-colors"
-            >
-              프로필 수정하기
-            </button>
-            
-            <button
-              onClick={handleNewAnalysis}
-              className="bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 text-white px-8 py-4 rounded-full text-lg font-bold transition-colors"
-            >
-              새로운 분석하기
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   )

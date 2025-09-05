@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import ProfileRegistrationStep from '@/components/profile/ProfileRegistrationStep'
+import CompatibilityReport from '@/components/profile/CompatibilityReport'
 import { ProfileData } from '@/types'
 import { IDEAL_TYPE_KEYWORDS } from '@/constants/data'
 
@@ -26,6 +27,8 @@ export default function ProfilePage() {
   const [selectedIdealKeywords, setSelectedIdealKeywords] = useState<string[]>([])
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [localUser, setLocalUser] = useState<any>(null)
+  const [showCompatibilityReport, setShowCompatibilityReport] = useState(false)
+  const [otherUser, setOtherUser] = useState<any>(null)
 
   // 페이지 로드 시 사용자 정보 확인
   useEffect(() => {
@@ -41,6 +44,19 @@ export default function ProfilePage() {
         if (savedProfile) {
           const profile = JSON.parse(savedProfile)
           setProfileData(profile)
+        }
+        
+        // 저장된 사주 데이터가 있으면 프로필에 반영
+        const savedSajuData = localStorage.getItem('sajuMeetSajuData')
+        if (savedSajuData) {
+          const sajuData = JSON.parse(savedSajuData)
+          setProfileData(prev => ({
+            ...prev,
+            birthDate: sajuData.birthDate || prev.birthDate,
+            birthTime: sajuData.birthTime || prev.birthTime,
+            // 사주 데이터의 출생지 정보를 지역으로 매핑할 수 있다면 추가
+            // region: sajuData.birthPlace || prev.region,
+          }))
         }
         
         // 저장된 추가 사진이 있으면 불러오기
@@ -71,7 +87,11 @@ export default function ProfilePage() {
   }, [router])
 
   const handleInputChange = (field: string, value: any) => {
-    setProfileData((prev) => ({ ...prev, [field]: value }))
+    const newProfileData = { ...profileData, [field]: value }
+    setProfileData(newProfileData)
+    // localStorage에 저장
+    localStorage.setItem('sajuMeetProfile', JSON.stringify(newProfileData))
+    
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }))
     }
@@ -87,7 +107,10 @@ export default function ProfilePage() {
           const result = e.target?.result as string
           newPhotos.push(result)
           if (newPhotos.length === files.length) {
-            setAdditionalPhotos((prev) => [...prev, ...newPhotos].slice(0, 5)) // 최대 5장까지
+            const updatedPhotos = [...additionalPhotos, ...newPhotos].slice(0, 5) // 최대 5장까지
+            setAdditionalPhotos(updatedPhotos)
+            // localStorage에 저장
+            localStorage.setItem('sajuMeetAdditionalPhotos', JSON.stringify(updatedPhotos))
           }
         }
         reader.readAsDataURL(file)
@@ -96,17 +119,26 @@ export default function ProfilePage() {
   }
 
   const removeAdditionalPhoto = (index: number) => {
-    setAdditionalPhotos((prev) => prev.filter((_, i) => i !== index))
+    const updatedPhotos = additionalPhotos.filter((_, i) => i !== index)
+    setAdditionalPhotos(updatedPhotos)
+    // localStorage에 저장
+    localStorage.setItem('sajuMeetAdditionalPhotos', JSON.stringify(updatedPhotos))
   }
 
   const handleIdealTypeToggle = (keyword: string) => {
     setSelectedIdealKeywords((prev) => {
+      let updatedKeywords
       if (prev.includes(keyword)) {
-        return prev.filter((k) => k !== keyword)
+        updatedKeywords = prev.filter((k) => k !== keyword)
       } else if (prev.length < 3) {
-        return [...prev, keyword]
+        updatedKeywords = [...prev, keyword]
+      } else {
+        updatedKeywords = prev
       }
-      return prev
+      
+      // localStorage에 저장
+      localStorage.setItem('sajuMeetIdealKeywords', JSON.stringify(updatedKeywords))
+      return updatedKeywords
     })
   }
 
@@ -146,6 +178,25 @@ export default function ProfilePage() {
     router.push('/integrated-analysis')
   }
 
+  const handleCompatibilityAnalysis = () => {
+    // 임시로 더미 사용자 데이터 사용 (실제로는 매칭된 사용자 데이터 사용)
+    const dummyOtherUser = {
+      nickname: "상대방",
+      gender: "female",
+      birthDate: "1995-06-15",
+      faceKeywords: ["감성적", "직관적", "친근함"],
+      sajuKeywords: ["창의적", "성장지향적", "리더십"]
+    }
+    
+    setOtherUser(dummyOtherUser)
+    setShowCompatibilityReport(true)
+  }
+
+  const closeCompatibilityReport = () => {
+    setShowCompatibilityReport(false)
+    setOtherUser(null)
+  }
+
   // 로딩 중이거나 사용자 정보가 없는 경우
   if (!localUser) {
     return (
@@ -160,18 +211,35 @@ export default function ProfilePage() {
   }
 
   return (
-    <ProfileRegistrationStep
-      profileData={profileData}
-      additionalPhotos={additionalPhotos}
-      selectedIdealKeywords={selectedIdealKeywords}
-      errors={errors}
-      onInputChange={handleInputChange}
-      onAdditionalPhotoUpload={handleAdditionalPhotoUpload}
-      onRemoveAdditionalPhoto={removeAdditionalPhoto}
-      onIdealTypeToggle={handleIdealTypeToggle}
-      onValidateAndProceed={handleProfileComplete}
-      onBack={handleBack}
-      IDEAL_TYPE_KEYWORDS={IDEAL_TYPE_KEYWORDS}
-    />
+    <>
+      <ProfileRegistrationStep
+        profileData={profileData}
+        additionalPhotos={additionalPhotos}
+        selectedIdealKeywords={selectedIdealKeywords}
+        errors={errors}
+        onInputChange={handleInputChange}
+        onAdditionalPhotoUpload={handleAdditionalPhotoUpload}
+        onRemoveAdditionalPhoto={removeAdditionalPhoto}
+        onIdealTypeToggle={handleIdealTypeToggle}
+        onValidateAndProceed={handleProfileComplete}
+        onBack={handleBack}
+        onCompatibilityAnalysis={handleCompatibilityAnalysis}
+        IDEAL_TYPE_KEYWORDS={IDEAL_TYPE_KEYWORDS}
+      />
+      
+      {showCompatibilityReport && otherUser && (
+        <CompatibilityReport
+          user1={{
+            nickname: profileData.nickname,
+            gender: profileData.gender,
+            birthDate: profileData.birthDate,
+            faceKeywords: [], // 실제로는 저장된 관상 키워드 사용
+            sajuKeywords: [] // 실제로는 저장된 사주 키워드 사용
+          }}
+          user2={otherUser}
+          onClose={closeCompatibilityReport}
+        />
+      )}
+    </>
   )
 }

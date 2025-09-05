@@ -14,6 +14,14 @@ interface AnalysisResultStepProps {
   profileData: ProfileData
   faceReadingResults: AnalysisResult[]
   sajuResults: AnalysisResult[]
+  ohaengData?: {
+    labels: string[];
+    data: number[];
+    descriptions: string[];
+    personalTraits: string[];
+    colors: string[];
+    overallInterpretation?: string;
+  }
   onLogout: () => void
   localUser: any
   onProfileSetup: () => void
@@ -24,6 +32,7 @@ export default function AnalysisResultStep({
   profileData,
   faceReadingResults,
   sajuResults,
+  ohaengData,
   onLogout,
   localUser,
   onProfileSetup
@@ -34,6 +43,7 @@ export default function AnalysisResultStep({
       profileData={profileData}
       faceReadingResults={faceReadingResults}
       sajuResults={sajuResults}
+      ohaengData={ohaengData}
       onLogout={onLogout}
       localUser={localUser}
       onProfileSetup={onProfileSetup}

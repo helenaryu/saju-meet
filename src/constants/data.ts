@@ -42,6 +42,7 @@ export const IDEAL_TYPE_KEYWORDS = [
 
 export const dummyMatches: MatchUser[] = [
   {
+    id: "1",
     name: "김민지",
     faceCompatibility: 88,
     sajuCompatibility: 82,
@@ -61,6 +62,7 @@ export const dummyMatches: MatchUser[] = [
     totalAnalysis: "전체적으로 조화로운 궁합으로 서로를 보완하는 관계",
   },
   {
+    id: "2",
     name: "박서준",
     faceCompatibility: 95,
     sajuCompatibility: 89,
@@ -80,6 +82,7 @@ export const dummyMatches: MatchUser[] = [
     totalAnalysis: "최고 수준의 궁합으로 이상적인 파트너십 기대",
   },
   {
+    id: "3",
     name: "이서연",
     faceCompatibility: 85,
     sajuCompatibility: 91,

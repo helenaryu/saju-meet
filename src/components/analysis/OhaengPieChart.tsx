@@ -1,71 +1,229 @@
-// components/OhaengDonutChart.tsx
-import { useState } from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { useEffect, useRef, useState } from "react";
 
-const data = [
-  { name: '목(木)', value: 25, color: '#3CB371', desc: '균형 성장화', vibe: '풍요롭고 독오져이쁜 언니지' },
-  { name: '화(火)', value: 15, color: '#FF6347', desc: '훼륵 휙 정릴', vibe: '안잘 에너지콱 뿜쁜 언니지' },
-  { name: '토(土)', value: 30, color: '#FFA500', desc: '윤장어 정질', vibe: '엄격껍 셀관은흐 질싸얀 언니지' },
-  { name: '금(金)', value: 10, color: '#BA55D3', desc: '당진 틀정', vibe: '언근룰 언클링정이 짱욧 에너지' },
-  { name: '수(水)', value: 20, color: '#1E90FF', desc: '너지화 당칼', vibe: '어퍽왈 안정틱따쥬 깊은 언니지' },
-];
+interface OhaengPieChartProps {
+  ohaengData?: {
+    labels: string[];
+    data: number[];
+    descriptions: string[];
+    personalTraits: string[];
+    colors: string[];
+    overallInterpretation?: string;
+  } | undefined;
+}
 
-export default function OhaengPieChart() {
-  const [active, setActive] = useState<number | null>(null);
+const OhaengPieChart = ({ ohaengData }: OhaengPieChartProps) => {
+  const canvasRef = useRef(null);
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+
+  // 기본 데이터 (props가 없을 때 사용)
+  const defaultLabels = ["목(木)", "화(火)", "토(土)", "금(金)", "수(水)"];
+  const defaultData = [25, 15, 30, 10, 20];
+  const defaultDescriptions = [
+    "자라나는 생명력, 성장성과 끈기를 갖고 있어요.",
+    "불 같은 추진력, 열정과 감정의 폭발이 강한 편이에요.",
+    "중심을 잡는 안정감, 책임감과 인내심이 돋보입니다.",
+    "냉철한 판단력, 이성적이고 분석적인 면이 강합니다.",
+    "유연한 사고와 감성, 흐름에 순응하는 스타일이에요."
+  ];
+  const defaultPersonalTraits = [
+    "아이디어를 꾸준히 키워나가는 스타일이에요.",
+    "때론 감정에 솔직하게 반응하며 이끌어가는 편이에요.",
+    "무게감 있게 중심을 잡고 리더십을 발휘해요.",
+    "꼼꼼하고 효율적인 일처리를 잘하는 편이에요.",
+    "타인의 감정에 민감하고 배려심이 많아요."
+  ];
+  const defaultColors = ["#A8D5BA", "#FFB4A2", "#FFEAA7", "#B5B2C2", "#AED9E0"];
+
+  // props가 있으면 사용하고, 없으면 기본값 사용
+  const labels = ohaengData?.labels || defaultLabels;
+  const data = ohaengData?.data || defaultData;
+  const descriptions = ohaengData?.descriptions || defaultDescriptions;
+  const personalTraits = ohaengData?.personalTraits || defaultPersonalTraits;
+  const colors = ohaengData?.colors || defaultColors;
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    const total = data.reduce((sum, val) => sum + val, 0);
+    let startAngle = -0.5 * Math.PI;
+    const centerX = 200;
+    const centerY = 200;
+    const outerRadius = 140;
+    const innerRadius = 80; // 도넛 모양을 위한 내부 반지름
+
+    const handleMouseMove = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left - centerX;
+      const y = e.clientY - rect.top - centerY;
+      const distance = Math.sqrt(x * x + y * y);
+
+      if (distance < innerRadius || distance > outerRadius) {
+        setHoveredIndex(null);
+        return;
+      }
+
+      let angle = Math.atan2(y, x);
+      if (angle < -0.5 * Math.PI) angle += 2 * Math.PI;
+      let accAngle = -0.5 * Math.PI;
+      for (let i = 0; i < data.length; i++) {
+        const slice = (data[i] / total) * 2 * Math.PI;
+        if (angle >= accAngle && angle < accAngle + slice) {
+          setHoveredIndex(i);
+          break;
+        }
+        accAngle += slice;
+      }
+    };
+
+    const handleMouseLeave = () => {
+      setHoveredIndex(null);
+    };
+
+    const handleClick = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left - centerX;
+      const y = e.clientY - rect.top - centerY;
+      const distance = Math.sqrt(x * x + y * y);
+
+      if (distance < innerRadius || distance > outerRadius) return setSelectedIndex(null);
+
+      let angle = Math.atan2(y, x);
+      if (angle < -0.5 * Math.PI) angle += 2 * Math.PI;
+      let accAngle = -0.5 * Math.PI;
+      for (let i = 0; i < data.length; i++) {
+        const slice = (data[i] / total) * 2 * Math.PI;
+        if (angle >= accAngle && angle < accAngle + slice) {
+          setSelectedIndex(i);
+          break;
+        }
+        accAngle += slice;
+      }
+    };
+
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseleave', handleMouseLeave);
+    canvas.addEventListener('click', handleClick);
+
+    // Draw donut chart
+    data.forEach((value, i) => {
+      const sliceAngle = (value / total) * 2 * Math.PI;
+      const isHovered = hoveredIndex === i;
+      const isSelected = selectedIndex === i;
+      
+      // 호버 효과를 위한 색상 조정
+      let currentColor = colors[i];
+      if (isHovered) {
+        // 호버 시 밝게
+        const color = colors[i];
+        const rgb = color.match(/\d+/g);
+        if (rgb) {
+          const r = Math.min(255, parseInt(rgb[0]) + 30);
+          const g = Math.min(255, parseInt(rgb[1]) + 30);
+          const b = Math.min(255, parseInt(rgb[2]) + 30);
+          currentColor = `rgb(${r}, ${g}, ${b})`;
+        }
+      }
+      
+      // 외부 원 그리기
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.arc(centerX, centerY, outerRadius, startAngle, startAngle + sliceAngle);
+      ctx.fillStyle = currentColor;
+      ctx.fill();
+      
+      // 내부 원을 투명하게 만들기 (도넛 모양)
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.arc(centerX, centerY, innerRadius, startAngle, startAngle + sliceAngle);
+      ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+      
+      // 테두리 그리기 (외부와 내부 모두)
+      ctx.strokeStyle = isSelected ? "#10b981" : "#fff";
+      ctx.lineWidth = isSelected ? 3 : 2;
+      
+      // 외부 테두리
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, outerRadius, startAngle, startAngle + sliceAngle);
+      ctx.stroke();
+      
+      // 내부 테두리
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, innerRadius, startAngle, startAngle + sliceAngle);
+      ctx.stroke();
+      
+      // 퍼센트와 라벨 텍스트 그리기 (슬라이스가 충분히 클 때만)
+      if (sliceAngle > 0.2) { // 최소 각도 체크
+        const midAngle = startAngle + sliceAngle / 2;
+        const labelRadius = (outerRadius + innerRadius) / 2;
+        const labelX = centerX + Math.cos(midAngle) * labelRadius;
+        const labelY = centerY + Math.sin(midAngle) * labelRadius;
+        
+        // 텍스트 배경 그리기
+        ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+        ctx.fillRect(labelX - 25, labelY - 15, 50, 30);
+        
+        // 퍼센트 텍스트
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 12px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(`${value}%`, labelX, labelY - 3);
+        
+        // 오행 라벨 텍스트
+        ctx.fillStyle = "#e2e8f0";
+        ctx.font = "10px Arial";
+        ctx.fillText(labels[i], labelX, labelY + 8);
+      }
+      
+      startAngle += sliceAngle;
+    });
+
+    // 이벤트 리스너 정리 함수 반환
+    return () => {
+      canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.removeEventListener('mouseleave', handleMouseLeave);
+      canvas.removeEventListener('click', handleClick);
+    };
+  }, [data, colors, labels, hoveredIndex, selectedIndex]);
 
   return (
-    <div className="flex flex-col items-center py-10 px-4">
-      <h2 className="text-2xl font-bold text-green-500 mb-1">🌿 오행 분석 리포트</h2>
-      <p className="text-sm text-gray-200 mb-4">당신의 기질과 성향을 오행으로 분석한 결과</p>
+    <div className="flex flex-col items-center space-y-6">
+      <canvas ref={canvasRef} width={400} height={400} className="bg-white/10 rounded-xl shadow-md cursor-pointer border border-white/20" />
 
-      <div className="relative w-full max-w-xs h-64">
-        <ResponsiveContainer>
-          <PieChart>
-            <Pie
-              data={data}
-              innerRadius={60}
-              outerRadius={90}
-              paddingAngle={2}
-              dataKey="value"
-              onClick={(_, index) => setActive(index)}
-            >
-              {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
-              ))}
-            </Pie>
-          </PieChart>
-        </ResponsiveContainer>
+      {/* 범례 */}
+      <div className="flex flex-wrap justify-center gap-4 mt-4">
+        {labels.map((label, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <div 
+              className="w-4 h-4 rounded-full" 
+              style={{ backgroundColor: colors[i] }}
+            />
+            <span className="text-sm text-gray-300">{label} ({data[i]}%)</span>
+          </div>
+        ))}
+      </div>
 
-        {data.map((entry, index) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-3xl mt-4">
+        {data.map((value, i) => (
           <div
-            key={index}
-            className="absolute text-white text-xs font-bold"
-            style={{
-              top: `${50 + 40 * Math.sin((2 * Math.PI * index) / data.length)}%`,
-              left: `${50 + 40 * Math.cos((2 * Math.PI * index) / data.length)}%`,
-              transform: 'translate(-50%, -50%)',
-            }}
+            key={labels[i]}
+            className={`flex flex-col border border-white/20 rounded-lg p-4 bg-white/5 shadow-sm transition-all duration-200 hover:bg-white/10 cursor-pointer ${selectedIndex === i ? 'ring-2 ring-green-400 bg-green-500/20' : ''}`}
+            onClick={() => setSelectedIndex(i)}
           >
-            {entry.value}%
-          </div>
-        ))}
-
-        {active !== null && (
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full w-72 p-4 bg-white rounded-lg shadow-xl text-sm text-black z-10">
-            <h3 className="font-bold text-base mb-1">{data[active].name}</h3>
-            <p><strong>기본 성향</strong>: {data[active].desc}</p>
-            <p><strong>당신의 특징</strong>: {data[active].vibe}</p>
-          </div>
-        )}
-      </div>
-
-      <div className="mt-8 flex flex-wrap justify-center gap-3">
-        {data.map((entry, idx) => (
-          <div key={idx} className="text-white px-3 py-2 rounded-md text-sm font-semibold" style={{ backgroundColor: entry.color }}>
-            {entry.name} <span className="text-xs font-normal">{entry.desc}</span>
+            <h3 className="font-semibold text-lg text-white">
+              {labels[i]} <span className="text-sm text-green-300">({value}%)</span>
+            </h3>
+            <p className="text-sm text-gray-300 mt-1">🌀 기본 성향: {descriptions[i]}</p>
+            <p className="text-sm text-gray-200 mt-1">✨ 당신의 특징: {personalTraits[i]}</p>
           </div>
         ))}
       </div>
+
     </div>
   );
-}
+};
+
+export default OhaengPieChart;

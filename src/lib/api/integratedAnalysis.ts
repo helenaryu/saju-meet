@@ -2,6 +2,7 @@ import { claudeService, ClaudeAnalysisRequest, ClaudeAnalysisResponse } from './
 import { sajuService, SajuAnalysisRequest, SajuAnalysisResponse } from './saju';
 import { faceReadingService, FaceReadingRequest, FaceReadingResponse } from './faceReading';
 import { knowledgeBaseService } from './knowledgeBase';
+import { ohaengAnalysisService, OhaengAnalysisRequest, OhaengAnalysisResponse } from './ohaengAnalysis';
 
 export interface IntegratedAnalysisRequest {
   nickname: string;
@@ -15,6 +16,7 @@ export interface IntegratedAnalysisResponse {
   faceReading: FaceReadingResponse;
   saju: SajuAnalysisResponse;
   claude: ClaudeAnalysisResponse;
+  ohaeng: OhaengAnalysisResponse;
   summary: {
     overallStyle: string;
     compatibilityScore: number;
@@ -70,25 +72,39 @@ export class IntegratedAnalysisService {
       });
       console.log('Claude AI 분석 완료:', claude);
 
-      // 5. 통합 요약 생성
+      // 5. 오행 분석
+      console.log('오행 분석 시작...');
+      const ohaeng = await ohaengAnalysisService.analyzeOhaeng({
+        nickname: request.nickname,
+        gender: request.gender,
+        birthDate: request.birthDate,
+        birthTime: request.birthTime,
+        faceReadingKeywords: faceReading.keywords,
+        sajuKeywords: saju.keywords,
+        sajuElements: saju.elements
+      });
+      console.log('오행 분석 완료:', ohaeng);
+
+      // 6. 통합 요약 생성
       const summary = this.generateAdvancedSummary(faceReading, saju, claude, traditionalTexts);
 
-      // 6. 분석 메타데이터 생성
+      // 7. 분석 메타데이터 생성
       const analysisMetadata = this.generateAnalysisMetadata(faceReading, saju, claude, traditionalTexts);
 
-      // 7. 대화 ID 생성
+      // 8. 대화 ID 생성
       const conversationId = this.generateConversationId(request.nickname);
 
       const result: IntegratedAnalysisResponse = {
         faceReading,
         saju,
         claude,
+        ohaeng,
         summary,
         conversationId,
         analysisMetadata
       };
 
-      // 8. 분석 히스토리 저장
+      // 9. 분석 히스토리 저장
       this.analysisHistory.set(conversationId, result);
 
       console.log('고도화된 통합 분석 완료:', result);

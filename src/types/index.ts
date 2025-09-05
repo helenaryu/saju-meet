@@ -45,6 +45,7 @@ export interface SajuData {
 }
 
 export interface MatchUser {
+  id: string
   name: string
   faceCompatibility: number
   sajuCompatibility: number
@@ -91,5 +92,54 @@ export interface AnalysisReport {
   ideal_match: {
     description: string
     keywords: string[]
+  }
+}
+
+export interface CompatibilityRequest {
+  user1: {
+    nickname: string
+    gender: string
+    birthDate: string
+    birthTime: string
+    faceKeywords: string[]
+    sajuKeywords: string[]
+    faceAnalysis?: any
+    sajuAnalysis?: any
+  }
+  user2: {
+    nickname: string
+    gender: string
+    birthDate: string
+    birthTime: string
+    faceKeywords: string[]
+    sajuKeywords: string[]
+    faceAnalysis?: any
+    sajuAnalysis?: any
+  }
+}
+
+export interface CompatibilityResponse {
+  overallScore: number
+  faceCompatibility: {
+    score: number
+    analysis: string
+    keywords: string[]
+  }
+  sajuCompatibility: {
+    score: number
+    analysis: string
+    keywords: string[]
+  }
+  detailedAnalysis: {
+    personalityMatch: string
+    relationshipDynamics: string
+    challenges: string[]
+    strengths: string[]
+    advice: string
+  }
+  claudeAnalysis: {
+    compatibilityReport: string
+    recommendations: string[]
+    traditionalWisdom: string[]
   }
 }
