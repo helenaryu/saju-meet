@@ -28,7 +28,7 @@ function AuthCallbackContent() {
           if (code) {
             console.log('OAuth 코드가 있으므로 임시 인증 성공으로 처리')
             setTimeout(() => {
-              router.push('/integrated-analysis?auth=temp')
+              window.location.href = '/integrated-analysis?auth=temp'
             }, 2000)
           } else {
             setTimeout(() => {
@@ -110,7 +110,7 @@ function AuthCallbackContent() {
           console.log('✅ 인증 성공:', data.session)
           setDebugInfo('인증 성공 - integrated-analysis로 이동')
           // 인증 성공 후 integrated-analysis로 이동
-          router.push('/integrated-analysis')
+          window.location.href = '/integrated-analysis'
         } else {
           console.log('⚠️ 인증 세션 없음')
           setDebugInfo('세션 없음 - 로그아웃 처리')

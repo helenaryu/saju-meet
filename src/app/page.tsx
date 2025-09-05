@@ -375,10 +375,13 @@ function FaceReadingAppContent() {
     const auth = searchParams.get('auth')
     const code = searchParams.get('code')
     
+    console.log('URL 파라미터 확인:', { auth, code })
+    
     // OAuth 인증 코드가 있으면 콜백 페이지로 리다이렉트
     if (code) {
       console.log('OAuth 코드 감지, 콜백 페이지로 리다이렉트:', code)
-      router.push(`/auth/callback?code=${code}`)
+      // 즉시 리다이렉트
+      window.location.href = `/auth/callback?code=${code}`
       return
     }
     
