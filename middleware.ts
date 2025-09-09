@@ -4,20 +4,10 @@ import type { NextRequest } from 'next/server'
 export function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl
   
-  // 환경별 기본 URL 설정
+  // Vercel URL 설정
   const getBaseUrl = () => {
-    // Vercel 환경에서는 환경 변수 사용
-    if (process.env.NEXT_PUBLIC_SITE_URL) {
-      return process.env.NEXT_PUBLIC_SITE_URL
-    }
-    
-    // 프로덕션 환경에서는 Vercel 도메인 사용
-    if (process.env.NODE_ENV === 'production') {
-      return 'https://saju-meet.vercel.app'
-    }
-    
-    // 개발 환경에서는 localhost 사용
-    return 'http://localhost:3000'
+    // 환경 변수가 있으면 사용, 없으면 Vercel 도메인 사용
+    return process.env.NEXT_PUBLIC_SITE_URL || 'https://saju-meet.vercel.app'
   }
   
   // OAuth 코드가 있는 경우 즉시 콜백 페이지로 리다이렉트

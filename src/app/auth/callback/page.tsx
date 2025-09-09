@@ -28,9 +28,8 @@ function AuthCallbackContent() {
           if (code) {
             console.log('OAuth 코드가 있으므로 임시 인증 성공으로 처리')
             setTimeout(() => {
-              // 절대 URL 사용하여 localhost 리다이렉트 방지
-              const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 
-                (process.env.NODE_ENV === 'production' ? 'https://saju-meet.vercel.app' : 'http://localhost:3000')
+              // Vercel URL 사용
+              const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://saju-meet.vercel.app'
               
               // 디버깅을 위한 로그
               console.log('🔧 콜백 리다이렉트 URL 설정:')
@@ -130,9 +129,8 @@ function AuthCallbackContent() {
         if (data.session) {
           console.log('✅ 인증 성공:', data.session)
           setDebugInfo('인증 성공 - integrated-analysis로 이동')
-          // 인증 성공 후 integrated-analysis로 이동 (절대 URL 사용)
-          const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 
-            (process.env.NODE_ENV === 'production' ? 'https://saju-meet.vercel.app' : 'http://localhost:3000')
+          // 인증 성공 후 integrated-analysis로 이동
+          const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://saju-meet.vercel.app'
           
           // 디버깅을 위한 로그
           console.log('🔧 인증 성공 후 리다이렉트 URL 설정:')

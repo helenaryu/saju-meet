@@ -559,9 +559,8 @@ function FaceReadingAppContent() {
         throw new Error('Supabase auth가 초기화되지 않았습니다.')
       }
 
-      // 절대 URL 사용하여 localhost 리다이렉트 방지
-      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 
-        (process.env.NODE_ENV === 'production' ? 'https://saju-meet.vercel.app' : 'http://localhost:3000')
+      // Vercel URL 사용
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://saju-meet.vercel.app'
       
       // 디버깅을 위한 로그
       console.log('🔧 OAuth 리다이렉트 URL 설정:')
@@ -613,9 +612,8 @@ function FaceReadingAppContent() {
         throw new Error('Supabase auth가 초기화되지 않았습니다.')
       }
 
-      // 절대 URL 사용하여 localhost 리다이렉트 방지
-      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 
-        (process.env.NODE_ENV === 'production' ? 'https://saju-meet.vercel.app' : 'http://localhost:3000')
+      // Vercel URL 사용
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://saju-meet.vercel.app'
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'kakao' as const,

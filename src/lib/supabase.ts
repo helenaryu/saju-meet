@@ -16,9 +16,7 @@ const getRedirectUrl = () => {
   }
   
   // 서버 사이드 - 환경 변수에서 가져오기
-  const isProduction = process.env.NODE_ENV === 'production'
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 
-    (isProduction ? 'https://saju-meet.vercel.app' : 'http://localhost:3000')
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://saju-meet.vercel.app'
   
   return `${baseUrl}/auth/callback`
 }
