@@ -83,9 +83,8 @@ Supabase 설정이 완료되었습니다.
 
 **추가 확인사항**:
 - Google Cloud Console > APIs & Services > Credentials > OAuth 2.0 Client IDs
-- 승인된 리다이렉트 URI에 다음 URL들이 모두 포함되어 있는지 확인:
+- 승인된 리다이렉트 URI에 다음 URL이 포함되어 있는지 확인:
   - `https://saju-meet.vercel.app/auth/callback`
-  - `http://localhost:3000/auth/callback` (개발용)
 
 ## 📝 체크리스트
 

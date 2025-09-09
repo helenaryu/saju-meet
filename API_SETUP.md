@@ -41,7 +41,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
 
 # 서비스 설정
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=https://saju-meet.vercel.app
 
 # 분석 설정
 ANALYSIS_VERSION=2.0.0
@@ -124,7 +124,7 @@ npm run dev
 ```
 
 ### 2. 브라우저에서 테스트
-- `http://localhost:3000` 접속
+- `https://saju-meet.vercel.app` 접속
 - 통합 분석 단계에서 사진 업로드 및 생년월일 입력
 - 고도화된 분석 결과 확인
 

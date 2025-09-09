@@ -29,19 +29,17 @@ OPENAI_API_KEY=your_openai_api_key
 4. **OAuth 2.0 Client IDs**에서 사용 중인 클라이언트 선택
 
 #### 2.2 Authorized redirect URIs 설정
-다음 URL들을 **Authorized redirect URIs**에 추가:
+다음 URL을 **Authorized redirect URIs**에 추가:
 
 ```
 https://saju-meet.vercel.app/auth/callback
-http://localhost:3000/auth/callback
 ```
 
 #### 2.3 Authorized JavaScript origins 설정
-다음 URL들을 **Authorized JavaScript origins**에 추가:
+다음 URL을 **Authorized JavaScript origins**에 추가:
 
 ```
 https://saju-meet.vercel.app
-http://localhost:3000
 ```
 
 ### 3. Supabase Auth 설정
@@ -57,8 +55,6 @@ Supabase 대시보드 > Authentication > Settings에서:
 ```
 https://saju-meet.vercel.app/auth/callback
 https://saju-meet.vercel.app/profile
-http://localhost:3000/auth/callback
-http://localhost:3000/profile
 ```
 
 #### 3.3 OAuth Provider 설정

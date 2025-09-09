@@ -1,23 +1,9 @@
 import { createClient } from '@supabase/supabase-js'
 
-// 환경별 리다이렉트 URL 설정
+// Vercel URL만 사용하는 리다이렉트 URL 설정
 const getRedirectUrl = () => {
-  if (typeof window !== 'undefined') {
-    // 클라이언트 사이드 - 현재 도메인 사용
-    const protocol = window.location.protocol
-    const host = window.location.host
-    
-    // Vercel 환경에서는 HTTPS 강제 사용
-    if (host.includes('vercel.app') || host.includes('vercel.com')) {
-      return `https://${host}/auth/callback`
-    }
-    
-    return `${protocol}//${host}/auth/callback`
-  }
-  
-  // 서버 사이드 - 환경 변수에서 가져오기
+  // 항상 Vercel URL 사용 (localhost 제거)
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://saju-meet.vercel.app'
-  
   return `${baseUrl}/auth/callback`
 }
 
