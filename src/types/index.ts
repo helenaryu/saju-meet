@@ -35,6 +35,8 @@ export interface ProfileData {
   school: string
   introduction: string
   idealKeywords: string[]
+  faceKeywords?: string[]
+  sajuKeywords?: string[]
 }
 
 export interface SajuData {

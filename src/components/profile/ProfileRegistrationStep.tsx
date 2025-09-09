@@ -28,7 +28,6 @@ interface ProfileRegistrationStepProps {
   onIdealTypeToggle: (keyword: string) => void
   onValidateAndProceed: () => void
   onBack: () => void
-  onCompatibilityAnalysis?: () => void
   IDEAL_TYPE_KEYWORDS: string[]
 }
 
@@ -43,7 +42,6 @@ export default function ProfileRegistrationStep({
   onIdealTypeToggle,
   onValidateAndProceed,
   onBack,
-  onCompatibilityAnalysis,
   IDEAL_TYPE_KEYWORDS
 }: ProfileRegistrationStepProps) {
   return (
@@ -290,20 +288,6 @@ export default function ProfileRegistrationStep({
             </div>
           </div>
 
-          {/* 궁합 분석 버튼 */}
-          {onCompatibilityAnalysis && (
-            <div className="mt-6">
-              <button
-                onClick={onCompatibilityAnalysis}
-                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-8 py-4 rounded-full text-lg font-bold transition-all duration-300 transform hover:scale-105 shadow-lg"
-              >
-                💕 궁합 분석하기
-              </button>
-              <p className="text-center text-gray-400 text-sm mt-2">
-                상대방과의 사주와 관상 궁합을 확인해보세요
-              </p>
-            </div>
-          )}
 
           {/* 하단 버튼 */}
           <div className="flex flex-col sm:flex-row gap-4 mt-8">

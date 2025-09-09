@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import ProfileRegistrationStep from '@/components/profile/ProfileRegistrationStep'
-import CompatibilityReport from '@/components/profile/CompatibilityReport'
 import { ProfileData } from '@/types'
 import { IDEAL_TYPE_KEYWORDS } from '@/constants/data'
 
@@ -27,8 +26,6 @@ export default function ProfilePage() {
   const [selectedIdealKeywords, setSelectedIdealKeywords] = useState<string[]>([])
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [localUser, setLocalUser] = useState<any>(null)
-  const [showCompatibilityReport, setShowCompatibilityReport] = useState(false)
-  const [otherUser, setOtherUser] = useState<any>(null)
 
   // 페이지 로드 시 사용자 정보 확인
   useEffect(() => {
@@ -178,24 +175,6 @@ export default function ProfilePage() {
     router.push('/integrated-analysis')
   }
 
-  const handleCompatibilityAnalysis = () => {
-    // 임시로 더미 사용자 데이터 사용 (실제로는 매칭된 사용자 데이터 사용)
-    const dummyOtherUser = {
-      nickname: "상대방",
-      gender: "female",
-      birthDate: "1995-06-15",
-      faceKeywords: ["감성적", "직관적", "친근함"],
-      sajuKeywords: ["창의적", "성장지향적", "리더십"]
-    }
-    
-    setOtherUser(dummyOtherUser)
-    setShowCompatibilityReport(true)
-  }
-
-  const closeCompatibilityReport = () => {
-    setShowCompatibilityReport(false)
-    setOtherUser(null)
-  }
 
   // 로딩 중이거나 사용자 정보가 없는 경우
   if (!localUser) {
@@ -223,23 +202,8 @@ export default function ProfilePage() {
         onIdealTypeToggle={handleIdealTypeToggle}
         onValidateAndProceed={handleProfileComplete}
         onBack={handleBack}
-        onCompatibilityAnalysis={handleCompatibilityAnalysis}
         IDEAL_TYPE_KEYWORDS={IDEAL_TYPE_KEYWORDS}
       />
-      
-      {showCompatibilityReport && otherUser && (
-        <CompatibilityReport
-          user1={{
-            nickname: profileData.nickname,
-            gender: profileData.gender,
-            birthDate: profileData.birthDate,
-            faceKeywords: [], // 실제로는 저장된 관상 키워드 사용
-            sajuKeywords: [] // 실제로는 저장된 사주 키워드 사용
-          }}
-          user2={otherUser}
-          onClose={closeCompatibilityReport}
-        />
-      )}
     </>
   )
 }

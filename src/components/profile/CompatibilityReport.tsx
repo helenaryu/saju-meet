@@ -31,11 +31,21 @@ export default function CompatibilityReport({ user1, user2, onClose }: Compatibi
     setError(null)
 
     try {
+      // 인증 토큰 가져오기 (localStorage에서)
+      const token = localStorage.getItem('supabase.auth.token')
+      
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      }
+      
+      // 토큰이 있으면 인증 헤더 추가
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+
       const response = await fetch('/api/compatibility', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({
           user1: {
             ...user1,
@@ -51,12 +61,14 @@ export default function CompatibilityReport({ user1, user2, onClose }: Compatibi
       })
 
       if (!response.ok) {
-        throw new Error('궁합 분석에 실패했습니다.')
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || '궁합 분석에 실패했습니다.')
       }
 
       const result = await response.json()
       setCompatibilityData(result.data)
     } catch (err) {
+      console.error('궁합 분석 오류:', err)
       setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.')
     } finally {
       setLoading(false)

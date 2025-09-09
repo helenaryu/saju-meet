@@ -31,28 +31,19 @@ export async function POST(request: NextRequest) {
     if (supabase) {
       try {
         const authHeader = request.headers.get('authorization');
-        if (!authHeader) {
-          return NextResponse.json(
-            { error: '인증이 필요합니다.' },
-            { status: 401 }
-          );
-        }
-
-        const token = authHeader.replace('Bearer ', '');
-        const { data: { user }, error } = await supabase.auth.getUser(token);
-        
-        if (error || !user) {
-          return NextResponse.json(
-            { error: '인증이 필요합니다.' },
-            { status: 401 }
-          );
+        if (authHeader) {
+          const token = authHeader.replace('Bearer ', '');
+          const { data: { user }, error } = await supabase.auth.getUser(token);
+          
+          if (error || !user) {
+            console.log('인증 토큰이 유효하지 않지만 계속 진행합니다.');
+          }
+        } else {
+          console.log('인증 헤더가 없지만 계속 진행합니다.');
         }
       } catch (error) {
         console.error('인증 오류:', error);
-        return NextResponse.json(
-          { error: '인증 토큰이 유효하지 않습니다.' },
-          { status: 401 }
-        );
+        console.log('인증 오류가 발생했지만 계속 진행합니다.');
       }
     } else {
       console.log('Supabase가 설정되지 않아 인증을 건너뜁니다.');

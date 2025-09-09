@@ -54,13 +54,17 @@ export class CompatibilityService {
     user1Analysis?: any,
     user2Analysis?: any
   ): CompatibilityResponse['faceCompatibility'] {
+    // 빈 키워드 배열에 대한 fallback 처리
+    const safeUser1Keywords = user1Keywords.length > 0 ? user1Keywords : ['관상 분석 필요'];
+    const safeUser2Keywords = user2Keywords.length > 0 ? user2Keywords : ['관상 분석 필요'];
+    
     // 키워드 매칭 점수 계산
-    const commonKeywords = user1Keywords.filter(keyword => 
-      user2Keywords.includes(keyword)
+    const commonKeywords = safeUser1Keywords.filter(keyword => 
+      safeUser2Keywords.includes(keyword)
     );
     
     const keywordScore = Math.min(
-      (commonKeywords.length / Math.max(user1Keywords.length, user2Keywords.length)) * 100,
+      (commonKeywords.length / Math.max(safeUser1Keywords.length, safeUser2Keywords.length)) * 100,
       100
     );
 
@@ -107,13 +111,17 @@ export class CompatibilityService {
     user1Analysis?: any,
     user2Analysis?: any
   ): CompatibilityResponse['sajuCompatibility'] {
+    // 빈 키워드 배열에 대한 fallback 처리
+    const safeUser1Keywords = user1Keywords.length > 0 ? user1Keywords : ['사주 분석 필요'];
+    const safeUser2Keywords = user2Keywords.length > 0 ? user2Keywords : ['사주 분석 필요'];
+    
     // 사주 키워드 매칭
-    const commonKeywords = user1Keywords.filter(keyword => 
-      user2Keywords.includes(keyword)
+    const commonKeywords = safeUser1Keywords.filter(keyword => 
+      safeUser2Keywords.includes(keyword)
     );
     
     const keywordScore = Math.min(
-      (commonKeywords.length / Math.max(user1Keywords.length, user2Keywords.length)) * 100,
+      (commonKeywords.length / Math.max(safeUser1Keywords.length, safeUser2Keywords.length)) * 100,
       100
     );
 

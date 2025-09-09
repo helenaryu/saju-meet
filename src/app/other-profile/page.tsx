@@ -287,15 +287,15 @@ function OtherProfileContent() {
             nickname: myProfile.nickname,
             gender: myProfile.gender,
             birthDate: myProfile.birthDate,
-            faceKeywords: [], // 실제로는 저장된 관상 키워드 사용
-            sajuKeywords: [] // 실제로는 저장된 사주 키워드 사용
+            faceKeywords: myProfile.faceKeywords || ['관상 분석 필요'],
+            sajuKeywords: myProfile.sajuKeywords || ['사주 분석 필요']
           }}
           user2={{
             nickname: otherUser.nickname,
             gender: otherUser.gender,
             birthDate: otherUser.birthDate,
-            faceKeywords: otherUser.faceKeywords,
-            sajuKeywords: otherUser.sajuKeywords
+            faceKeywords: otherUser.faceKeywords || ['관상 분석 필요'],
+            sajuKeywords: otherUser.sajuKeywords || ['사주 분석 필요']
           }}
           onClose={closeCompatibilityReport}
         />
