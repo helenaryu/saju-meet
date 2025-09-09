@@ -100,6 +100,14 @@ export default function IntegratedAnalysisPage() {
         const user = JSON.parse(savedUser)
         setLocalUser(user)
         
+        // 프로필 완료 상태 확인
+        const isProfileComplete = localStorage.getItem('sajuMeetProfileComplete')
+        if (isProfileComplete === 'true') {
+          console.log('✅ 프로필이 이미 완료됨 - 홈으로 리다이렉트')
+          router.push('/home')
+          return
+        }
+        
         // 저장된 프로필 데이터 불러오기
         const savedProfile = localStorage.getItem('sajuMeetProfile')
         if (savedProfile) {
@@ -254,6 +262,11 @@ export default function IntegratedAnalysisPage() {
 
   const handleLogout = () => {
     localStorage.removeItem('localUser')
+    localStorage.removeItem('sajuMeetProfile')
+    localStorage.removeItem('sajuMeetAdditionalPhotos')
+    localStorage.removeItem('sajuMeetIdealKeywords')
+    localStorage.removeItem('sajuMeetProfileComplete')
+    localStorage.removeItem('sajuMeetSajuData')
     router.push('/')
   }
 

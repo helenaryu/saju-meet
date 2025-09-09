@@ -519,6 +519,11 @@ function FaceReadingAppContent() {
     setLocalUser(null)
     setIsLoggedIn(false)
     localStorage.removeItem('localUser')
+    localStorage.removeItem('sajuMeetProfile')
+    localStorage.removeItem('sajuMeetAdditionalPhotos')
+    localStorage.removeItem('sajuMeetIdealKeywords')
+    localStorage.removeItem('sajuMeetProfileComplete')
+    localStorage.removeItem('sajuMeetSajuData')
     setCurrentStep('onboarding')
   }
 
@@ -528,10 +533,19 @@ function FaceReadingAppContent() {
     if (savedUser) {
       try {
         const user = JSON.parse(savedUser)
-                 setLocalUser(user)
-         setIsLoggedIn(true)
-         setCurrentStep('integrated-analysis')
-         setIntegratedAnalysisStep('input')
+        setLocalUser(user)
+        setIsLoggedIn(true)
+        
+        // 프로필 완료 상태 확인
+        const isProfileComplete = localStorage.getItem('sajuMeetProfileComplete')
+        if (isProfileComplete === 'true') {
+          // 프로필이 완료된 경우 홈으로 이동
+          window.location.href = '/home'
+        } else {
+          // 프로필이 완료되지 않은 경우 통합 분석 페이지로 이동
+          setCurrentStep('integrated-analysis')
+          setIntegratedAnalysisStep('input')
+        }
       } catch (error) {
         console.error('저장된 사용자 정보 파싱 오류:', error)
         localStorage.removeItem('localUser')

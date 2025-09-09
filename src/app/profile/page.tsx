@@ -162,13 +162,16 @@ export default function ProfilePage() {
       return
     }
 
-    // 프로필 완료 후 홈으로 이동
-    router.push('/home')
-    
     // 로컬 스토리지에 프로필 데이터 저장
     localStorage.setItem('sajuMeetProfile', JSON.stringify(profileData))
     localStorage.setItem('sajuMeetAdditionalPhotos', JSON.stringify(additionalPhotos))
     localStorage.setItem('sajuMeetIdealKeywords', JSON.stringify(selectedIdealKeywords))
+    
+    // 프로필 완료 상태 저장
+    localStorage.setItem('sajuMeetProfileComplete', 'true')
+    
+    // 프로필 완료 후 홈으로 이동
+    router.push('/home')
   }
 
   const handleBack = () => {

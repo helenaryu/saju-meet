@@ -21,6 +21,14 @@ export default function HomePage() {
         const user = JSON.parse(savedUser)
         setLocalUser(user)
         
+        // 프로필 완료 상태 확인
+        const isProfileComplete = localStorage.getItem('sajuMeetProfileComplete')
+        if (isProfileComplete !== 'true') {
+          console.log('⚠️ 프로필이 완료되지 않음 - 프로필 등록 페이지로 리다이렉트')
+          router.push('/profile')
+          return
+        }
+        
         // 저장된 프로필 데이터가 있으면 불러오기
         const savedProfile = localStorage.getItem('sajuMeetProfile')
         if (savedProfile) {
@@ -60,6 +68,7 @@ export default function HomePage() {
     localStorage.removeItem('sajuMeetProfile')
     localStorage.removeItem('sajuMeetAdditionalPhotos')
     localStorage.removeItem('sajuMeetIdealKeywords')
+    localStorage.removeItem('sajuMeetProfileComplete')
     router.push('/')
   }
 

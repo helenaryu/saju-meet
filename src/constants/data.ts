@@ -56,7 +56,8 @@ export const dummyMatches: MatchUser[] = [
     introduction: "안녕하세요! 긍정적인 에너지를 나누는 것을 좋아합니다.",
     photos: [
       "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face",
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face"
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop&crop=face"
     ],
     faceKeywords: ["온화한", "지적인"],
     sajuKeywords: ["안정 추구", "균형 감각"],
@@ -78,8 +79,9 @@ export const dummyMatches: MatchUser[] = [
     education: "대학교 졸업",
     introduction: "새로운 사람들과의 만남을 즐겁게 생각합니다.",
     photos: [
-      "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face",
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face"
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face"
     ],
     faceKeywords: ["카리스마", "세련된"],
     sajuKeywords: ["직진", "감정교류"],
@@ -101,8 +103,9 @@ export const dummyMatches: MatchUser[] = [
     education: "대학원 졸업",
     introduction: "예술과 자연을 사랑하는 감성적인 사람입니다.",
     photos: [
-      "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face",
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face"
+      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&h=400&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=400&fit=crop&crop=face"
     ],
     faceKeywords: ["귀여운", "순수한"],
     sajuKeywords: ["로맨틱", "안정"],
