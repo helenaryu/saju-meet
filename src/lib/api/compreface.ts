@@ -192,7 +192,7 @@ export class CompreFaceService {
       });
       return response.status === 200;
     } catch (error) {
-      console.log('CompreFace 서버 사용 불가, fallback 시스템 사용:', error.message);
+      console.log('CompreFace 서버 사용 불가, fallback 시스템 사용:', error instanceof Error ? error.message : String(error));
       return false;
     }
   }
