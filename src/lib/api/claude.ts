@@ -71,7 +71,7 @@ export class ClaudeService {
       
       console.log('Claude API 요청 전송 중...');
       const response = await this.client.messages.create({
-        model: 'claude-3-5-sonnet-20241022',
+        model: 'claude-sonnet-4-20250514',
         max_tokens: 1500,
         temperature: 0.7,
         messages: [
@@ -182,7 +182,7 @@ export class ClaudeService {
       }
 
       const response = await this.client.messages.create({
-        model: 'claude-3-5-sonnet-20241022',
+        model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
         temperature: 0.7,
         messages: [
