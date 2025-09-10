@@ -45,7 +45,12 @@ export class FaceAnalysisFallback {
    */
   async analyzeFace(imageFile: File): Promise<FallbackFaceAnalysis> {
     try {
-      // 이미지 메타데이터에서 기본 정보 추출
+      // 서버 사이드에서는 기본 분석 결과 반환
+      if (typeof window === 'undefined') {
+        return this.generateServerSideAnalysis(imageFile);
+      }
+
+      // 클라이언트 사이드에서는 이미지 메타데이터 기반 분석
       const imageInfo = await this.extractImageInfo(imageFile);
       
       // 나이 추정 (이미지 크기와 파일명 기반)
@@ -82,6 +87,17 @@ export class FaceAnalysisFallback {
     size: number;
     type: string;
   }> {
+    // 서버 사이드에서는 기본값 사용
+    if (typeof window === 'undefined') {
+      return {
+        width: 800,
+        height: 600,
+        size: imageFile.size,
+        type: imageFile.type
+      };
+    }
+
+    // 클라이언트 사이드에서는 Image API 사용
     return new Promise((resolve) => {
       const img = new Image();
       img.onload = () => {
@@ -314,6 +330,23 @@ export class FaceAnalysisFallback {
     }
     
     return compatibility.slice(0, 4); // 최대 4개
+  }
+
+  private generateServerSideAnalysis(imageFile: File): FallbackFaceAnalysis {
+    // 서버 사이드에서는 파일 정보만으로 기본 분석 수행
+    const age = this.estimateAge(imageFile, { width: 800, height: 600 });
+    const gender = this.estimateGender(imageFile);
+    const features = this.analyzeFacialFeatures(imageFile, { width: 800, height: 600 });
+    const keywords = this.generateKeywords(features, age, gender);
+    const loveCompatibility = this.generateLoveCompatibility(features, age, gender);
+
+    return {
+      age,
+      gender,
+      features,
+      keywords,
+      loveCompatibility
+    };
   }
 
   private generateDefaultAnalysis(): FallbackFaceAnalysis {
