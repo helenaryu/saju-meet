@@ -3,6 +3,21 @@ import { TraditionalText } from '../knowledgeBase'
 
 export class ClaudeResponseParser {
   static parseAdvancedResponse(text: string, traditionalTexts: TraditionalText[]): ClaudeAnalysisResponse {
+    console.log('ClaudeResponseParser: 응답 텍스트 시작:', text.substring(0, 200) + '...');
+    
+    // JSON 응답을 먼저 시도
+    const jsonResponse = this.tryParseJsonResponse(text);
+    if (jsonResponse) {
+      console.log('ClaudeResponseParser: JSON 파싱 성공!');
+      return {
+        ...jsonResponse,
+        traditionalWisdom: traditionalTexts
+      };
+    }
+    
+    console.log('ClaudeResponseParser: JSON 파싱 실패, 마크다운 방식으로 폴백');
+
+    // JSON 파싱 실패 시 기존 마크다운 방식으로 폴백
     const sections = this.extractSections(text);
     
     return {
@@ -19,6 +34,79 @@ export class ClaudeResponseParser {
       },
       traditionalWisdom: traditionalTexts
     };
+  }
+
+  private static tryParseJsonResponse(text: string): ClaudeAnalysisResponse | null {
+    try {
+      console.log('tryParseJsonResponse: JSON 파싱 시도 중...');
+      
+      // JSON 코드 블록에서 JSON 추출
+      const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/);
+      if (jsonMatch) {
+        console.log('tryParseJsonResponse: JSON 코드 블록 발견');
+        const jsonText = jsonMatch[1].trim();
+        console.log('tryParseJsonResponse: JSON 텍스트:', jsonText.substring(0, 100) + '...');
+        const parsed = JSON.parse(jsonText);
+        console.log('tryParseJsonResponse: JSON 파싱 성공, 필수 필드 확인 중...');
+        
+        // 필수 필드 검증
+        if (parsed.loveStyle && parsed.faceReadingInterpretation && parsed.sajuInterpretation) {
+          console.log('tryParseJsonResponse: 필수 필드 검증 통과, 응답 생성');
+          return {
+            loveStyle: parsed.loveStyle || '분석 중...',
+            faceReadingInterpretation: parsed.faceReadingInterpretation || '분석 중...',
+            sajuInterpretation: parsed.sajuInterpretation || '분석 중...',
+            idealTypeDescription: parsed.idealTypeDescription || '분석 중...',
+            recommendedKeywords: Array.isArray(parsed.recommendedKeywords) ? parsed.recommendedKeywords : [],
+            detailedAnalysis: {
+              personalityInsights: parsed.detailedAnalysis?.personalityInsights || '분석 중...',
+              relationshipAdvice: parsed.detailedAnalysis?.relationshipAdvice || '분석 중...',
+              compatibilityFactors: parsed.detailedAnalysis?.compatibilityFactors || '분석 중...',
+              growthOpportunities: parsed.detailedAnalysis?.growthOpportunities || '분석 중...'
+            },
+            traditionalWisdom: []
+          };
+        } else {
+          console.log('tryParseJsonResponse: 필수 필드 부족 - loveStyle:', !!parsed.loveStyle, 'faceReading:', !!parsed.faceReadingInterpretation, 'saju:', !!parsed.sajuInterpretation);
+        }
+      }
+
+      // 코드 블록 없이 직접 JSON인 경우
+      const directJsonMatch = text.match(/\{[\s\S]*\}/);
+      if (directJsonMatch) {
+        console.log('tryParseJsonResponse: 직접 JSON 객체 발견');
+        const jsonText = directJsonMatch[0];
+        console.log('tryParseJsonResponse: 직접 JSON 텍스트:', jsonText.substring(0, 100) + '...');
+        const parsed = JSON.parse(jsonText);
+        console.log('tryParseJsonResponse: 직접 JSON 파싱 성공, 필수 필드 확인 중...');
+        
+        if (parsed.loveStyle && parsed.faceReadingInterpretation && parsed.sajuInterpretation) {
+          console.log('tryParseJsonResponse: 직접 JSON 필수 필드 검증 통과, 응답 생성');
+          return {
+            loveStyle: parsed.loveStyle || '분석 중...',
+            faceReadingInterpretation: parsed.faceReadingInterpretation || '분석 중...',
+            sajuInterpretation: parsed.sajuInterpretation || '분석 중...',
+            idealTypeDescription: parsed.idealTypeDescription || '분석 중...',
+            recommendedKeywords: Array.isArray(parsed.recommendedKeywords) ? parsed.recommendedKeywords : [],
+            detailedAnalysis: {
+              personalityInsights: parsed.detailedAnalysis?.personalityInsights || '분석 중...',
+              relationshipAdvice: parsed.detailedAnalysis?.relationshipAdvice || '분석 중...',
+              compatibilityFactors: parsed.detailedAnalysis?.compatibilityFactors || '분석 중...',
+              growthOpportunities: parsed.detailedAnalysis?.growthOpportunities || '분석 중...'
+            },
+            traditionalWisdom: []
+          };
+        } else {
+          console.log('tryParseJsonResponse: 직접 JSON 필수 필드 부족 - loveStyle:', !!parsed.loveStyle, 'faceReading:', !!parsed.faceReadingInterpretation, 'saju:', !!parsed.sajuInterpretation);
+        }
+      }
+      
+      console.log('tryParseJsonResponse: JSON 패턴을 찾지 못함');
+    } catch (error) {
+      console.log('tryParseJsonResponse: JSON 파싱 실패:', error);
+    }
+    
+    return null;
   }
 
   private static extractSections(text: string): Record<string, any> {
