@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
           };
         }
       } catch (comprefaceError) {
-        console.warn('CompreFace 분석 실패, fallback 시스템 사용:', comprefaceError.message);
+        console.warn('CompreFace 분석 실패, fallback 시스템 사용:', comprefaceError instanceof Error ? comprefaceError.message : String(comprefaceError));
         // CompreFace 실패 시 fallback 시스템 사용
         faceData = await faceAnalysisFallback.analyzeFace(imageFile);
       }

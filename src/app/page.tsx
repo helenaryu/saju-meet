@@ -491,7 +491,7 @@ function FaceReadingAppContent() {
       // Supabase가 없으면 onboarding으로 유지
       setCurrentStep('onboarding')
     }
-  }, [supabaseAvailable, supabase, checkSupabaseSession]) // localUser, isLoggedIn 의존성 제거
+  }, [supabaseAvailable, supabase, checkSupabaseSession, localUser, isLoggedIn])
 
   // 로컬 인증 상태 (Supabase 없이도 작동)
   const handleLocalLogin = (email: string, password: string) => {
