@@ -491,7 +491,7 @@ function FaceReadingAppContent() {
       // Supabase가 없으면 onboarding으로 유지
       setCurrentStep('onboarding')
     }
-  }, [supabaseAvailable, supabase, localUser, isLoggedIn, checkSupabaseSession])
+  }, [supabaseAvailable, supabase, checkSupabaseSession]) // localUser, isLoggedIn 의존성 제거
 
   // 로컬 인증 상태 (Supabase 없이도 작동)
   const handleLocalLogin = (email: string, password: string) => {
@@ -540,7 +540,7 @@ function FaceReadingAppContent() {
         const isProfileComplete = localStorage.getItem('sajuMeetProfileComplete')
         if (isProfileComplete === 'true') {
           // 프로필이 완료된 경우 홈으로 이동
-          window.location.href = '/home'
+          router.push('/home')
         } else {
           // 프로필이 완료되지 않은 경우 통합 분석 페이지로 이동
           setCurrentStep('integrated-analysis')
@@ -551,7 +551,7 @@ function FaceReadingAppContent() {
         localStorage.removeItem('localUser')
       }
     }
-  }, [])
+  }, [router])
 
   // OAuth 인증 함수들 (Supabase가 설정된 경우에만)
   const handleGoogleSignUp = async () => {
@@ -767,13 +767,14 @@ function FaceReadingAppContent() {
       return
     }
 
-    // 프로필 완료 후 홈으로 이동
-    setCurrentStep("home")
-    
-    // 로컬 스토리지에 프로필 데이터 저장 (선택사항)
+    // 로컬 스토리지에 프로필 데이터 저장
     localStorage.setItem('sajuMeetProfile', JSON.stringify(profileData))
     localStorage.setItem('sajuMeetAdditionalPhotos', JSON.stringify(additionalPhotos))
     localStorage.setItem('sajuMeetIdealKeywords', JSON.stringify(selectedIdealKeywords))
+    localStorage.setItem('sajuMeetProfileComplete', 'true')
+    
+    // 프로필 완료 후 홈으로 이동
+    router.push('/home')
   }
 
   // 프로필 설정 단계
@@ -800,13 +801,13 @@ function FaceReadingAppContent() {
 
   // 홈/대시보드 단계 (프로필 완료 후) - 별도 페이지로 이동
   if (currentStep === "home") {
-    router.push('/home')
+    // useEffect에서 처리하므로 여기서는 null 반환
     return null
   }
 
   // 이상형 매칭 단계 - 별도 페이지로 이동
   if (currentStep === "ideal-match") {
-    router.push('/ideal-match')
+    // useEffect에서 처리하므로 여기서는 null 반환
     return null
   }
 

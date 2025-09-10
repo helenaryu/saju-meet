@@ -27,23 +27,10 @@ function AuthCallbackContent() {
           const code = searchParams?.get('code')
           if (code) {
             console.log('OAuth 코드가 있으므로 임시 인증 성공으로 처리')
-            setTimeout(() => {
-              // Vercel URL 사용
-              const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://saju-meet.vercel.app'
-              
-              // 디버깅을 위한 로그
-              console.log('🔧 콜백 리다이렉트 URL 설정:')
-              console.log('NEXT_PUBLIC_SITE_URL:', process.env.NEXT_PUBLIC_SITE_URL)
-              console.log('NODE_ENV:', process.env.NODE_ENV)
-              console.log('계산된 baseUrl:', baseUrl)
-              console.log('최종 리다이렉트 URL:', `${baseUrl}/integrated-analysis?auth=temp`)
-              
-              window.location.href = `${baseUrl}/integrated-analysis?auth=temp`
-            }, 2000)
+            // 즉시 리다이렉트 (setTimeout 제거)
+            router.push('/integrated-analysis?auth=temp')
           } else {
-            setTimeout(() => {
-              router.push('/?auth=error&reason=no_supabase')
-            }, 3000)
+            router.push('/?auth=error&reason=no_supabase')
           }
           return
         }
@@ -129,34 +116,21 @@ function AuthCallbackContent() {
         if (data.session) {
           console.log('✅ 인증 성공:', data.session)
           setDebugInfo('인증 성공 - integrated-analysis로 이동')
-          // 인증 성공 후 integrated-analysis로 이동
-          const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://saju-meet.vercel.app'
-          
-          // 디버깅을 위한 로그
-          console.log('🔧 인증 성공 후 리다이렉트 URL 설정:')
-          console.log('NEXT_PUBLIC_SITE_URL:', process.env.NEXT_PUBLIC_SITE_URL)
-          console.log('NODE_ENV:', process.env.NODE_ENV)
-          console.log('계산된 baseUrl:', baseUrl)
-          console.log('최종 리다이렉트 URL:', `${baseUrl}/integrated-analysis`)
-          
-          window.location.href = `${baseUrl}/integrated-analysis`
+          // 인증 성공 후 integrated-analysis로 이동 (router.push 사용)
+          router.push('/integrated-analysis')
         } else {
           console.log('⚠️ 인증 세션 없음')
           setDebugInfo('세션 없음 - 로그아웃 처리')
           // 세션이 없으면 로그아웃 처리
           await supabase.auth.signOut()
           setError('인증 세션이 만료되었습니다.')
-          setTimeout(() => {
-            router.push('/?auth=error&reason=session_expired')
-          }, 3000)
+          router.push('/?auth=error&reason=session_expired')
         }
       } catch (error) {
         console.error('❌ 콜백 처리 오류:', error)
         setError('인증 처리 중 예상치 못한 오류가 발생했습니다.')
         setDebugInfo(`예상치 못한 오류: ${error}`)
-        setTimeout(() => {
-          router.push('/?auth=error')
-        }, 3000)
+        router.push('/?auth=error')
       }
     }
 

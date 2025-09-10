@@ -136,7 +136,7 @@ export default function IntegratedAnalysisPage() {
     }
 
     checkSupabaseSession()
-  }, [router, localUser, checkSupabaseSession])
+  }, [router, checkSupabaseSession]) // localUser 의존성 제거
 
   const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
