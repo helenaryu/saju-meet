@@ -1,16 +1,5 @@
-// MediaPipe는 클라이언트 사이드에서만 로드
-let FaceMesh: any = null;
-let Camera: any = null;
-
-if (typeof window !== 'undefined') {
-  // 클라이언트 사이드에서만 MediaPipe 로드
-  import('@mediapipe/face_mesh').then(module => {
-    FaceMesh = module.FaceMesh;
-  });
-  import('@mediapipe/camera_utils').then(module => {
-    Camera = module.Camera;
-  });
-}
+// CompreFace API 연동
+import { comprefaceService, CompreFaceDetection } from './compreface';
 
 export interface FaceReadingRequest {
   imageFile: File;
@@ -50,14 +39,10 @@ export interface FaceReadingResponse {
 }
 
 export class FaceReadingService {
-  private faceMesh: any;
   private isInitialized = false;
 
   constructor() {
-    // 클라이언트 사이드에서만 초기화
-    if (typeof window !== 'undefined') {
-      this.initializeFaceMesh();
-    }
+    this.isInitialized = true;
   }
 
   private async initializeFaceMesh() {
@@ -94,51 +79,101 @@ export class FaceReadingService {
 
   async analyzeFace(request: FaceReadingRequest): Promise<FaceReadingResponse> {
     try {
-      // 서버 사이드에서는 더미 분석 결과 반환
-      if (typeof window === 'undefined') {
-        return this.generateDummyAnalysis();
+      // CompreFace API를 통한 실제 얼굴 분석
+      const response = await fetch('/api/face-analysis', {
+        method: 'POST',
+        body: (() => {
+          const formData = new FormData();
+          formData.append('image', request.imageFile);
+          return formData;
+        })(),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || '얼굴 분석에 실패했습니다.');
       }
 
-      if (!this.isInitialized) {
-        await this.initializeFaceMesh();
+      const result = await response.json();
+      
+      if (!result.success || !result.data) {
+        throw new Error('얼굴 분석 결과를 받을 수 없습니다.');
       }
 
-      // MediaPipe가 사용 가능한 경우 실제 분석 수행
-      if (this.faceMesh) {
-        try {
-          // 이미지에서 얼굴 랜드마크 추출
-          const landmarks = await this.extractLandmarks(request.imageFile);
-          
-          // 랜드마크 기반으로 얼굴 특징 분석
-          const features = this.analyzeFeatures(landmarks);
-          
-          // 특징을 바탕으로 키워드 생성
-          const keywords = this.generateKeywords(features);
-          
-          // 관상 해석 생성
-          const interpretation = this.generateInterpretation(features, keywords);
-          
-          // 연애 궁합 키워드 생성
-          const loveCompatibility = this.generateLoveCompatibility(features, keywords);
+      const faceData = result.data;
 
-          return {
-            features,
-            keywords,
-            interpretation,
-            loveCompatibility
-          };
-        } catch (error) {
-          console.error('MediaPipe 분석 중 오류:', error);
-          // MediaPipe 분석 실패 시 더미 분석으로 대체
-        }
-      }
+      // CompreFace 결과를 기존 인터페이스에 맞게 변환
+      const features = {
+        eyes: faceData.features.eyes,
+        nose: faceData.features.nose,
+        mouth: faceData.features.mouth,
+        forehead: faceData.features.forehead,
+        chin: faceData.features.chin,
+      };
 
-      // MediaPipe가 사용 불가능하거나 분석 실패 시 더미 분석 결과 반환
-      return this.generateDummyAnalysis();
+      // Claude에게 전달할 상세 분석 요청
+      const claudeAnalysis = await this.requestClaudeAnalysis(faceData);
+
+      return {
+        features,
+        keywords: claudeAnalysis.keywords || faceData.keywords,
+        interpretation: claudeAnalysis.interpretation || this.generateInterpretation(features, faceData.keywords),
+        loveCompatibility: claudeAnalysis.loveCompatibility || faceData.loveCompatibility
+      };
+
     } catch (error) {
       console.error('관상 분석 중 오류:', error);
       // 오류 발생 시 더미 분석 결과 반환
       return this.generateDummyAnalysis();
+    }
+  }
+
+  private async requestClaudeAnalysis(faceData: any): Promise<{
+    keywords: string[];
+    interpretation: string;
+    loveCompatibility: string[];
+  }> {
+    try {
+      const response = await fetch('/api/analysis', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'face_reading',
+          data: {
+            // CompreFace 분석 결과
+            age: faceData.age,
+            gender: faceData.gender,
+            features: faceData.features,
+            landmarks: faceData.landmarks,
+            pose: faceData.pose,
+            mask: faceData.mask,
+            bbox: faceData.bbox,
+            // 기본 키워드
+            basicKeywords: faceData.keywords,
+            basicLoveCompatibility: faceData.loveCompatibility,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Claude 분석 요청에 실패했습니다.');
+      }
+
+      const result = await response.json();
+      return result.data || {
+        keywords: faceData.keywords,
+        interpretation: '',
+        loveCompatibility: faceData.loveCompatibility,
+      };
+    } catch (error) {
+      console.error('Claude 분석 요청 오류:', error);
+      return {
+        keywords: faceData.keywords,
+        interpretation: '',
+        loveCompatibility: faceData.loveCompatibility,
+      };
     }
   }
 

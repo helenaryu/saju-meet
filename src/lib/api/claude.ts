@@ -175,6 +175,38 @@ export class ClaudeService {
 
 
 
+  // 일반적인 텍스트 생성 메서드
+  async generateResponse(prompt: string): Promise<string> {
+    try {
+      if (!this.client) {
+        console.log('Claude client가 없어서 더미 응답 반환');
+        return 'Claude API가 설정되지 않았습니다.';
+      }
+
+      const response = await this.client.messages.create({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        temperature: 0.7,
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ]
+      });
+
+      const content = response.content[0];
+      if (content.type !== 'text') {
+        throw new Error('Unexpected response type from Claude API');
+      }
+
+      return content.text;
+    } catch (error) {
+      console.error('Claude generateResponse 오류:', error);
+      return 'Claude API 호출 중 오류가 발생했습니다.';
+    }
+  }
+
   // 대화형 분석을 위한 메서드
   async continueConversation(
     nickname: string, 

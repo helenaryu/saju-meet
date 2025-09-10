@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { integratedAnalysisService } from '@/lib/api/integratedAnalysis';
+import { claudeService } from '@/lib/api/claude';
 
 // Supabase 클라이언트를 선택적으로 생성
 const createSupabaseClient = () => {
@@ -21,8 +22,90 @@ const createSupabaseClient = () => {
   }
 };
 
+// CompreFace 데이터를 처리하는 함수
+async function handleFaceReadingAnalysis(faceData: any) {
+  try {
+    // Claude에게 CompreFace 분석 결과를 전달하여 관상 해석 요청
+    const claudePrompt = `
+당신은 전문 관상학자입니다. CompreFace로 분석된 얼굴 데이터를 바탕으로 정확하고 상세한 관상 분석을 제공해주세요.
+
+**분석된 얼굴 데이터:**
+- 나이: ${faceData.age}세
+- 성별: ${faceData.gender}
+- 얼굴 특징:
+  - 눈: ${JSON.stringify(faceData.features.eyes)}
+  - 코: ${JSON.stringify(faceData.features.nose)}
+  - 입: ${JSON.stringify(faceData.features.mouth)}
+  - 이마: ${JSON.stringify(faceData.features.forehead)}
+  - 턱: ${JSON.stringify(faceData.features.chin)}
+  - 얼굴 형태: ${JSON.stringify(faceData.features.faceShape)}
+- 포즈 정보: ${JSON.stringify(faceData.pose)}
+- 마스크 정보: ${JSON.stringify(faceData.mask)}
+
+**기본 키워드:** ${faceData.basicKeywords?.join(', ') || '없음'}
+**기본 연애 궁합:** ${faceData.basicLoveCompatibility?.join(', ') || '없음'}
+
+위 데이터를 바탕으로 다음을 제공해주세요:
+
+1. **주요 키워드 (5-7개)**: 관상의 핵심 특징을 나타내는 키워드
+2. **상세 해석**: 관상학적 관점에서의 종합적인 해석 (200-300자)
+3. **연애 궁합**: 연애와 관계에서의 특징과 궁합 (3-4개 항목)
+
+JSON 형태로 응답해주세요:
+{
+  "keywords": ["키워드1", "키워드2", ...],
+  "interpretation": "상세한 관상 해석",
+  "loveCompatibility": ["궁합1", "궁합2", ...]
+}
+`;
+
+    const claudeResponse = await claudeService.generateResponse(claudePrompt);
+    
+    // Claude 응답을 JSON으로 파싱
+    let claudeAnalysis;
+    try {
+      claudeAnalysis = JSON.parse(claudeResponse);
+    } catch (parseError) {
+      console.error('Claude 응답 파싱 오류:', parseError);
+      // 파싱 실패 시 기본값 사용
+      claudeAnalysis = {
+        keywords: faceData.basicKeywords || [],
+        interpretation: '관상 분석을 완료했습니다.',
+        loveCompatibility: faceData.basicLoveCompatibility || []
+      };
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: claudeAnalysis
+    });
+
+  } catch (error) {
+    console.error('CompreFace 관상 분석 오류:', error);
+    return NextResponse.json(
+      { 
+        error: '관상 분석 중 오류가 발생했습니다.',
+        details: error instanceof Error ? error.message : '알 수 없는 오류'
+      },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
+    const contentType = request.headers.get('content-type');
+    
+    // JSON 요청인지 확인 (CompreFace 데이터 처리용)
+    if (contentType?.includes('application/json')) {
+      const body = await request.json();
+      
+      if (body.type === 'face_reading') {
+        return handleFaceReadingAnalysis(body.data);
+      }
+    }
+    
+    // 기존 FormData 처리 (통합 분석용)
     const formData = await request.formData();
     
     // 기본 정보 추출

@@ -1,6 +1,7 @@
 "use client"
 
-import React from 'react'
+import React, { useState } from 'react'
+import { faceReadingService, FaceReadingRequest } from '@/lib/api/faceReading'
 
 interface FacePoint {
   id: string
@@ -13,10 +14,57 @@ interface FaceReadingVisualProps {
   gender: 'male' | 'female'
   facePoints: FacePoint[]
   className?: string
+  imageFile?: File
+  onAnalysisComplete?: (result: any) => void
 }
 
-export default function FaceReadingVisual({ gender, facePoints, className = '' }: FaceReadingVisualProps) {
-  
+export default function FaceReadingVisual({ 
+  gender, 
+  facePoints, 
+  className = '', 
+  imageFile, 
+  onAnalysisComplete 
+}: FaceReadingVisualProps) {
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [analysisResult, setAnalysisResult] = useState<any>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  // CompreFace를 통한 실제 얼굴 분석
+  const performFaceAnalysis = async () => {
+    if (!imageFile) {
+      setError('이미지 파일이 필요합니다.')
+      return
+    }
+
+    setIsAnalyzing(true)
+    setError(null)
+
+    try {
+      const request: FaceReadingRequest = {
+        imageFile: imageFile
+      }
+
+      const result = await faceReadingService.analyzeFace(request)
+      setAnalysisResult(result)
+      
+      if (onAnalysisComplete) {
+        onAnalysisComplete(result)
+      }
+    } catch (err) {
+      console.error('얼굴 분석 오류:', err)
+      setError(err instanceof Error ? err.message : '얼굴 분석에 실패했습니다.')
+    } finally {
+      setIsAnalyzing(false)
+    }
+  }
+
+  // 이미지가 제공되면 자동으로 분석 시작
+  React.useEffect(() => {
+    if (imageFile && !analysisResult && !isAnalyzing) {
+      performFaceAnalysis()
+    }
+  }, [imageFile])
+
   // 기본 포인트들
   const getFacePoints = (): FacePoint[] => {
     if (facePoints.length > 0) {
@@ -92,6 +140,73 @@ export default function FaceReadingVisual({ gender, facePoints, className = '' }
 
   return (
     <div className={`space-y-6 ${className}`}>
+      {/* 분석 상태 표시 */}
+      {isAnalyzing && (
+        <div className="bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-2xl p-6 border border-blue-400/30">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
+            <h3 className="text-xl font-semibold text-blue-300 mb-2">🔍 얼굴 분석 중...</h3>
+            <p className="text-gray-300">CompreFace를 통해 얼굴을 분석하고 있습니다.</p>
+          </div>
+        </div>
+      )}
+
+      {/* 오류 표시 */}
+      {error && (
+        <div className="bg-gradient-to-r from-red-500/20 to-pink-500/20 rounded-2xl p-6 border border-red-400/30">
+          <div className="text-center">
+            <h3 className="text-xl font-semibold text-red-300 mb-2">❌ 분석 오류</h3>
+            <p className="text-gray-300 mb-4">{error}</p>
+            <button
+              onClick={performFaceAnalysis}
+              className="bg-red-500/20 text-red-400 px-4 py-2 rounded-lg border border-red-400/30 hover:bg-red-500/30 transition-colors"
+            >
+              다시 시도
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* CompreFace 분석 결과 */}
+      {analysisResult && (
+        <div className="bg-gradient-to-r from-purple-500/20 to-violet-500/20 rounded-2xl p-6 border border-purple-400/30">
+          <h3 className="text-xl font-semibold text-purple-300 mb-4 text-center">🤖 AI 관상 분석 결과</h3>
+          
+          {/* 키워드 */}
+          <div className="mb-6">
+            <h4 className="text-lg font-semibold text-purple-300 mb-3">🌟 주요 키워드</h4>
+            <div className="flex flex-wrap gap-2">
+              {analysisResult.keywords?.map((keyword: string, index: number) => (
+                <span key={index} className="bg-purple-500/20 text-purple-400 px-3 py-1 rounded-full text-sm border border-purple-400/30">
+                  {keyword}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* 상세 해석 */}
+          <div className="mb-6">
+            <h4 className="text-lg font-semibold text-purple-300 mb-3">📝 상세 해석</h4>
+            <p className="text-gray-200 leading-relaxed">
+              {analysisResult.interpretation}
+            </p>
+          </div>
+
+          {/* 연애 궁합 */}
+          <div className="mb-6">
+            <h4 className="text-lg font-semibold text-purple-300 mb-3">💕 연애 궁합</h4>
+            <ul className="space-y-2">
+              {analysisResult.loveCompatibility?.map((compatibility: string, index: number) => (
+                <li key={index} className="text-gray-200 flex items-start">
+                  <span className="text-purple-400 mr-2">•</span>
+                  {compatibility}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+
       {/* 관상 종합 분석 */}
       <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-2xl p-6 border border-green-400/30">
         <h3 className="text-xl font-semibold text-green-300 mb-4 text-center">📋 관상 종합 분석</h3>
