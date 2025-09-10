@@ -37,10 +37,21 @@ const OhaengPieChart = ({ ohaengData }: OhaengPieChartProps) => {
 
   // props가 있으면 사용하고, 없으면 기본값 사용
   const labels = ohaengData?.labels || defaultLabels;
-  const data = ohaengData?.data || defaultData;
+  // data 배열이 있고, 모든 값이 유효한 숫자인지 확인
+  const hasValidData = ohaengData?.data && 
+                      Array.isArray(ohaengData.data) && 
+                      ohaengData.data.length === 5 &&
+                      ohaengData.data.every(val => typeof val === 'number' && !isNaN(val));
+  
+  const data = hasValidData ? ohaengData.data : defaultData;
   const descriptions = ohaengData?.descriptions || defaultDescriptions;
   const personalTraits = ohaengData?.personalTraits || defaultPersonalTraits;
   const colors = ohaengData?.colors || defaultColors;
+
+  // 디버깅을 위한 로그 (필요시 주석 해제)
+  // console.log('OhaengPieChart - ohaengData:', ohaengData);
+  // console.log('OhaengPieChart - hasValidData:', hasValidData);
+  // console.log('OhaengPieChart - final data used:', data);
 
   useEffect(() => {
     const canvas = canvasRef.current;

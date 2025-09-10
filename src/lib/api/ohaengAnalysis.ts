@@ -70,13 +70,15 @@ export class OhaengAnalysisService {
       return [20, 20, 20, 20, 20];
     }
 
-    return [
+    const ratios = [
       Math.round((elements.wood / total) * 100),
       Math.round((elements.fire / total) * 100),
       Math.round((elements.earth / total) * 100),
       Math.round((elements.metal / total) * 100),
       Math.round((elements.water / total) * 100)
     ];
+    
+    return ratios;
   }
 
   private async generateOhaengInterpretation(
