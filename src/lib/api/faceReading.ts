@@ -45,37 +45,7 @@ export class FaceReadingService {
     this.isInitialized = true;
   }
 
-  private async initializeFaceMesh() {
-    try {
-      if (!FaceMesh) {
-        throw new Error('MediaPipe FaceMesh이 로드되지 않았습니다.');
-      }
-
-      this.faceMesh = new FaceMesh({
-        locateFile: (file: string) => {
-          return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
-        }
-      });
-
-      this.faceMesh.setOptions({
-        maxNumFaces: 1,
-        refineLandmarks: true,
-        minDetectionConfidence: 0.5,
-        minTrackingConfidence: 0.5
-      });
-
-      this.faceMesh.onResults((results: any) => {
-        // 결과 처리 로직
-        console.log('Face mesh results:', results);
-      });
-
-      this.isInitialized = true;
-    } catch (error) {
-      console.error('FaceMesh 초기화 오류:', error);
-      // 초기화 실패 시 더미 분석으로 진행
-      this.isInitialized = true;
-    }
-  }
+  // MediaPipe 관련 코드는 제거됨 - CompreFace 사용
 
   async analyzeFace(request: FaceReadingRequest): Promise<FaceReadingResponse> {
     try {
@@ -177,49 +147,7 @@ export class FaceReadingService {
     }
   }
 
-  private async extractLandmarks(imageFile: File): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => {
-        try {
-          // Canvas에 이미지 그리기
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          if (!ctx) {
-            reject(new Error('Canvas context를 생성할 수 없습니다.'));
-            return;
-          }
-
-          canvas.width = img.width;
-          canvas.height = img.height;
-          ctx.drawImage(img, 0, 0);
-
-          // FaceMesh에 이미지 전달
-          this.faceMesh.send({ image: canvas });
-          
-          // 임시로 더미 랜드마크 반환 (실제 구현에서는 FaceMesh 결과 사용)
-          setTimeout(() => {
-            resolve(this.generateDummyLandmarks());
-          }, 1000);
-        } catch (error) {
-          reject(error);
-        }
-      };
-      
-      img.onerror = () => reject(new Error('이미지 로드에 실패했습니다.'));
-      img.src = URL.createObjectURL(imageFile);
-    });
-  }
-
-  private generateDummyLandmarks(): any[] {
-    // 실제 구현에서는 FaceMesh에서 반환된 랜드마크 사용
-    // 현재는 테스트용 더미 데이터 반환
-    return Array.from({ length: 468 }, (_, i) => ({
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      z: Math.random() * 100
-    }));
-  }
+  // MediaPipe 관련 메서드들은 제거됨 - CompreFace 사용
 
   private analyzeFeatures(landmarks: any[]): FaceReadingResponse['features'] {
     // 랜드마크 기반으로 얼굴 특징 분석

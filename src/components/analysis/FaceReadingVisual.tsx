@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { faceReadingService, FaceReadingRequest } from '@/lib/api/faceReading'
 
 interface FacePoint {
@@ -30,7 +30,7 @@ export default function FaceReadingVisual({
   const [error, setError] = useState<string | null>(null)
 
   // CompreFace를 통한 실제 얼굴 분석
-  const performFaceAnalysis = async () => {
+  const performFaceAnalysis = useCallback(async () => {
     if (!imageFile) {
       setError('이미지 파일이 필요합니다.')
       return
@@ -56,14 +56,14 @@ export default function FaceReadingVisual({
     } finally {
       setIsAnalyzing(false)
     }
-  }
+  }, [imageFile, onAnalysisComplete])
 
   // 이미지가 제공되면 자동으로 분석 시작
   React.useEffect(() => {
     if (imageFile && !analysisResult && !isAnalyzing) {
       performFaceAnalysis()
     }
-  }, [imageFile])
+  }, [imageFile, analysisResult, isAnalyzing, performFaceAnalysis])
 
   // 기본 포인트들
   const getFacePoints = (): FacePoint[] => {
