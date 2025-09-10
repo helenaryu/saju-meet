@@ -214,7 +214,12 @@ export default function IntegratedAnalysisPage() {
         })))
         
         // 오행 결과 저장
+        console.log('🔍 API Response Debug:');
+        console.log('  - result.data:', result.data);
+        console.log('  - result.data.ohaeng:', result.data.ohaeng);
+        
         if (result.data.ohaeng) {
+          console.log('✅ Setting ohaeng data:', result.data.ohaeng);
           setOhaengData({
             labels: result.data.ohaeng.labels,
             data: result.data.ohaeng.data,
@@ -223,6 +228,8 @@ export default function IntegratedAnalysisPage() {
             colors: result.data.ohaeng.colors,
             overallInterpretation: result.data.ohaeng.overallInterpretation
           })
+        } else {
+          console.log('❌ No ohaeng data in API response');
         }
         
         console.log('통합 분석 완료:', result.data)
@@ -234,7 +241,8 @@ export default function IntegratedAnalysisPage() {
       }
 
     } catch (error) {
-      console.error('통합 분석 중 오류:', error)
+      console.error('❌ 통합 분석 중 오류:', error)
+      console.log('🔄 Using fallback data due to error');
       
       // 오류 발생 시 더미 데이터 사용
       const { FACE_READING_KEYWORDS, SAJU_KEYWORDS } = await import('@/constants/data')

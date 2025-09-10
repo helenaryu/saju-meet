@@ -36,32 +36,35 @@ export class IntegratedAnalysisService {
   private analysisHistory: Map<string, IntegratedAnalysisResponse> = new Map();
 
   async performIntegratedAnalysis(request: IntegratedAnalysisRequest): Promise<IntegratedAnalysisResponse> {
+    console.log('고도화된 통합 분석 시작:', request);
+
+    // 1. 관상 분석 (MediaPipe 기반)
+    console.log('관상 분석 시작...');
+    const faceReading = await faceReadingService.analyzeFace({
+      imageFile: request.imageFile
+    });
+    console.log('관상 분석 완료:', faceReading);
+
+    // 2. 사주 분석 (전통 이론 기반)
+    console.log('사주 분석 시작...');
+    const saju = await sajuService.analyzeSaju({
+      birthDate: request.birthDate,
+      birthTime: request.birthTime
+    });
+    console.log('사주 분석 완료:', saju);
+
+    // 3. RAG 기반 전통 문헌 검색
+    console.log('전통 문헌 검색 시작...');
+    const traditionalTexts = await this.searchRelevantTraditionalTexts(faceReading, saju);
+    console.log('전통 문헌 검색 완료:', traditionalTexts.length, '개');
+
+    // 4. 고도화된 Claude AI 분석 (실패해도 계속 진행)
+    let claude;
     try {
-      console.log('고도화된 통합 분석 시작:', request);
-
-      // 1. 관상 분석 (MediaPipe 기반)
-      console.log('관상 분석 시작...');
-      const faceReading = await faceReadingService.analyzeFace({
-        imageFile: request.imageFile
-      });
-      console.log('관상 분석 완료:', faceReading);
-
-      // 2. 사주 분석 (전통 이론 기반)
-      console.log('사주 분석 시작...');
-      const saju = await sajuService.analyzeSaju({
-        birthDate: request.birthDate,
-        birthTime: request.birthTime
-      });
-      console.log('사주 분석 완료:', saju);
-
-      // 3. RAG 기반 전통 문헌 검색
-      console.log('전통 문헌 검색 시작...');
-      const traditionalTexts = await this.searchRelevantTraditionalTexts(faceReading, saju);
-      console.log('전통 문헌 검색 완료:', traditionalTexts.length, '개');
-
-      // 4. 고도화된 Claude AI 분석
       console.log('Claude AI 고도화 분석 시작...');
-      const claude = await claudeService.generateLoveReport({
+      
+      // Vercel 타임아웃을 고려한 Promise.race 사용
+      const claudePromise = claudeService.generateLoveReport({
         nickname: request.nickname,
         gender: request.gender,
         birthDate: request.birthDate,
@@ -70,50 +73,69 @@ export class IntegratedAnalysisService {
         faceReadingFeatures: faceReading.features,
         sajuElements: saju.elements
       });
+      
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Claude API timeout')), 8000) // 8초 타임아웃
+      );
+      
+      claude = await Promise.race([claudePromise, timeoutPromise]) as ClaudeAnalysisResponse;
       console.log('Claude AI 분석 완료:', claude);
-
-      // 5. 오행 분석
-      console.log('오행 분석 시작...');
-      const ohaeng = await ohaengAnalysisService.analyzeOhaeng({
-        nickname: request.nickname,
-        gender: request.gender,
-        birthDate: request.birthDate,
-        birthTime: request.birthTime,
-        faceReadingKeywords: faceReading.keywords,
-        sajuKeywords: saju.keywords,
-        sajuElements: saju.elements
-      });
-      console.log('오행 분석 완료:', ohaeng);
-
-      // 6. 통합 요약 생성
-      const summary = this.generateAdvancedSummary(faceReading, saju, claude, traditionalTexts);
-
-      // 7. 분석 메타데이터 생성
-      const analysisMetadata = this.generateAnalysisMetadata(faceReading, saju, claude, traditionalTexts);
-
-      // 8. 대화 ID 생성
-      const conversationId = this.generateConversationId(request.nickname);
-
-      const result: IntegratedAnalysisResponse = {
-        faceReading,
-        saju,
-        claude,
-        ohaeng,
-        summary,
-        conversationId,
-        analysisMetadata
-      };
-
-      // 9. 분석 히스토리 저장
-      this.analysisHistory.set(conversationId, result);
-
-      console.log('고도화된 통합 분석 완료:', result);
-      return result;
-
-    } catch (error) {
-      console.error('통합 분석 중 오류:', error);
-      throw new Error(`통합 분석에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
+    } catch (claudeError) {
+      console.error('Claude AI 분석 실패, 기본값 사용:', claudeError);
+      // Claude 실패 시 기본값 사용
+      claude = {
+        loveStyle: '분석 중...',
+        faceReadingInterpretation: '분석 중...',
+        sajuInterpretation: '분석 중...',
+        idealTypeDescription: '분석 중...',
+        recommendedKeywords: [],
+        detailedAnalysis: {
+          personalityInsights: '분석 중...',
+          relationshipAdvice: '분석 중...',
+          compatibilityFactors: '분석 중...',
+          growthOpportunities: '분석 중...'
+        },
+        traditionalWisdom: []
+      } as ClaudeAnalysisResponse;
     }
+
+    // 5. 오행 분석 (Claude 실패와 독립적으로 실행)
+    console.log('오행 분석 시작...');
+    const ohaeng = await ohaengAnalysisService.analyzeOhaeng({
+      nickname: request.nickname,
+      gender: request.gender,
+      birthDate: request.birthDate,
+      birthTime: request.birthTime,
+      faceReadingKeywords: faceReading.keywords,
+      sajuKeywords: saju.keywords,
+      sajuElements: saju.elements
+    });
+    console.log('오행 분석 완료:', ohaeng);
+
+    // 6. 통합 요약 생성
+    const summary = this.generateAdvancedSummary(faceReading, saju, claude, traditionalTexts);
+
+    // 7. 분석 메타데이터 생성
+    const analysisMetadata = this.generateAnalysisMetadata(faceReading, saju, claude, traditionalTexts);
+
+    // 8. 대화 ID 생성
+    const conversationId = this.generateConversationId(request.nickname);
+
+    const result: IntegratedAnalysisResponse = {
+      faceReading,
+      saju,
+      claude,
+      ohaeng,
+      summary,
+      conversationId,
+      analysisMetadata
+    };
+
+    // 9. 분석 히스토리 저장
+    this.analysisHistory.set(conversationId, result);
+
+    console.log('고도화된 통합 분석 완료:', result);
+    return result;
   }
 
   private async searchRelevantTraditionalTexts(
@@ -123,21 +145,21 @@ export class IntegratedAnalysisService {
     const texts: any[] = [];
     
     try {
-      // 사주 관련 문헌 검색
+      // 사주 관련 문헌 검색 (최대 2개로 제한)
       const sajuTexts = await knowledgeBaseService.searchSajuTexts(
         saju.elements, 
         saju.keywords
       );
-      texts.push(...sajuTexts);
+      texts.push(...sajuTexts.slice(0, 2));
 
-      // 관상 관련 문헌 검색
+      // 관상 관련 문헌 검색 (최대 1개로 제한)
       const faceTexts = await knowledgeBaseService.searchFaceReadingTexts(
         faceReading.features, 
         faceReading.keywords
       );
-      texts.push(...faceTexts);
+      texts.push(...faceTexts.slice(0, 1));
 
-      // 궁합 관련 문헌 검색
+      // 궁합 관련 문헌 검색 (최대 1개로 제한)
       const dominantElements = Object.entries(saju.elements)
         .sort(([,a], [,b]) => (b as number) - (a as number))
         .slice(0, 2);
@@ -147,13 +169,14 @@ export class IntegratedAnalysisService {
           dominantElements[0][0], 
           dominantElements[1][0]
         );
-        texts.push(...compatibilityTexts);
+        texts.push(...compatibilityTexts.slice(0, 1));
       }
     } catch (error) {
       console.error('전통 문헌 검색 중 오류:', error);
     }
 
-    return texts;
+    // 최대 4개로 제한하여 프롬프트 길이 관리
+    return texts.slice(0, 4);
   }
 
   private generateAdvancedSummary(

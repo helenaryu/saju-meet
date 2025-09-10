@@ -48,10 +48,12 @@ const OhaengPieChart = ({ ohaengData }: OhaengPieChartProps) => {
   const personalTraits = ohaengData?.personalTraits || defaultPersonalTraits;
   const colors = ohaengData?.colors || defaultColors;
 
-  // 디버깅을 위한 로그 (필요시 주석 해제)
-  // console.log('OhaengPieChart - ohaengData:', ohaengData);
-  // console.log('OhaengPieChart - hasValidData:', hasValidData);
-  // console.log('OhaengPieChart - final data used:', data);
+  // 디버깅을 위한 로그
+  console.log('🔍 OhaengPieChart Debug:');
+  console.log('  - ohaengData:', ohaengData);
+  console.log('  - hasValidData:', hasValidData);
+  console.log('  - final data used:', data);
+  console.log('  - is using default data:', !hasValidData);
 
   useEffect(() => {
     const canvas = canvasRef.current;

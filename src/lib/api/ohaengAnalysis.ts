@@ -28,12 +28,12 @@ export interface OhaengAnalysisResponse {
 export class OhaengAnalysisService {
   async analyzeOhaeng(request: OhaengAnalysisRequest): Promise<OhaengAnalysisResponse> {
     try {
-      console.log('오행 분석 시작:', request);
-      console.log('사주 elements:', request.sajuElements);
+      console.log('🔍 오행 분석 시작:', request);
+      console.log('🔍 사주 elements:', request.sajuElements);
 
       // 사주 오행 비율 계산
       const ohaengData = this.calculateOhaengRatios(request.sajuElements);
-      console.log('계산된 오행 비율:', ohaengData);
+      console.log('🔍 계산된 오행 비율:', ohaengData);
       
       // Claude AI를 통한 오행 해석 생성
       const claudeInterpretation = await this.generateOhaengInterpretation(request, ohaengData);
@@ -49,7 +49,7 @@ export class OhaengAnalysisService {
         overallInterpretation: claudeInterpretation.overallInterpretation
       };
 
-      console.log('오행 분석 완료:', result);
+      console.log('✅ 오행 분석 완료:', result);
       return result;
 
     } catch (error) {
