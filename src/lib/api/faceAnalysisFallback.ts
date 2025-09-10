@@ -10,8 +10,8 @@ export interface FallbackFaceAnalysis {
       characteristics: string[];
     };
     nose: {
-      size: 'small' | 'medium' | 'large';
-      shape: 'straight' | 'curved' | 'wide';
+      bridge: 'straight' | 'curved' | 'wide';
+      tip: 'pointed' | 'rounded' | 'wide';
       characteristics: string[];
     };
     mouth: {
@@ -166,23 +166,23 @@ export class FaceAnalysisFallback {
   }
 
   private analyzeNose(aspectRatio: number, sizeFactor: number): FallbackFaceAnalysis['features']['nose'] {
-    const sizes: ('small' | 'medium' | 'large')[] = ['small', 'medium', 'large'];
-    const shapes: ('straight' | 'curved' | 'wide')[] = ['straight', 'curved', 'wide'];
+    const bridges: ('straight' | 'curved' | 'wide')[] = ['straight', 'curved', 'wide'];
+    const tips: ('pointed' | 'rounded' | 'wide')[] = ['pointed', 'rounded', 'wide'];
     
-    const sizeIndex = Math.floor((aspectRatio + sizeFactor) * 0.4) % sizes.length;
-    const shapeIndex = Math.floor((aspectRatio + sizeFactor) * 0.6) % shapes.length;
+    const bridgeIndex = Math.floor((aspectRatio + sizeFactor) * 0.4) % bridges.length;
+    const tipIndex = Math.floor((aspectRatio + sizeFactor) * 0.6) % tips.length;
     
-    const size = sizes[sizeIndex];
-    const shape = shapes[shapeIndex];
+    const bridge = bridges[bridgeIndex];
+    const tip = tips[tipIndex];
     
     const characteristics = [
-      shape === 'straight' ? '직선적인 코로 정직하고 솔직함' :
-      shape === 'curved' ? '곡선적인 코로 부드럽고 따뜻함' : '넓은 코로 관대하고 여유로움',
-      size === 'large' ? '큰 코로 리더십이 강함' : 
-      size === 'small' ? '작은 코로 섬세하고 정확함' : '적당한 크기로 균형감 있음'
+      bridge === 'straight' ? '직선적인 코로 정직하고 솔직함' :
+      bridge === 'curved' ? '곡선적인 코로 부드럽고 따뜻함' : '넓은 코로 관대하고 여유로움',
+      tip === 'pointed' ? '뾰족한 코끝으로 예리하고 섬세함' :
+      tip === 'rounded' ? '둥근 코끝으로 부드럽고 친근함' : '넓은 코끝으로 관대하고 여유로움'
     ];
 
-    return { size, shape, characteristics };
+    return { bridge, tip, characteristics };
   }
 
   private analyzeMouth(aspectRatio: number, sizeFactor: number): FallbackFaceAnalysis['features']['mouth'] {
@@ -275,7 +275,7 @@ export class FaceAnalysisFallback {
     
     // 얼굴 특징 기반 키워드
     if (features.eyes.size === 'large') keywords.push('감성적');
-    if (features.nose.shape === 'straight') keywords.push('정직함');
+    if (features.nose.bridge === 'straight') keywords.push('정직함');
     if (features.mouth.size === 'large') keywords.push('소통능력');
     if (features.forehead.width === 'wide') keywords.push('지적능력');
     if (features.chin.shape === 'square') keywords.push('의지력');
@@ -327,9 +327,9 @@ export class FaceAnalysisFallback {
           characteristics: ['적당한 크기의 눈으로 균형감 있음', '아몬드 모양으로 매력적임']
         },
         nose: {
-          size: 'medium',
-          shape: 'straight',
-          characteristics: ['직선적인 코로 정직하고 솔직함', '적당한 크기로 균형감 있음']
+          bridge: 'straight',
+          tip: 'rounded',
+          characteristics: ['직선적인 코로 정직하고 솔직함', '둥근 코끝으로 부드럽고 친근함']
         },
         mouth: {
           size: 'medium',
