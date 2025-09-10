@@ -29,12 +29,15 @@ export class OhaengAnalysisService {
   async analyzeOhaeng(request: OhaengAnalysisRequest): Promise<OhaengAnalysisResponse> {
     try {
       console.log('오행 분석 시작:', request);
+      console.log('사주 elements:', request.sajuElements);
 
       // 사주 오행 비율 계산
       const ohaengData = this.calculateOhaengRatios(request.sajuElements);
+      console.log('계산된 오행 비율:', ohaengData);
       
       // Claude AI를 통한 오행 해석 생성
       const claudeInterpretation = await this.generateOhaengInterpretation(request, ohaengData);
+      console.log('생성된 해석:', claudeInterpretation);
       
       // 결과 구성
       const result: OhaengAnalysisResponse = {
@@ -62,22 +65,17 @@ export class OhaengAnalysisService {
     metal: number;
     water: number;
   }): number[] {
-    // 사주 오행 비율을 0-100% 범위로 정규화
-    const total = elements.wood + elements.fire + elements.earth + elements.metal + elements.water;
-    
-    if (total === 0) {
-      // 기본 균형 비율 (모든 오행이 동일)
-      return [20, 20, 20, 20, 20];
-    }
-
+    // 사주 서비스에서 이미 0-100% 범위로 정규화된 값을 받음
+    // 따라서 그대로 사용하면 됨
     const ratios = [
-      Math.round((elements.wood / total) * 100),
-      Math.round((elements.fire / total) * 100),
-      Math.round((elements.earth / total) * 100),
-      Math.round((elements.metal / total) * 100),
-      Math.round((elements.water / total) * 100)
+      elements.wood,
+      elements.fire,
+      elements.earth,
+      elements.metal,
+      elements.water
     ];
     
+    console.log('오행 비율 (정규화됨):', ratios);
     return ratios;
   }
 
@@ -89,94 +87,111 @@ export class OhaengAnalysisService {
     personalTraits: string[];
     overallInterpretation: string;
   }> {
-    const prompt = `
-당신은 전통 동양 철학과 사주학에 깊은 지식을 가진 전문가입니다. 
-사용자의 사주 정보와 관상 분석 결과를 바탕으로 오행(목화토금수) 분석을 해주세요.
+    // 오행 비율에 따른 개인화된 설명 생성
+    const descriptions = this.generateOhaengDescriptions(ohaengData, request);
+    const personalTraits = this.generatePersonalTraits(ohaengData, request);
+    const overallInterpretation = this.generateOverallInterpretation(ohaengData, request);
+    
+    return {
+      descriptions,
+      personalTraits,
+      overallInterpretation
+    };
+  }
 
-**사용자 정보:**
-- 이름: ${request.nickname}
-- 성별: ${request.gender}
-- 생년월일: ${request.birthDate}
-- 출생시간: ${request.birthTime}
+  private generateOhaengDescriptions(ohaengData: number[], request: OhaengAnalysisRequest): string[] {
+    const descriptions = [];
+    
+    // 목(木) - 0번째
+    if (ohaengData[0] > 0) {
+      descriptions.push(`목의 기운이 ${ohaengData[0]}%로 강해 성장과 발전을 추구하는 성향이 뚜렷해요. 새로운 아이디어를 꾸준히 키워나가고 도전정신이 강한 편이에요.`);
+    } else {
+      descriptions.push(`목의 기운이 약하지만 잠재력이 있어 꾸준한 노력을 통해 성장할 수 있는 가능성이 높아요.`);
+    }
+    
+    // 화(火) - 1번째
+    if (ohaengData[1] > 0) {
+      descriptions.push(`화의 기운이 ${ohaengData[1]}%로 매우 강해 열정적이고 활발한 성향이에요. 추진력이 뛰어나고 감정 표현이 솔직한 편이에요.`);
+    } else {
+      descriptions.push(`화의 기운이 약하지만 필요할 때 적절한 열정을 발휘할 수 있는 능력이 있어요.`);
+    }
+    
+    // 토(土) - 2번째
+    if (ohaengData[2] > 0) {
+      descriptions.push(`토의 기운이 ${ohaengData[2]}%로 강해 안정감과 신뢰성을 중시하는 성향이에요. 책임감이 강하고 꾸준한 노력으로 목표를 달성해요.`);
+    } else {
+      descriptions.push(`토의 기운이 약하지만 필요에 따라 안정성을 추구하는 면이 있어요.`);
+    }
+    
+    // 금(金) - 3번째
+    if (ohaengData[3] > 0) {
+      descriptions.push(`금의 기운이 ${ohaengData[3]}%로 강해 이성적이고 분석적인 사고를 가지고 있어요. 원칙을 중시하고 효율적인 일처리를 선호해요.`);
+    } else {
+      descriptions.push(`금의 기운이 약하지만 필요할 때 논리적 판단을 할 수 있는 능력이 있어요.`);
+    }
+    
+    // 수(水) - 4번째
+    if (ohaengData[4] > 0) {
+      descriptions.push(`수의 기운이 ${ohaengData[4]}%로 강해 유연하고 적응력이 뛰어난 성향이에요. 직관력이 좋고 타인의 감정에 민감하게 반응해요.`);
+    } else {
+      descriptions.push(`수의 기운이 약하지만 상황에 맞게 유연하게 대처할 수 있는 능력이 있어요.`);
+    }
+    
+    return descriptions;
+  }
 
-**관상 분석 키워드:** ${request.faceReadingKeywords.join(', ')}
+  private generatePersonalTraits(ohaengData: number[], request: OhaengAnalysisRequest): string[] {
+    const traits = [];
+    
+    // 목(木) 특성
+    if (ohaengData[0] > 0) {
+      traits.push(`창의적이고 성장 지향적인 사고를 가지고 있어 새로운 도전을 두려워하지 않아요. 리더십이 있고 팀을 이끌어가는 능력이 뛰어나요.`);
+    } else {
+      traits.push(`신중하게 접근하되 필요할 때는 적극적으로 행동하는 균형잡힌 성향이에요.`);
+    }
+    
+    // 화(火) 특성
+    if (ohaengData[1] > 0) {
+      traits.push(`열정적이고 활발한 에너지로 주변 사람들에게 긍정적인 영향을 미쳐요. 감정 표현이 솔직하고 진정성 있는 관계를 추구해요.`);
+    } else {
+      traits.push(`차분한 성향이지만 중요한 순간에는 적절한 열정을 보여주는 스타일이에요.`);
+    }
+    
+    // 토(土) 특성
+    if (ohaengData[2] > 0) {
+      traits.push(`안정적이고 신뢰할 수 있는 성격으로 다른 사람들이 의지할 수 있는 존재예요. 꾸준한 노력으로 목표를 달성하는 인내심이 있어요.`);
+    } else {
+      traits.push(`유연한 사고를 가지고 있지만 필요할 때는 안정성을 추구하는 면이 있어요.`);
+    }
+    
+    // 금(金) 특성
+    if (ohaengData[3] > 0) {
+      traits.push(`논리적이고 체계적인 사고로 문제를 해결하는 능력이 뛰어나요. 원칙을 중시하고 공정한 판단을 내리는 편이에요.`);
+    } else {
+      traits.push(`감성적이지만 필요할 때는 이성적 판단을 할 수 있는 균형잡힌 성향이에요.`);
+    }
+    
+    // 수(水) 특성
+    if (ohaengData[4] > 0) {
+      traits.push(`직관력이 뛰어나고 타인의 감정을 잘 이해하는 공감 능력이 있어요. 상황에 맞게 유연하게 대처하는 적응력이 뛰어나요.`);
+    } else {
+      traits.push(`원칙적이지만 필요할 때는 유연한 사고를 할 수 있는 능력이 있어요.`);
+    }
+    
+    return traits;
+  }
 
-**사주 분석 키워드:** ${request.sajuKeywords.join(', ')}
-
-**오행 비율:**
-- 목(木): ${ohaengData[0]}%
-- 화(火): ${ohaengData[1]}%
-- 토(土): ${ohaengData[2]}%
-- 금(金): ${ohaengData[3]}%
-- 수(水): ${ohaengData[4]}%
-
-다음 형식으로 JSON 응답해주세요:
-
-{
-  "descriptions": [
-    "목(木)에 대한 기본 성향 설명 (2-3문장, 개인화된 내용)",
-    "화(火)에 대한 기본 성향 설명 (2-3문장, 개인화된 내용)",
-    "토(土)에 대한 기본 성향 설명 (2-3문장, 개인화된 내용)",
-    "금(金)에 대한 기본 성향 설명 (2-3문장, 개인화된 내용)",
-    "수(水)에 대한 기본 성향 설명 (2-3문장, 개인화된 내용)"
-  ],
-  "personalTraits": [
-    "목(木) 기질의 개인적 특징과 연애/성향 해석 (2-3문장)",
-    "화(火) 기질의 개인적 특징과 연애/성향 해석 (2-3문장)",
-    "토(土) 기질의 개인적 특징과 연애/성향 해석 (2-3문장)",
-    "금(金) 기질의 개인적 특징과 연애/성향 해석 (2-3문장)",
-    "수(水) 기질의 개인적 특징과 연애/성향 해석 (2-3문장)"
-  ],
-  "overallInterpretation": "전체적인 오행 분석 종합 해석 (3-4문장, 개인의 특성을 반영한 종합적인 평가)"
-}
-
-**중요 지침:**
-1. 각 오행의 설명은 사용자의 실제 사주와 관상 정보를 반영해야 합니다
-2. 개인화된 내용으로 작성하되, 전통적인 오행 이론을 기반으로 해야 합니다
-3. 연애와 성향에 대한 구체적인 해석을 포함해야 합니다
-4. 긍정적이고 건설적인 톤으로 작성하세요
-5. JSON 형식을 정확히 지켜주세요
-`;
-
-    try {
-      const claudeRequest = {
-        nickname: request.nickname,
-        gender: request.gender,
-        birthDate: request.birthDate,
-        faceReadingKeywords: request.faceReadingKeywords,
-        sajuKeywords: request.sajuKeywords,
-        faceReadingFeatures: {},
-        sajuElements: request.sajuElements
-      };
-      
-      const response = await claudeService.generateLoveReport(claudeRequest);
-      
-      return {
-        descriptions: response.detailedAnalysis.personalityInsights ? [response.detailedAnalysis.personalityInsights] : [],
-        personalTraits: response.recommendedKeywords || [],
-        overallInterpretation: response.detailedAnalysis.relationshipAdvice || ''
-      };
-    } catch (error) {
-      console.error('Claude 오행 해석 생성 중 오류:', error);
-      
-      // 기본값 반환
-      return {
-        descriptions: [
-          "자라나는 생명력, 성장성과 끈기를 갖고 있어요.",
-          "불 같은 추진력, 열정과 감정의 폭발이 강한 편이에요.",
-          "중심을 잡는 안정감, 책임감과 인내심이 돋보입니다.",
-          "냉철한 판단력, 이성적이고 분석적인 면이 강합니다.",
-          "유연한 사고와 감성, 흐름에 순응하는 스타일이에요."
-        ],
-        personalTraits: [
-          "아이디어를 꾸준히 키워나가는 스타일이에요.",
-          "때론 감정에 솔직하게 반응하며 이끌어가는 편이에요.",
-          "무게감 있게 중심을 잡고 리더십을 발휘해요.",
-          "꼼꼼하고 효율적인 일처리를 잘하는 편이에요.",
-          "타인의 감정에 민감하고 배려심이 많아요."
-        ],
-        overallInterpretation: "당신의 오행 분석 결과를 종합해보면, 균형잡힌 성향을 보이고 있습니다."
-      };
+  private generateOverallInterpretation(ohaengData: number[], request: OhaengAnalysisRequest): string {
+    const maxIndex = ohaengData.indexOf(Math.max(...ohaengData));
+    const maxValue = ohaengData[maxIndex];
+    const elements = ['목(木)', '화(火)', '토(土)', '금(金)', '수(水)'];
+    
+    if (maxValue > 50) {
+      return `${elements[maxIndex]}의 기운이 ${maxValue}%로 매우 강해 이 오행의 특성이 당신의 성격을 주도하고 있어요. 이 강점을 잘 활용하면 더욱 빛나는 매력을 발휘할 수 있을 거예요.`;
+    } else if (maxValue > 30) {
+      return `${elements[maxIndex]}의 기운이 ${maxValue}%로 강해 이 오행의 특성이 당신의 성격에 큰 영향을 미치고 있어요. 균형잡힌 성향을 유지하면서도 이 강점을 살리는 것이 좋겠어요.`;
+    } else {
+      return `다양한 오행의 기운이 균형있게 분포되어 있어 상황에 맞게 유연하게 대처할 수 있는 능력이 뛰어나요. 각 오행의 장점을 적절히 활용하는 것이 성공의 열쇠가 될 거예요.`;
     }
   }
 }
