@@ -63,7 +63,7 @@ export class IntegratedAnalysisService {
     try {
       console.log('Claude AI 고도화 분석 시작...');
       
-      // Vercel 타임아웃을 고려한 Promise.race 사용
+      // Vercel 타임아웃을 고려한 Promise.race 사용 (타임아웃을 12초로 증가)
       const claudePromise = claudeService.generateLoveReport({
         nickname: request.nickname,
         gender: request.gender,
@@ -74,11 +74,11 @@ export class IntegratedAnalysisService {
         sajuElements: saju.elements
       });
       
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Claude API timeout')), 8000) // 8초 타임아웃
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('Claude API timeout - 12초 내에 응답하지 않음')), 12000) // 12초 타임아웃
       );
       
-      claude = await Promise.race([claudePromise, timeoutPromise]) as ClaudeAnalysisResponse;
+      claude = await Promise.race([claudePromise, timeoutPromise]);
       console.log('Claude AI 분석 완료:', claude);
     } catch (claudeError) {
       console.error('Claude AI 분석 실패, 기본값 사용:', claudeError);

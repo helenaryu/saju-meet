@@ -70,7 +70,9 @@ export class ClaudeService {
       const prompt = ClaudePromptBuilder.buildAdvancedPrompt(request, traditionalTexts, conversationHistory);
       
       console.log('Claude API 요청 전송 중...');
-      const response = await this.client.messages.create({
+      
+      // Claude API 호출에 타임아웃 설정
+      const claudeRequest = this.client.messages.create({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1500,
         temperature: 0.7,
@@ -81,6 +83,13 @@ export class ClaudeService {
           }
         ]
       });
+      
+      // 15초 타임아웃 설정
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('Claude API request timeout')), 15000)
+      );
+      
+      const response = await Promise.race([claudeRequest, timeoutPromise]);
       
       console.log('Claude API 응답 받음:', response);
 
@@ -181,7 +190,8 @@ export class ClaudeService {
         return ClaudeResponseParser.generateDummyResponse({ nickname, gender: '', birthDate: '', faceReadingKeywords: [], sajuKeywords: [] });
       }
 
-      const response = await this.client.messages.create({
+      // 대화형 분석에도 타임아웃 설정
+      const claudeRequest = this.client.messages.create({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
         temperature: 0.7,
@@ -192,6 +202,12 @@ export class ClaudeService {
           }
         ]
       });
+      
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('Claude API conversation timeout')), 10000)
+      );
+      
+      const response = await Promise.race([claudeRequest, timeoutPromise]);
 
       const content = response.content[0];
       if (content.type !== 'text') {
