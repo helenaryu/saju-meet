@@ -71,10 +71,10 @@ export class ClaudeService {
       
       console.log('Claude API 요청 전송 중...');
       
-      // Claude API 호출에 타임아웃 설정
+      // Claude API 호출에 타임아웃 설정 (max_tokens 줄여서 빠른 응답)
       const claudeRequest = this.client.messages.create({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1500,
+        max_tokens: 800, // 1500에서 800으로 줄임
         temperature: 0.7,
         messages: [
           {
@@ -84,9 +84,9 @@ export class ClaudeService {
         ]
       });
       
-      // 15초 타임아웃 설정
+      // 30초 타임아웃 설정
       const timeoutPromise = new Promise<never>((_, reject) => 
-        setTimeout(() => reject(new Error('Claude API request timeout')), 15000)
+        setTimeout(() => reject(new Error('Claude API request timeout')), 30000)
       );
       
       const response = await Promise.race([claudeRequest, timeoutPromise]);
@@ -190,10 +190,10 @@ export class ClaudeService {
         return ClaudeResponseParser.generateDummyResponse({ nickname, gender: '', birthDate: '', faceReadingKeywords: [], sajuKeywords: [] });
       }
 
-      // 대화형 분석에도 타임아웃 설정
+      // 대화형 분석에도 타임아웃 설정 (max_tokens 줄여서 빠른 응답)
       const claudeRequest = this.client.messages.create({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
+        max_tokens: 500, // 1000에서 500으로 줄임
         temperature: 0.7,
         messages: [
           {
@@ -204,7 +204,7 @@ export class ClaudeService {
       });
       
       const timeoutPromise = new Promise<never>((_, reject) => 
-        setTimeout(() => reject(new Error('Claude API conversation timeout')), 10000)
+        setTimeout(() => reject(new Error('Claude API conversation timeout')), 20000)
       );
       
       const response = await Promise.race([claudeRequest, timeoutPromise]);

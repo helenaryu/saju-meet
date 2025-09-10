@@ -75,7 +75,7 @@ export class IntegratedAnalysisService {
       });
       
       const timeoutPromise = new Promise<never>((_, reject) => 
-        setTimeout(() => reject(new Error('Claude API timeout - 12초 내에 응답하지 않음')), 12000) // 12초 타임아웃
+        setTimeout(() => reject(new Error('Claude API timeout - 25초 내에 응답하지 않음')), 25000) // 25초 타임아웃
       );
       
       claude = await Promise.race([claudePromise, timeoutPromise]);
