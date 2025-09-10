@@ -25,36 +25,34 @@ export async function POST(request: NextRequest) {
         const detectionResult = await comprefaceService.detectFaces(imageFile);
         
         if (!detectionResult.result || detectionResult.result.length === 0) {
-          return NextResponse.json(
-            { error: '얼굴을 감지할 수 없습니다. 더 명확한 얼굴 사진을 업로드해주세요.' },
-            { status: 400 }
-          );
+          console.log('CompreFace에서 얼굴을 감지하지 못함, fallback 시스템 사용');
+          faceData = await faceAnalysisFallback.analyzeFace(imageFile);
+        } else {
+          const faceDetection = detectionResult.result[0];
+          
+          // CompreFace 결과를 관상 분석에 적합한 형태로 변환
+          faceData = {
+            faceId: faceDetection.face_id,
+            bbox: faceDetection.bbox,
+            landmarks: faceDetection.landmarks,
+            age: faceDetection.age,
+            gender: faceDetection.gender,
+            mask: faceDetection.mask,
+            pose: faceDetection.pose,
+            features: {
+              eyes: analyzeEyes(faceDetection.landmarks, faceDetection.bbox),
+              nose: analyzeNose(faceDetection.landmarks, faceDetection.bbox),
+              mouth: analyzeMouth(faceDetection.landmarks, faceDetection.bbox),
+              forehead: analyzeForehead(faceDetection.landmarks, faceDetection.bbox),
+              chin: analyzeChin(faceDetection.landmarks, faceDetection.bbox),
+              faceShape: analyzeFaceShape(faceDetection.landmarks, faceDetection.bbox),
+            },
+            keywords: generateFaceKeywords(faceDetection),
+            loveCompatibility: generateLoveCompatibility(faceDetection),
+          };
         }
-
-        const faceDetection = detectionResult.result[0];
-        
-        // CompreFace 결과를 관상 분석에 적합한 형태로 변환
-        faceData = {
-          faceId: faceDetection.face_id,
-          bbox: faceDetection.bbox,
-          landmarks: faceDetection.landmarks,
-          age: faceDetection.age,
-          gender: faceDetection.gender,
-          mask: faceDetection.mask,
-          pose: faceDetection.pose,
-          features: {
-            eyes: analyzeEyes(faceDetection.landmarks, faceDetection.bbox),
-            nose: analyzeNose(faceDetection.landmarks, faceDetection.bbox),
-            mouth: analyzeMouth(faceDetection.landmarks, faceDetection.bbox),
-            forehead: analyzeForehead(faceDetection.landmarks, faceDetection.bbox),
-            chin: analyzeChin(faceDetection.landmarks, faceDetection.bbox),
-            faceShape: analyzeFaceShape(faceDetection.landmarks, faceDetection.bbox),
-          },
-          keywords: generateFaceKeywords(faceDetection),
-          loveCompatibility: generateLoveCompatibility(faceDetection),
-        };
       } catch (comprefaceError) {
-        console.warn('CompreFace 분석 실패, fallback 시스템 사용:', comprefaceError);
+        console.warn('CompreFace 분석 실패, fallback 시스템 사용:', comprefaceError.message);
         // CompreFace 실패 시 fallback 시스템 사용
         faceData = await faceAnalysisFallback.analyzeFace(imageFile);
       }

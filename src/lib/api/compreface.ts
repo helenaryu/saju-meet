@@ -66,8 +66,15 @@ export class CompreFaceService {
             status: true,
             face_plugins: 'age,gender,landmarks,mask,pose', // 모든 플러그인 활성화
           },
+          timeout: 10000, // 10초 타임아웃
+          validateStatus: (status) => status < 500, // 500 미만은 성공으로 간주
         }
       );
+
+      // 응답이 HTML인지 확인 (에러 페이지)
+      if (typeof response.data === 'string' && response.data.includes('<!doctype')) {
+        throw new Error('CompreFace 서버가 HTML 응답을 반환했습니다.');
+      }
 
       return response.data;
     } catch (error) {
@@ -172,10 +179,20 @@ export class CompreFaceService {
    */
   async checkHealth(): Promise<boolean> {
     try {
-      const response = await axios.get(`${this.config.baseUrl}/api/v1/health`);
+      // 기본 URL이 잘못된 경우 바로 false 반환
+      if (this.config.baseUrl === 'https://compreface-api.herokuapp.com' || 
+          this.config.apiKey === 'your-api-key-here') {
+        console.log('CompreFace 설정이 기본값이므로 fallback 시스템 사용');
+        return false;
+      }
+
+      const response = await axios.get(`${this.config.baseUrl}/api/v1/health`, {
+        timeout: 5000, // 5초 타임아웃
+        validateStatus: (status) => status < 500 // 500 미만은 성공으로 간주
+      });
       return response.status === 200;
     } catch (error) {
-      console.error('CompreFace 서버 상태 확인 오류:', error);
+      console.log('CompreFace 서버 사용 불가, fallback 시스템 사용:', error.message);
       return false;
     }
   }
