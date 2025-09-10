@@ -1,6 +1,19 @@
 // CompreFace API 연동
 import { comprefaceService, CompreFaceDetection } from './compreface';
 
+// URL 유틸리티 함수
+const getBaseUrl = (): string => {
+  if (typeof window !== 'undefined') {
+    return window.location.origin;
+  }
+  
+  if (process.env.NEXT_PUBLIC_VERCEL_URL) {
+    return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
+  }
+  
+  return 'http://localhost:3000';
+};
+
 export interface FaceReadingRequest {
   imageFile: File;
   imageUrl?: string;
@@ -50,7 +63,7 @@ export class FaceReadingService {
   async analyzeFace(request: FaceReadingRequest): Promise<FaceReadingResponse> {
     try {
       // CompreFace API를 통한 실제 얼굴 분석
-      const response = await fetch('/api/face-analysis', {
+      const response = await fetch(`${getBaseUrl()}/api/face-analysis`, {
         method: 'POST',
         body: (() => {
           const formData = new FormData();
@@ -104,7 +117,7 @@ export class FaceReadingService {
     loveCompatibility: string[];
   }> {
     try {
-      const response = await fetch('/api/analysis', {
+      const response = await fetch(`${getBaseUrl()}/api/analysis`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
