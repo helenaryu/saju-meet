@@ -38,20 +38,28 @@ export class ClaudeService {
 
   constructor() {
     const apiKey = process.env.ANTHROPIC_API_KEY;
+    console.log('ClaudeService 초기화 - API 키 존재 여부:', !!apiKey);
+    console.log('API 키 길이:', apiKey ? apiKey.length : 0);
     if (!apiKey) {
       console.warn('ANTHROPIC_API_KEY is not set. Claude API will not be available.');
       this.client = null;
     } else {
+      console.log('Claude API 클라이언트 초기화 성공');
       this.client = new Anthropic({ apiKey });
     }
   }
 
   async generateLoveReport(request: ClaudeAnalysisRequest): Promise<ClaudeAnalysisResponse> {
     try {
+      console.log('Claude generateLoveReport 시작');
+      console.log('Claude client 존재 여부:', !!this.client);
+      
       if (!this.client) {
+        console.log('Claude client가 없어서 더미 응답 반환');
         return ClaudeResponseParser.generateDummyResponse(request);
       }
 
+      console.log('Claude API 호출 시작');
       // 1. RAG를 통한 관련 전통 문헌 검색
       const traditionalTexts = await this.searchRelevantTraditionalTexts(request);
       
@@ -61,6 +69,7 @@ export class ClaudeService {
       // 3. 고도화된 프롬프트 생성
       const prompt = ClaudePromptBuilder.buildAdvancedPrompt(request, traditionalTexts, conversationHistory);
       
+      console.log('Claude API 요청 전송 중...');
       const response = await this.client.messages.create({
         model: 'claude-3-5-sonnet-20241022',
         max_tokens: 3000,
@@ -72,6 +81,8 @@ export class ClaudeService {
           }
         ]
       });
+      
+      console.log('Claude API 응답 받음:', response);
 
       const content = response.content[0];
       if (content.type !== 'text') {
@@ -82,9 +93,12 @@ export class ClaudeService {
       this.updateConversationHistory(request.nickname, 'user', prompt);
       this.updateConversationHistory(request.nickname, 'assistant', content.text);
 
+      console.log('Claude API 응답 파싱 중...');
       return ClaudeResponseParser.parseAdvancedResponse(content.text, traditionalTexts);
     } catch (error) {
       console.error('Claude API 호출 중 오류:', error);
+      console.error('오류 상세:', error instanceof Error ? error.message : '알 수 없는 오류');
+      console.log('오류로 인해 더미 응답 반환');
       return ClaudeResponseParser.generateDummyResponse(request);
     }
   }
