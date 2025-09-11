@@ -58,26 +58,24 @@ export class FacialAnalysisService {
       let comprefaceResponse;
       let faceData;
       
-      try {
-        comprefaceResponse = await comprefaceService.detectFaces(request.imageFile);
-        
-        if (!comprefaceResponse.result || comprefaceResponse.result.length === 0) {
-          throw new Error('얼굴을 감지할 수 없습니다. 더 명확한 얼굴 사진을 업로드해주세요.');
-        }
-        
-        faceData = comprefaceResponse.result[0];
-        console.log('CompreFace 분석 완료:', {
-          age: faceData.age,
-          gender: faceData.gender,
-          landmarks: faceData.landmarks?.length || 0
-        });
-      } catch (comprefaceError) {
-        console.error('CompreFace 분석 실패, fallback 데이터 사용:', comprefaceError);
-        
-        // CompreFace 실패 시 fallback 데이터 생성
-        faceData = this.generateFallbackFaceData();
-        comprefaceResponse = { result: [faceData] };
+      // CompreFace 서버 상태 확인
+      const isHealthy = await comprefaceService.checkHealth();
+      if (!isHealthy) {
+        throw new Error('CompreFace 서버가 사용 불가능합니다. 서버를 시작하고 API 키를 설정해주세요.');
       }
+
+      comprefaceResponse = await comprefaceService.detectFaces(request.imageFile);
+      
+      if (!comprefaceResponse.result || comprefaceResponse.result.length === 0) {
+        throw new Error('얼굴을 감지할 수 없습니다. 더 명확한 얼굴 사진을 업로드해주세요.');
+      }
+      
+      faceData = comprefaceResponse.result[0];
+      console.log('CompreFace 분석 완료:', {
+        age: faceData.age,
+        gender: faceData.gender,
+        landmarks: faceData.landmarks?.length || 0
+      });
       
       // 2. CompreFace 데이터를 관상 특징으로 매핑
       console.log('관상 특징 매핑 중...');
@@ -171,57 +169,6 @@ export class FacialAnalysisService {
     }
   }
 
-  /**
-   * CompreFace 실패 시 fallback 얼굴 데이터 생성
-   */
-  private generateFallbackFaceData(): any {
-    // 68개 랜드마크 포인트 생성 (기본 얼굴 모양)
-    const landmarks = [];
-    for (let i = 0; i < 68; i++) {
-      landmarks.push({
-        x: 100 + Math.random() * 200, // 100-300 범위
-        y: 100 + Math.random() * 200  // 100-300 범위
-      });
-    }
-    
-    return {
-      face_id: 'fallback_' + Date.now(),
-      bbox: {
-        x_min: 50,
-        y_min: 50,
-        x_max: 350,
-        y_max: 350,
-        probability: 0.8
-      },
-      landmarks: landmarks,
-      age: {
-        low: 20,
-        high: 30,
-        probability: 0.8
-      },
-      gender: {
-        value: 'female',
-        probability: 0.8
-      },
-      mask: {
-        value: 'without_mask',
-        probability: 0.9
-      },
-      pose: {
-        pitch: 0,
-        yaw: 0,
-        roll: 0
-      },
-      embedding: new Array(512).fill(0).map(() => Math.random()),
-      execution_time: {
-        age: 100,
-        gender: 100,
-        detector: 200,
-        calculator: 150,
-        mask: 50
-      }
-    };
-  }
 
   /**
    * Fallback 관상 해석 생성

@@ -37,6 +37,10 @@ NEXT_PUBLIC_SITE_URL=https://saju-meet.vercel.app
 # AI API 키
 ANTHROPIC_API_KEY=your_claude_api_key
 OPENAI_API_KEY=your_openai_api_key
+
+# CompreFace 설정 (프로덕션용)
+NEXT_PUBLIC_COMPREFACE_URL=https://your-compreface-server.com
+NEXT_PUBLIC_COMPREFACE_API_KEY=your-compreface-api-key
 ```
 
 **⚠️ 중요**: `NEXT_PUBLIC_SITE_URL`은 반드시 설정해야 합니다. 이 변수가 없으면 localhost로 리다이렉트되는 문제가 발생합니다.

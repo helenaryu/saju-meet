@@ -73,14 +73,7 @@ export class FaceReadingService {
         gender: '미지정'
       };
       
-      let analysisResult;
-      try {
-        analysisResult = await facialAnalysisService.analyzeFacialFeatures(analysisRequest);
-      } catch (facialAnalysisError) {
-        console.error('관상 분석 서비스 실패, fallback 사용:', facialAnalysisError);
-        // Fallback: 더미 데이터로 분석 결과 생성
-        analysisResult = this.generateFallbackAnalysisResult();
-      }
+      const analysisResult = await facialAnalysisService.analyzeFacialFeatures(analysisRequest);
       
       // 기존 인터페이스에 맞게 변환
       const features = {
@@ -131,56 +124,6 @@ export class FaceReadingService {
     }
   }
 
-  /**
-   * Fallback 분석 결과 생성
-   */
-  private generateFallbackAnalysisResult(): any {
-    return {
-      mappedFeatures: {
-        eyes: {
-          size: 'medium',
-          shape: 'almond',
-          characteristics: ['균형잡힌 눈', '자연스러운 모양']
-        },
-        nose: {
-          bridge: 'straight',
-          tip: 'rounded',
-          characteristics: ['곧은 코', '자연스러운 모양']
-        },
-        mouth: {
-          size: 'medium',
-          shape: 'bow-shaped',
-          characteristics: ['균형잡힌 입', '자연스러운 모양']
-        },
-        forehead: {
-          width: 'medium',
-          height: 'medium',
-          characteristics: ['균형잡힌 이마']
-        },
-        chin: {
-          shape: 'rounded',
-          characteristics: ['자연스러운 턱']
-        },
-        overall: {
-          faceShape: 'oval',
-          symmetry: 'high',
-          characteristics: ['균형잡힌 얼굴', '자연스러운 대칭성']
-        },
-        keywords: ['균형잡힌', '자연스러운', '안정적', '친근함'],
-        loveCompatibility: ['안정적', '신뢰감', '조화로움']
-      },
-      claudeAnalysis: {
-        interpretation: '균형잡히고 자연스러운 얼굴을 가진 당신은 안정적이고 신뢰할 수 있는 매력을 가지고 있습니다.',
-        personalityInsights: '차분하고 신중한 성격으로 안정적인 관계를 선호합니다.',
-        relationshipAdvice: '진정성 있는 소통을 통해 깊이 있는 관계를 만들어가세요.',
-        compatibilityFactors: '안정적이고 신뢰할 수 있는 파트너와 잘 어울립니다.',
-        growthOpportunities: '자신의 감정을 더 표현해보세요.',
-        recommendedKeywords: ['안정적', '신뢰감', '조화로움'],
-        loveStyle: '안정적이고 진정성 있는 사랑',
-        idealTypeDescription: '신뢰할 수 있고 안정적인 이상형'
-      }
-    };
-  }
 
   /**
    * Fallback 관상 분석 (기존 방식)
