@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:13
@@ -47,18 +45,6 @@ services:
       - "3001:80"
     depends_on:
       - api
-    networks:
-      - compreface
-
-  db-migrate:
-    image: exadel/compreface-db-migrate:1.2.0
-    environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_URL: jdbc:postgresql://postgres:5432/compreface
-      POSTGRES_USER: postgres
-      POSTGRES_DB: compreface
-    depends_on:
-      - postgres
     networks:
       - compreface
 
