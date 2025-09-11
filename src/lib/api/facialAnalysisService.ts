@@ -1,7 +1,49 @@
-import { comprefaceService, CompreFaceDetection } from './compreface';
+import { detectFacesWithSDK, checkCompreFaceHealth } from './comprefaceSDK';
 import { FacialFeatureMapper, MappedFacialFeatures } from './facialFeatureMapper';
 import { claudeService, ClaudeAnalysisRequest } from './claude';
 import { supabaseFacialAnalysisService } from './supabaseFacialAnalysis';
+
+// Import CompreFace types from SDK
+interface CompreFaceDetection {
+  face_id: string;
+  bbox: {
+    x_min: number;
+    y_min: number;
+    x_max: number;
+    y_max: number;
+    probability: number;
+  };
+  landmarks: Array<{
+    x: number;
+    y: number;
+  }>;
+  age: {
+    low: number;
+    high: number;
+    probability: number;
+  };
+  gender: {
+    value: string;
+    probability: number;
+  };
+  mask: {
+    value: string;
+    probability: number;
+  };
+  pose: {
+    pitch: number;
+    yaw: number;
+    roll: number;
+  };
+  embedding: number[];
+  execution_time: {
+    age: number;
+    gender: number;
+    detector: number;
+    calculator: number;
+    mask: number;
+  };
+}
 
 export interface FacialAnalysisRequest {
   imageFile: File;
@@ -62,18 +104,19 @@ export class FacialAnalysisService {
       let faceData;
       
       // CompreFace 서버 상태 확인
-      const isHealthy = await comprefaceService.checkHealth();
+      const isHealthy = await checkCompreFaceHealth();
       if (!isHealthy) {
         throw new Error('CompreFace 서버가 사용 불가능합니다. 서버를 시작하고 API 키를 설정해주세요.');
       }
 
-      comprefaceResponse = await comprefaceService.detectFaces(request.imageFile);
+      // Use CompreFace SDK for detection
+      const detectionResult = await detectFacesWithSDK(request.imageFile);
       
-      if (!comprefaceResponse.result || comprefaceResponse.result.length === 0) {
+      if (!detectionResult.result || detectionResult.result.length === 0) {
         throw new Error('얼굴을 감지할 수 없습니다. 더 명확한 얼굴 사진을 업로드해주세요.');
       }
       
-      faceData = comprefaceResponse.result[0];
+      faceData = detectionResult.result[0];
       console.log('CompreFace 분석 완료:', {
         age: faceData.age,
         gender: faceData.gender,
