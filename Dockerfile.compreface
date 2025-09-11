@@ -1,0 +1,11 @@
+FROM docker:20.10.16-dind
+
+# Install docker-compose
+RUN apk add --no-cache docker-compose
+
+# Copy CompreFace files
+COPY docker-compose.compreface.yml /app/
+WORKDIR /app
+
+# Start CompreFace
+CMD ["docker-compose", "-f", "docker-compose.compreface.yml", "up", "-d"]

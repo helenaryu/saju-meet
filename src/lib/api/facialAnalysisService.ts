@@ -1,12 +1,15 @@
 import { comprefaceService, CompreFaceDetection } from './compreface';
 import { FacialFeatureMapper, MappedFacialFeatures } from './facialFeatureMapper';
 import { claudeService, ClaudeAnalysisRequest } from './claude';
+import { supabaseFacialAnalysisService } from './supabaseFacialAnalysis';
 
 export interface FacialAnalysisRequest {
   imageFile: File;
   nickname?: string;
   gender?: string;
   birthDate?: string;
+  userId?: string;
+  imageUrl?: string;
 }
 
 export interface FacialAnalysisResponse {
@@ -93,8 +96,8 @@ export class FacialAnalysisService {
       console.log('Claude AI 분석 완료');
       
       const processingTime = Date.now() - startTime;
-      
-      return {
+
+      const analysisResult = {
         comprefaceData: faceData,
         mappedFeatures,
         claudeAnalysis,
@@ -105,6 +108,23 @@ export class FacialAnalysisService {
           processingTime
         }
       };
+
+      // Save to Supabase if user is authenticated
+      if (request.userId) {
+        try {
+          await supabaseFacialAnalysisService.saveFacialAnalysis(
+            request.userId,
+            analysisResult,
+            request.imageUrl
+          );
+          console.log('✅ Facial analysis saved to Supabase');
+        } catch (error) {
+          console.error('Failed to save to Supabase:', error);
+          // Continue without failing the analysis
+        }
+      }
+
+      return analysisResult;
       
     } catch (error) {
       console.error('관상 분석 오류:', error);
