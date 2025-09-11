@@ -18,6 +18,8 @@ services:
       POSTGRES_URL: jdbc:postgresql://postgres:5432/compreface
       POSTGRES_USER: postgres
       POSTGRES_DB: compreface
+    ports:
+      - "8001:8080"
     depends_on:
       - postgres
     networks:
@@ -30,6 +32,8 @@ services:
       POSTGRES_URL: jdbc:postgresql://postgres:5432/compreface
       POSTGRES_USER: postgres
       POSTGRES_DB: compreface
+    ports:
+      - "8000:8080"
     depends_on:
       - postgres
     networks:
@@ -39,6 +43,8 @@ services:
     image: exadel/compreface-fe:1.2.0
     environment:
       REACT_APP_SERVER_URL: http://localhost:8000
+    ports:
+      - "3001:80"
     depends_on:
       - api
     networks:

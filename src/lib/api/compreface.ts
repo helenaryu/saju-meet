@@ -186,13 +186,28 @@ export class CompreFaceService {
         return false;
       }
 
+      // CompreFace 1.2.0 health check endpoint
       const response = await axios.get(`${this.config.baseUrl}/api/v1/health`, {
         timeout: 5000, // 5초 타임아웃
-        validateStatus: (status) => status < 500 // 500 미만은 성공으로 간주
+        validateStatus: (status) => status < 500, // 500 미만은 성공으로 간주
+        headers: {
+          'x-api-key': this.config.apiKey,
+        }
       });
-      return response.status === 200;
+      
+      // CompreFace 1.2.0 returns { "status": "ok" } on success
+      const isHealthy = response.status === 200 && 
+        (response.data?.status === 'ok' || response.data?.status === 'OK');
+      
+      if (isHealthy) {
+        console.log('✅ CompreFace 1.2.0 서버가 정상 작동 중');
+      } else {
+        console.log('⚠️ CompreFace 서버 응답이 예상과 다름:', response.data);
+      }
+      
+      return isHealthy;
     } catch (error) {
-      console.log('CompreFace 서버 사용 불가, fallback 시스템 사용:', error instanceof Error ? error.message : String(error));
+      console.log('❌ CompreFace 서버 사용 불가, fallback 시스템 사용:', error instanceof Error ? error.message : String(error));
       return false;
     }
   }

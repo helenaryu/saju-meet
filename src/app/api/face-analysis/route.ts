@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { comprefaceService } from '@/lib/api/compreface';
-import { faceAnalysisFallback } from '@/lib/api/faceAnalysisFallback';
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,55 +16,69 @@ export async function POST(request: NextRequest) {
     // CompreFace 서버 상태 확인
     const isHealthy = await comprefaceService.checkHealth();
     
-    let faceData;
-    
-    if (isHealthy) {
-      try {
-        // CompreFace를 사용한 실제 얼굴 분석
-        const detectionResult = await comprefaceService.detectFaces(imageFile);
-        
-        if (!detectionResult.result || detectionResult.result.length === 0) {
-          console.log('CompreFace에서 얼굴을 감지하지 못함, fallback 시스템 사용');
-          faceData = await faceAnalysisFallback.analyzeFace(imageFile);
-        } else {
-          const faceDetection = detectionResult.result[0];
-          
-          // CompreFace 결과를 관상 분석에 적합한 형태로 변환
-          faceData = {
-            faceId: faceDetection.face_id,
-            bbox: faceDetection.bbox,
-            landmarks: faceDetection.landmarks,
-            age: faceDetection.age,
-            gender: faceDetection.gender,
-            mask: faceDetection.mask,
-            pose: faceDetection.pose,
-            features: {
-              eyes: analyzeEyes(faceDetection.landmarks, faceDetection.bbox),
-              nose: analyzeNose(faceDetection.landmarks, faceDetection.bbox),
-              mouth: analyzeMouth(faceDetection.landmarks, faceDetection.bbox),
-              forehead: analyzeForehead(faceDetection.landmarks, faceDetection.bbox),
-              chin: analyzeChin(faceDetection.landmarks, faceDetection.bbox),
-              faceShape: analyzeFaceShape(faceDetection.landmarks, faceDetection.bbox),
-            },
-            keywords: generateFaceKeywords(faceDetection),
-            loveCompatibility: generateLoveCompatibility(faceDetection),
-          };
-        }
-      } catch (comprefaceError) {
-        console.warn('CompreFace 분석 실패, fallback 시스템 사용:', comprefaceError instanceof Error ? comprefaceError.message : String(comprefaceError));
-        // CompreFace 실패 시 fallback 시스템 사용
-        faceData = await faceAnalysisFallback.analyzeFace(imageFile);
-      }
-    } else {
-      console.log('CompreFace 서버 사용 불가, fallback 시스템 사용');
-      // CompreFace 서버가 사용 불가능한 경우 fallback 시스템 사용
-      faceData = await faceAnalysisFallback.analyzeFace(imageFile);
+    if (!isHealthy) {
+      return NextResponse.json(
+        { 
+          error: 'CompreFace 서버가 사용 불가능합니다. 서버를 시작하고 API 키를 설정해주세요.',
+          code: 'COMPREFACE_UNAVAILABLE'
+        },
+        { status: 503 }
+      );
     }
 
-    return NextResponse.json({
-      success: true,
-      data: faceData,
-    });
+    try {
+      // CompreFace를 사용한 실제 얼굴 분석
+      const detectionResult = await comprefaceService.detectFaces(imageFile);
+      
+      if (!detectionResult.result || detectionResult.result.length === 0) {
+        return NextResponse.json(
+          { 
+            error: '이미지에서 얼굴을 감지할 수 없습니다. 얼굴이 명확히 보이는 사진을 업로드해주세요.',
+            code: 'NO_FACE_DETECTED'
+          },
+          { status: 400 }
+        );
+      }
+
+      const faceDetection = detectionResult.result[0];
+      
+      // CompreFace 결과를 관상 분석에 적합한 형태로 변환
+      const faceData = {
+        faceId: faceDetection.face_id,
+        bbox: faceDetection.bbox,
+        landmarks: faceDetection.landmarks,
+        age: faceDetection.age,
+        gender: faceDetection.gender,
+        mask: faceDetection.mask,
+        pose: faceDetection.pose,
+        features: {
+          eyes: analyzeEyes(faceDetection.landmarks, faceDetection.bbox),
+          nose: analyzeNose(faceDetection.landmarks, faceDetection.bbox),
+          mouth: analyzeMouth(faceDetection.landmarks, faceDetection.bbox),
+          forehead: analyzeForehead(faceDetection.landmarks, faceDetection.bbox),
+          chin: analyzeChin(faceDetection.landmarks, faceDetection.bbox),
+          faceShape: analyzeFaceShape(faceDetection.landmarks, faceDetection.bbox),
+        },
+        keywords: generateFaceKeywords(faceDetection),
+        loveCompatibility: generateLoveCompatibility(faceDetection),
+      };
+
+      return NextResponse.json({
+        success: true,
+        data: faceData,
+      });
+
+    } catch (comprefaceError) {
+      console.error('CompreFace 분석 실패:', comprefaceError);
+      return NextResponse.json(
+        { 
+          error: '얼굴 분석에 실패했습니다. CompreFace 서버를 확인해주세요.',
+          code: 'COMPREFACE_ANALYSIS_FAILED',
+          details: comprefaceError instanceof Error ? comprefaceError.message : String(comprefaceError)
+        },
+        { status: 500 }
+      );
+    }
 
   } catch (error) {
     console.error('얼굴 분석 API 오류:', error);

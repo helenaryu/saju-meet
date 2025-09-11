@@ -62,75 +62,57 @@ export class FaceReadingService {
 
   async analyzeFace(request: FaceReadingRequest): Promise<FaceReadingResponse> {
     try {
-      // 먼저 fallback 시스템을 사용하여 안정적인 분석 수행
-      const { faceAnalysisFallback } = await import('./faceAnalysisFallback');
-      const fallbackResult = await faceAnalysisFallback.analyzeFace(request.imageFile);
-      
-      // CompreFace API를 통한 실제 얼굴 분석 시도 (선택적)
-      try {
-        const response = await fetch(`${getBaseUrl()}/api/face-analysis`, {
-          method: 'POST',
-          body: (() => {
-            const formData = new FormData();
-            formData.append('image', request.imageFile);
-            return formData;
-          })(),
-        });
+      // CompreFace API를 통한 실제 얼굴 분석
+      const response = await fetch(`${getBaseUrl()}/api/face-analysis`, {
+        method: 'POST',
+        body: (() => {
+          const formData = new FormData();
+          formData.append('image', request.imageFile);
+          return formData;
+        })(),
+      });
 
-        if (response.ok) {
-          // 응답이 JSON인지 확인
-          const contentType = response.headers.get('content-type');
-          if (contentType && contentType.includes('application/json')) {
-            const result = await response.json();
-            
-            if (result.success && result.data) {
-              const faceData = result.data;
-              
-              // CompreFace 결과를 기존 인터페이스에 맞게 변환
-              const features = {
-                eyes: faceData.features.eyes,
-                nose: faceData.features.nose,
-                mouth: faceData.features.mouth,
-                forehead: faceData.features.forehead,
-                chin: faceData.features.chin,
-              };
-
-              // Claude에게 전달할 상세 분석 요청
-              const claudeAnalysis = await this.requestClaudeAnalysis(faceData);
-
-              return {
-                features,
-                keywords: claudeAnalysis.keywords || faceData.keywords,
-                interpretation: claudeAnalysis.interpretation || this.generateInterpretation(features, faceData.keywords),
-                loveCompatibility: claudeAnalysis.loveCompatibility || faceData.loveCompatibility
-              };
-            }
-          }
-        }
-      } catch (comprefaceError) {
-        console.log('CompreFace API 사용 불가, fallback 결과 사용:', comprefaceError instanceof Error ? comprefaceError.message : String(comprefaceError));
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || '얼굴 분석에 실패했습니다.');
       }
 
-      // Fallback 결과를 사용
+      // 응답이 JSON인지 확인
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('서버가 올바른 응답을 반환하지 않았습니다.');
+      }
+
+      const result = await response.json();
+      
+      if (!result.success || !result.data) {
+        throw new Error('얼굴 분석 결과를 처리할 수 없습니다.');
+      }
+
+      const faceData = result.data;
+      
+      // CompreFace 결과를 기존 인터페이스에 맞게 변환
       const features = {
-        eyes: fallbackResult.features.eyes,
-        nose: fallbackResult.features.nose,
-        mouth: fallbackResult.features.mouth,
-        forehead: fallbackResult.features.forehead,
-        chin: fallbackResult.features.chin,
+        eyes: faceData.features.eyes,
+        nose: faceData.features.nose,
+        mouth: faceData.features.mouth,
+        forehead: faceData.features.forehead,
+        chin: faceData.features.chin,
       };
+
+      // Claude에게 전달할 상세 분석 요청
+      const claudeAnalysis = await this.requestClaudeAnalysis(faceData);
 
       return {
         features,
-        keywords: fallbackResult.keywords,
-        interpretation: this.generateInterpretation(features, fallbackResult.keywords),
-        loveCompatibility: fallbackResult.loveCompatibility
+        keywords: claudeAnalysis.keywords || faceData.keywords,
+        interpretation: claudeAnalysis.interpretation || this.generateInterpretation(features, faceData.keywords),
+        loveCompatibility: claudeAnalysis.loveCompatibility || faceData.loveCompatibility
       };
 
     } catch (error) {
       console.error('관상 분석 중 오류:', error);
-      // 오류 발생 시 더미 분석 결과 반환
-      return this.generateDummyAnalysis();
+      throw error; // 오류를 다시 던져서 상위에서 처리하도록 함
     }
   }
 

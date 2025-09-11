@@ -157,6 +157,22 @@ export default function FaceReadingVisual({
           <div className="text-center">
             <h3 className="text-xl font-semibold text-red-300 mb-2">❌ 분석 오류</h3>
             <p className="text-gray-300 mb-4">{error}</p>
+            
+            {/* CompreFace 관련 오류인 경우 추가 안내 */}
+            {error.includes('CompreFace') && (
+              <div className="bg-yellow-500/10 border border-yellow-400/30 rounded-lg p-4 mb-4">
+                <h4 className="text-yellow-300 font-semibold mb-2">🔧 CompreFace 설정 필요</h4>
+                <p className="text-yellow-200 text-sm mb-2">
+                  실제 얼굴 분석을 위해서는 CompreFace 서버가 필요합니다.
+                </p>
+                <div className="text-yellow-200 text-xs space-y-1">
+                  <p>1. Docker Desktop 설치</p>
+                  <p>2. <code className="bg-yellow-500/20 px-1 rounded">./setup-compreface.sh</code> 실행</p>
+                  <p>3. API 키 설정 후 재시도</p>
+                </div>
+              </div>
+            )}
+            
             <button
               onClick={performFaceAnalysis}
               className="bg-red-500/20 text-red-400 px-4 py-2 rounded-lg border border-red-400/30 hover:bg-red-500/30 transition-colors"
